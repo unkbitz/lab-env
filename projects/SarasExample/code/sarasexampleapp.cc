@@ -3,7 +3,7 @@
 // (C) 2015-2022 Individual contributors, see AUTHORS file
 //------------------------------------------------------------------------------
 #include "config.h"
-#include "exampleapp.h"
+#include "sarasexampleapp.h"
 #include <cstring>
 
 const GLchar* vs =
