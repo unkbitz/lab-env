@@ -13,6 +13,7 @@ public:
 		m[2] = vec4(0.0f, 0.0f, 1.0f, 0.0f);
 		m[3] = vec4(0.0f, 0.0f, 0.0f, 1.0f);
 	}
+
 	mat4(vec4 const& r0, vec4 const& r1, vec4 const& r2, vec4 const& r3) {
 		m[0] = r0;
 		m[1] = r1;

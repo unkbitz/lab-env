@@ -24,6 +24,7 @@ namespace Mesh
 		GLuint vertexShader;
 		GLuint pixelShader;
 		GLuint triangle;
+		GLuint ibo;
 		Display::Window* window;
 	};
 } // namespace Mesh
