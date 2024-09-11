@@ -243,27 +243,3 @@ inline mat4 rotationaxis(vec3 const& v, float const rad) {
 	result = transpose(result);
 	return result;
 }
-
-inline mat4 translationx(float const pos) {
-	const mat4 transx(vec4(1.0f, 0.0f, 0.0f, 0.0f),
-					vec4(0.0f, 1.0f, 0.0f, 0.0f),
-					vec4(0.0f, 0.0f, 1.0f, 0.0f),
-					vec4(pos, 0.0f, 0.0f, 1.0f));
-	return transx;
-}
-
-inline mat4 translationy(float const pos) {
-	const mat4 transy(vec4(1.0f, 0.0f, 0.0f, 0.0f),
-		vec4(0.0f, 1.0f, 0.0f, 0.0f),
-		vec4(0.0f, 0.0f, 1.0f, 0.0f),
-		vec4(pos, 0.0f, 0.0f, 1.0f));
-	return transy;
-}
-
-inline mat4 translationz(float const pos) {
-	const mat4 transz(vec4(1.0f, 0.0f, 0.0f, 0.0f),
-		vec4(0.0f, 1.0f, 0.0f, 0.0f),
-		vec4(0.0f, 0.0f, 1.0f, 0.0f),
-		vec4(pos, 0.0f, 0.0f, 1.0f));
-	return transz;
-}

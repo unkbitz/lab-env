@@ -51,19 +51,43 @@ namespace Mesh
 
 		GLfloat buf[] =
 		{
-			-0.5f,	-0.5f,	-1,			// pos 0
+			-0.5f,	-0.5f,	0.5f,			// pos 0
 			0.5,	0.5f,	0,		1,	// color 0
-			0.5f,	-0.5f,	-1,			// pos 1
-			0.5f,	0,		0.5f,		1,	// color 0
-			0.5f,	0.5f,	-1,			// pos 2
-			0,		0,		0.5f,		1,	// color 0
-			-0.5f,	0.5f,	-1,			// pos 2
+			0.5f,	-0.5f,	0.5f,			// pos 1
+			0.5f,	0,		0.5f,	1,	// color 0
+			0.5f,	0.5f,	0.5f,			// pos 2
+			0,		0,		0.5f,	1,	// color 0
+			-0.5f,	0.5f,	0.5f,			// pos 2
+			0,		1,		0,		1,	// color 0
+
+			-0.5f,	-0.5f,	-0.5f,			// pos 0
+			0.5,	0.5f,	0,		1,	// color 0
+			0.5f,	-0.5f,	-0.5f,			// pos 1
+			0.5f,	0,		0.5f,	1,	// color 0
+			0.5f,	0.5f,	-0.5f,			// pos 2
+			0,		0,		0.5f,	1,	// color 0
+			-0.5f,	0.5f,	-0.5f,			// pos 2
 			0,		1,		0,		1,	// color 0
 		};
 
 		GLint iBuf[] = {
 			0, 1, 2,
-			2, 3, 0
+			2, 3, 0,
+
+			4, 6, 5,
+			7, 6, 4,
+
+			0, 4, 1,
+			4, 5, 1,
+
+			6, 7, 3,
+			3, 2, 6,
+
+			6, 5, 1,
+			2, 6, 1,
+
+			0, 3, 4,
+			3, 7, 4
 		};
 
 		if (this->window->Open())
@@ -121,13 +145,11 @@ namespace Mesh
 
 			// setup vbo
 			glGenBuffers(1, &this->triangle);
-			glGenBuffers(0.5f, &this->triangle);
 			glBindBuffer(GL_ARRAY_BUFFER, this->triangle);
 			glBufferData(GL_ARRAY_BUFFER, sizeof(buf), buf, GL_STATIC_DRAW);
 			glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 			glGenBuffers(1, &ibo);
-			glGenBuffers(0.5f, &ibo);
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
 			glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(iBuf), iBuf, GL_STATIC_DRAW);
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
@@ -147,8 +169,9 @@ namespace Mesh
 	}
 
 	void
-	MeshResources::Run()
+		MeshResources::Run()
 	{
+		glEnable(GL_DEPTH_TEST);
 		float angle = 0.0f;
 		float positionX = 0.0f;
 		float direction = 1.0f; // 1 for right, -1 for left
@@ -158,7 +181,7 @@ namespace Mesh
 
 		while (this->window->IsOpen())
 		{
-			glClear(GL_COLOR_BUFFER_BIT);
+			glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 			this->window->Update();
 
 			angle += 0.01;
@@ -168,13 +191,13 @@ namespace Mesh
 			}
 
 			// do stuff
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-			glBindBuffer(GL_ARRAY_BUFFER, this->triangle);
 			
-			mat4 rotationMatrix = rotationz(angle);
-			mat4 translationMatrix = translationx(positionX);
+			glBindBuffer(GL_ARRAY_BUFFER, this->triangle);
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+
+			mat4 rotationMatrix = rotationz(angle)* rotationx(angle);
 			rotationMatrix[3] += vec4(sin(angle), 0, 0, 0);
-			mat4 transformMatrix = rotationMatrix; //* translationMatrix;
+			mat4 transformMatrix = rotationMatrix;
 
 			glUseProgram(this->program);
 			GLint rotationLocation = glGetUniformLocation(this->program, "rotation");
@@ -187,17 +210,17 @@ namespace Mesh
 			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float32) * 7, NULL);
 			glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(float32) * 7, (GLvoid*)(sizeof(float32) * 3));
 			
-			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+			glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 			glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 			this->window->SwapBuffers();
 
-	#ifdef CI_TEST
+#ifdef CI_TEST
 			// if we're running CI, we want to return and exit the application after one frame
 			// break the loop and hopefully exit gracefully
 			break;
-	#endif
+#endif
 		}
 	}
 

@@ -12,14 +12,11 @@ namespace Mesh
 		/// destructor
 		~MeshResources();
 
-		/// open app
 		bool Open();
-		/// close app
 		void Close();
-		/// run app
 		void Run();
+		
 	private:
-
 		GLuint program;
 		GLuint vertexShader;
 		GLuint pixelShader;
