@@ -2,17 +2,16 @@
 #include "meshResources.h"
 #include <cstring>
 #include "math/mat4.h"
-#include "math/vec3.h"
-#include "math/vec4.h"
 
 const GLchar* vs =
 "#version 430\n"
 "layout(location=0) in vec3 pos;\n"
 "layout(location=1) in vec4 color;\n"
 "layout(location=0) out vec4 Color;\n"
+"uniform mat4 rotation;\n"
 "void main()\n"
 "{\n"
-"	gl_Position = vec4(pos, 1);\n"
+"	gl_Position = rotation * vec4(pos, 1);\n"
 "	Color = color;\n"
 "}\n";
 
@@ -43,9 +42,11 @@ namespace Mesh
 	{
 		App::Open();
 		this->window = new Display::Window;
-		window->SetKeyPressFunction([this](int32, int32, int32, int32)
+		window->SetKeyPressFunction([this](int key, int scancode, int action, int mods)
 		{
-			this->window->Close();
+			if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
+				this->window->Close();
+			}
 		});
 
 		GLfloat buf[] =
@@ -148,16 +149,39 @@ namespace Mesh
 	void
 	MeshResources::Run()
 	{
+		float angle = 0.0f;
+		float positionX = 0.0f;
+		float direction = 1.0f; // 1 for right, -1 for left
+		float speed = 0.01f; // Movement speed
+		float boundary = 0.5f; // Boundary for the movement (from -boundary to +boundary)
+
+
 		while (this->window->IsOpen())
 		{
 			glClear(GL_COLOR_BUFFER_BIT);
 			this->window->Update();
 
+			angle += 0.01;
+			positionX += speed * direction;
+			if (positionX > boundary || positionX < -boundary) {
+				direction *= -1.0f; // Change direction
+			}
+
 			// do stuff
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
 			glBindBuffer(GL_ARRAY_BUFFER, this->triangle);
 			
+			mat4 rotationMatrix = rotationz(angle);
+			mat4 translationMatrix = translationx(positionX);
+			rotationMatrix[3] += vec4(sin(angle), 0, 0, 0);
+			mat4 transformMatrix = rotationMatrix; //* translationMatrix;
+
 			glUseProgram(this->program);
+			GLint rotationLocation = glGetUniformLocation(this->program, "rotation");
+			if (rotationLocation != -1) {
+				glUniformMatrix4fv(rotationLocation, 1, GL_FALSE, &transformMatrix[0][0]);
+			}
+
 			glEnableVertexAttribArray(0);
 			glEnableVertexAttribArray(1);
 			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float32) * 7, NULL);

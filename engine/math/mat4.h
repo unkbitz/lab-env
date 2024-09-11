@@ -1,6 +1,8 @@
 #pragma once
 #include <iostream>
 #include <math.h>
+#include <math/vec3.h>
+#include <math/vec4.h>
 using namespace std;
 
 class mat4 {
@@ -35,7 +37,7 @@ public:
 	vec4 const& operator[](uint32_t const i) const;
 };
 
-mat4 transpose(mat4 const& m) {
+inline mat4 transpose(mat4 const& m) {
 	mat4 result;
 	result[0][0] = m[0][0];
 	result[0][1] = m[1][0];
@@ -60,14 +62,14 @@ mat4 transpose(mat4 const& m) {
 }
 
 
-mat4& mat4::operator=(mat4 const& rhs) {
+inline mat4& mat4::operator=(mat4 const& rhs) {
 	for (int i = 0; i < 4; ++i) {
 		this->m[i] = rhs.m[i];
 	}
 	return *this;
 }
 
-mat4 mat4::operator*(mat4 const& rhs) const {
+inline mat4 mat4::operator*(mat4 const& rhs) const {
 	vec4 zero(0, 0, 0, 0);
 	mat4 result(zero, zero, zero, zero);
 	mat4 given = *this;
@@ -82,7 +84,7 @@ mat4 mat4::operator*(mat4 const& rhs) const {
 	return result;
 }
 
-vec4 mat4::operator*(vec4 const& rhs) const {
+inline vec4 mat4::operator*(vec4 const& rhs) const {
 	vec4 result(0, 0, 0, 0);
 	mat4 given = *this;
 	given = transpose(given);
@@ -94,7 +96,7 @@ vec4 mat4::operator*(vec4 const& rhs) const {
 	return result;
 }
 
-bool mat4::operator==(mat4 const& rhs) const {
+inline bool mat4::operator==(mat4 const& rhs) const {
 	for (int r = 0; r < 4; r++) {
 		for (int k = 0; k < 4; k++) {
 			if (this->m[r][k] != rhs.m[r][k]) {
@@ -105,7 +107,7 @@ bool mat4::operator==(mat4 const& rhs) const {
 	return true;
 }
 
-bool mat4::operator!=(mat4 const& rhs) const {
+inline bool mat4::operator!=(mat4 const& rhs) const {
 	for (int r = 0; r < 4; r++) {
 		for (int k = 0; k < 4; k++) {
 			if (this->m[r][k] != rhs.m[r][k]) {
@@ -116,21 +118,21 @@ bool mat4::operator!=(mat4 const& rhs) const {
 	return false;
 }
 
-vec4& mat4::operator[](uint32_t const i) {
+inline vec4& mat4::operator[](uint32_t const i) {
 	if (i >= 4) {
 		throw std::out_of_range("Index out of range");
 	}
 	return m[i];
 }
 
-vec4 const& mat4::operator[](uint32_t const i) const {
+inline vec4 const& mat4::operator[](uint32_t const i) const {
 	if (i >= 4) {
 		throw std::out_of_range("Index out of range");
 	}
 	return m[i];
 }
 
-float determinant(mat4 const m) {
+inline float determinant(mat4 const m) {
 	float det = 1.0f;
 	mat4 a = m;
 	for (int i = 0; i < 4; i++) {
@@ -162,36 +164,36 @@ float determinant(mat4 const m) {
 	return det;
 }
 
-mat4 cofactor(mat4 const& a) {
+inline mat4 cofactor(mat4 const& a) {
 	mat4 result(
-		vec4(+(a[1][1] * a[2][2] * a[3][3] + a[1][2] * a[2][3] * a[3][1] + a[1][3] * a[2][1] * a[3][2] - a[1][3] * a[2][2] * a[3][1] - a[1][2] * a[2][1] * a[3][3]- a[1][1] * a[2][3] * a[3][2]),
+		vec4(+(a[1][1] * a[2][2] * a[3][3] + a[1][2] * a[2][3] * a[3][1] + a[1][3] * a[2][1] * a[3][2] - a[1][3] * a[2][2] * a[3][1] - a[1][2] * a[2][1] * a[3][3] - a[1][1] * a[2][3] * a[3][2]),
 			-(a[1][0] * a[2][2] * a[3][3] + a[1][2] * a[2][3] * a[3][0] + a[1][3] * a[2][0] * a[3][2] - a[1][3] * a[2][2] * a[3][0] - a[1][2] * a[2][0] * a[3][3] - a[1][0] * a[2][3] * a[3][2]),
-			+(a[1][0] * a[2][1] * a[3][3] + a[1][1] * a[2][3] * a[3][0] + a[1][3] * a[2][0] * a[3][1] - a[1][3] * a[2][1] * a[3][0] - a[1][1] * a[2][0] * a[3][3] - a[1][1] * a[2][3] * a[3][2]), 
+			+(a[1][0] * a[2][1] * a[3][3] + a[1][1] * a[2][3] * a[3][0] + a[1][3] * a[2][0] * a[3][1] - a[1][3] * a[2][1] * a[3][0] - a[1][1] * a[2][0] * a[3][3] - a[1][1] * a[2][3] * a[3][2]),
 			-(a[1][0] * a[2][1] * a[3][2] + a[1][1] * a[2][2] * a[3][0] + a[1][2] * a[2][0] * a[3][1] - a[1][2] * a[2][1] * a[3][0] - a[1][1] * a[2][0] * a[3][2] - a[1][0] * a[2][2] * a[3][1])),
 
 		vec4(-(a[0][1] * a[2][2] * a[3][3] + a[0][2] * a[2][3] * a[3][1] + a[0][3] * a[2][1] * a[3][2] - a[0][3] * a[2][2] * a[3][1] - a[0][2] * a[2][1] * a[3][3] - a[0][1] * a[2][3] * a[3][2]),
-			+(a[0][0] * a[2][2] * a[3][3] + a[0][3] * a[2][3] * a[3][0] + a[0][3] * a[2][0] * a[3][2] - a[0][3] * a[2][2] * a[3][0] - a[0][2] * a[2][0] * a[3][3] - a[0][0] * a[2][3] * a[3][2]), 
+			+(a[0][0] * a[2][2] * a[3][3] + a[0][3] * a[2][3] * a[3][0] + a[0][3] * a[2][0] * a[3][2] - a[0][3] * a[2][2] * a[3][0] - a[0][2] * a[2][0] * a[3][3] - a[0][0] * a[2][3] * a[3][2]),
 			-(a[0][0] * a[2][1] * a[3][3] + a[0][2] * a[2][3] * a[3][0] + a[0][3] * a[2][0] * a[3][1] - a[0][3] * a[2][1] * a[3][0] - a[0][2] * a[2][0] * a[3][3] - a[0][0] * a[2][3] * a[3][1]),
 			+(a[0][0] * a[2][1] * a[3][2] + a[0][2] * a[2][2] * a[3][0] + a[0][2] * a[2][0] * a[3][1] - a[0][2] * a[2][1] * a[3][0] - a[0][1] * a[2][0] * a[3][2] - a[0][0] * a[2][2] * a[3][1])),
 
-		vec4(+(a[0][1] * a[1][2] * a[3][3] + a[0][2] * a[1][3] * a[3][1] + a[0][3] * a[1][1] * a[3][2] - a[0][3] * a[1][2] * a[3][1] - a[0][2] * a[1][1] * a[3][3] - a[0][1] * a[1][3] * a[3][2]), 
-			-(a[0][0] * a[1][2] * a[3][3] + a[0][2] * a[1][3] * a[3][0] + a[0][3] * a[1][0] * a[3][2] - a[0][3] * a[1][2] * a[3][0] - a[0][2] * a[1][0] * a[3][3] - a[0][0] * a[1][3] * a[3][2]), 
-			+(a[0][0] * a[1][1] * a[3][3] + a[0][2] * a[1][3] * a[3][0] + a[0][3] * a[1][0] * a[3][1] - a[0][3] * a[1][1] * a[3][0] - a[0][2] * a[1][0] * a[3][3] - a[0][0] * a[1][3] * a[3][1]), 
+		vec4(+(a[0][1] * a[1][2] * a[3][3] + a[0][2] * a[1][3] * a[3][1] + a[0][3] * a[1][1] * a[3][2] - a[0][3] * a[1][2] * a[3][1] - a[0][2] * a[1][1] * a[3][3] - a[0][1] * a[1][3] * a[3][2]),
+			-(a[0][0] * a[1][2] * a[3][3] + a[0][2] * a[1][3] * a[3][0] + a[0][3] * a[1][0] * a[3][2] - a[0][3] * a[1][2] * a[3][0] - a[0][2] * a[1][0] * a[3][3] - a[0][0] * a[1][3] * a[3][2]),
+			+(a[0][0] * a[1][1] * a[3][3] + a[0][2] * a[1][3] * a[3][0] + a[0][3] * a[1][0] * a[3][1] - a[0][3] * a[1][1] * a[3][0] - a[0][2] * a[1][0] * a[3][3] - a[0][0] * a[1][3] * a[3][1]),
 			-(a[0][0] * a[1][1] * a[3][2] + a[0][2] * a[1][0] * a[3][0] + a[0][2] * a[1][0] * a[3][1] - a[0][2] * a[1][1] * a[3][0] - a[0][1] * a[1][0] * a[3][2] - a[0][0] * a[1][2] * a[3][1])),
 
-		vec4(-(a[0][1] * a[1][2] * a[2][3] + a[0][2] * a[1][3] * a[2][1] + a[0][3] * a[1][1] * a[2][2] - a[0][3] * a[1][2] * a[2][1] - a[0][2] * a[1][1] * a[2][3] - a[0][2] * a[1][3] * a[2][2]), 
-			+(a[0][0] * a[1][2] * a[2][3] + a[0][2] * a[1][3] * a[2][0] + a[0][3] * a[1][0] * a[2][2] - a[0][3] * a[1][2] * a[2][0] - a[0][2] * a[1][0] * a[2][3] - a[0][0] * a[1][3] * a[2][2]), 
-			-(a[0][0] * a[1][1] * a[2][3] + a[0][1] * a[1][3] * a[2][0] + a[0][3] * a[1][0] * a[2][1] - a[0][3] * a[1][1] * a[2][0] - a[0][1] * a[1][0] * a[2][3] - a[0][0] * a[1][3] * a[2][1]), 
+		vec4(-(a[0][1] * a[1][2] * a[2][3] + a[0][2] * a[1][3] * a[2][1] + a[0][3] * a[1][1] * a[2][2] - a[0][3] * a[1][2] * a[2][1] - a[0][2] * a[1][1] * a[2][3] - a[0][2] * a[1][3] * a[2][2]),
+			+(a[0][0] * a[1][2] * a[2][3] + a[0][2] * a[1][3] * a[2][0] + a[0][3] * a[1][0] * a[2][2] - a[0][3] * a[1][2] * a[2][0] - a[0][2] * a[1][0] * a[2][3] - a[0][0] * a[1][3] * a[2][2]),
+			-(a[0][0] * a[1][1] * a[2][3] + a[0][1] * a[1][3] * a[2][0] + a[0][3] * a[1][0] * a[2][1] - a[0][3] * a[1][1] * a[2][0] - a[0][1] * a[1][0] * a[2][3] - a[0][0] * a[1][3] * a[2][1]),
 			+(a[0][0] * a[1][1] * a[2][2] + a[0][1] * a[1][2] * a[2][0] + a[0][2] * a[1][0] * a[2][1] - a[0][2] * a[1][1] * a[2][0] - a[0][1] * a[1][0] * a[2][2] - a[0][0] * a[1][2] * a[2][1]))
 	);
 	return result;
 }
 
-mat4 adjoint(mat4 const& a) {
+inline mat4 adjoint(mat4 const& a) {
 	return transpose(cofactor(a));
 }
 
-mat4 inverse(mat4 const& m) {
+inline mat4 inverse(mat4 const& m) {
 	mat4 result;
 	mat4 a = m;
 	mat4 adj = adjoint(a);
@@ -207,7 +209,7 @@ mat4 inverse(mat4 const& m) {
 	return result;
 }
 
-mat4 rotationx(float const rad) {
+inline mat4 rotationx(float const rad) {
 	const mat4 rotx(vec4(1.0f, 0.0f, 0.0f, 0.0f),
 					vec4(0.0f, cos(rad), sin(rad), 0.0f),
 					vec4(0.0f, -sin(rad), cos(rad), 0.0f),
@@ -215,7 +217,7 @@ mat4 rotationx(float const rad) {
 	return rotx;
 }
 
-mat4 rotationy(float const rad) {
+inline mat4 rotationy(float const rad) {
 	const mat4 roty(vec4(cosf(rad), 0.0f, -sinf(rad), 0.0f),
 					vec4(0.0f, 1.0f, 0.0f, 0.0f),
 					vec4(sinf(rad), 0.0f, cosf(rad), 0.0f),
@@ -223,7 +225,7 @@ mat4 rotationy(float const rad) {
 	return roty;
 }
 
-mat4 rotationz(float const rad) {
+inline mat4 rotationz(float const rad) {
 	const mat4 rotz(vec4(cos(rad), sin(rad), 0.0f, 0.0f),
 					vec4(-sin(rad), cos(rad), 0.0f, 0.0f),
 					vec4(0.0f, 0.0f, 1.0f, 0.0f),
@@ -232,7 +234,7 @@ mat4 rotationz(float const rad) {
 }
 
 //rotationaxis(v : vec3 const&, rad : f32 const) : mat4
-mat4 rotationaxis(vec3 const& v, float const rad) {
+inline mat4 rotationaxis(vec3 const& v, float const rad) {
 	mat4 result(
 		vec4(v.x * v.x * (1 - cosf(rad)) + cosf(rad), v.x * v.y * (1 - cosf(rad)) - v.z * sinf(rad), v.x * v.z * (1 - cosf(rad)) + v.y * sinf(rad), 0),
 		vec4(v.x * v.y * (1 - cosf(rad)) + v.z * sinf(rad), v.y * v.y * (1 - cosf(rad)) + cosf(rad), v.y * v.z * (1 - cosf(rad)) - v.x * sinf(rad), 0),
@@ -240,4 +242,28 @@ mat4 rotationaxis(vec3 const& v, float const rad) {
 		vec4(0, 0, 0, 1));
 	result = transpose(result);
 	return result;
+}
+
+inline mat4 translationx(float const pos) {
+	const mat4 transx(vec4(1.0f, 0.0f, 0.0f, 0.0f),
+					vec4(0.0f, 1.0f, 0.0f, 0.0f),
+					vec4(0.0f, 0.0f, 1.0f, 0.0f),
+					vec4(pos, 0.0f, 0.0f, 1.0f));
+	return transx;
+}
+
+inline mat4 translationy(float const pos) {
+	const mat4 transy(vec4(1.0f, 0.0f, 0.0f, 0.0f),
+		vec4(0.0f, 1.0f, 0.0f, 0.0f),
+		vec4(0.0f, 0.0f, 1.0f, 0.0f),
+		vec4(pos, 0.0f, 0.0f, 1.0f));
+	return transy;
+}
+
+inline mat4 translationz(float const pos) {
+	const mat4 transz(vec4(1.0f, 0.0f, 0.0f, 0.0f),
+		vec4(0.0f, 1.0f, 0.0f, 0.0f),
+		vec4(0.0f, 0.0f, 1.0f, 0.0f),
+		vec4(pos, 0.0f, 0.0f, 1.0f));
+	return transz;
 }
