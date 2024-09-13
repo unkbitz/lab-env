@@ -3,28 +3,34 @@
 #include <cstring>
 #include "math/mat4.h"
 #include "Render/Grid.h"
+#include "TextureResource.h"
 
 const GLchar* vs =
 "#version 430\n"
 "layout(location=0) in vec3 pos;\n"
 "layout(location=1) in vec4 color;\n"
+"layout(location=2) in vec2 textureCoordinates;\n"
 "layout(location=0) out vec4 Color;\n"
 "uniform mat4 rotation;\n"
 "uniform mat4 projection;\n"
 "uniform mat4 view;\n"
+"layout(location=2) out vec2 TextureCoordinates;\n"
 "void main()\n"
 "{\n"
 "	gl_Position = projection * view * rotation * vec4(pos, 1);\n"
 "	Color = color;\n"
+"	TextureCoordinates = textureCoordinates;\n"
 "}\n";
 
 const GLchar* ps =
 "#version 430\n"
+"layout(location=2) in vec2 TextureCoordinates;\n"
 "layout(location=0) in vec4 color;\n"
 "out vec4 Color;\n"
+"uniform sampler2D Texture;\n"
 "void main()\n"
 "{\n"
-"	Color = color;\n"
+"	Color= texture(Texture, TextureCoordinates);\n"
 "}\n";
 
 using namespace Display;
@@ -49,21 +55,29 @@ namespace Mesh {
 		GLfloat buf[] =	{
 			-0.5f,	-0.5f,	0.5f,			// pos 0
 			0.5,	0.5f,	0,		1,	// color 0
+			0,		0,					//texture coordinates
 			0.5f,	-0.5f,	0.5f,			// pos 1
 			0.5f,	0,		0.5f,	1,	// color 0
+			0,		1,					//texture coordinates
 			0.5f,	0.5f,	0.5f,			// pos 2
 			0,		0,		0.5f,	1,	// color 0
+			1,		1,					//texture coordinates
 			-0.5f,	0.5f,	0.5f,			// pos 2
 			0,		1,		0,		1,	// color 0
+			1,		0,					//texture coordinates
 
 			-0.5f,	-0.5f,	-0.5f,			// pos 0
 			0.5,	0.5f,	0,		1,	// color 0
+			0,		0,					//texture coordinates
 			0.5f,	-0.5f,	-0.5f,			// pos 1
 			0.5f,	0,		0.5f,	1,	// color 0
+			0,		1,					//texture coordinates
 			0.5f,	0.5f,	-0.5f,			// pos 2
 			0,		0,		0.5f,	1,	// color 0
+			1,		1,					//texture coordinates
 			-0.5f,	0.5f,	-0.5f,			// pos 2
 			0,		1,		0,		1,	// color 0
+			1,		0,					//texture coordinates
 		};
 
 		GLint iBuf[] = {
@@ -168,6 +182,9 @@ namespace Mesh {
 		float speed = 0.01f; // Movement speed
 		float boundary = 0.5f; // Boundary for the movement (from -boundary to +boundary)
 
+		texture::TextureResource texture("Capture.JPG");
+		GLint textureLocation = glGetUniformLocation(this->program, "Texture");
+		
 		mat4 projectionMatrix = perspective(45.0f, 1.0f, 0.1f, 100.0f);
 		vec3 cameraPosition(0.0f, 5.0f, 5.0f); //eye
 		vec3 cameraTarget(0.0f, 0.0f, 0.0f); //at
@@ -181,10 +198,6 @@ namespace Mesh {
 			this->window->Update();
 
 			angle += 0.01;
-			positionX = 0;
-			//if (positionX > boundary || positionX < -boundary) {
-			//	direction *= -1.0f; // Change direction
-			//}
 
 			// do stuff
 			
@@ -192,13 +205,14 @@ namespace Mesh {
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
 
 			mat4 rotationMatrix = rotationz(angle) * rotationx(angle) * rotationy(angle);
-			//rotationMatrix[3] += vec4(sinf(angle), 0, 0, 0);
+			vec4 meshPosition(sinf(angle), -0.5f, 0, 0);
+			rotationMatrix[3] += meshPosition;
 			mat4 transformMatrix = rotationMatrix;
 
-			cameraTarget[0] = positionX;
-			cameraTarget[1] = positionY;
-			cameraTarget[2] = positionZ;
-			cameraPosition = vec3(cosf(angle) * 5, 5.0f, sinf(angle) * 5);
+			cameraPosition = vec3(cosf(angle) * 5 + meshPosition.x, 5.0f + meshPosition.y, sinf(angle) * 5 + meshPosition.z);
+			cameraTarget[0] = meshPosition.x;
+			cameraTarget[1] = meshPosition.y;
+			cameraTarget[2] = meshPosition.z;
 			viewMatrix = lookat(cameraPosition, cameraTarget, cameraUp);
 			viewProjectionMatrix = projectionMatrix * viewMatrix;
 
@@ -219,10 +233,15 @@ namespace Mesh {
 				glUniformMatrix4fv(viewLocation, 1, GL_FALSE, &viewMatrix[0][0]);
 			}
 			
-			glEnableVertexAttribArray(0);
-			glEnableVertexAttribArray(1);
-			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float32) * 7, NULL);
-			glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(float32) * 7, (GLvoid*)(sizeof(float32) * 3));
+			glUniform1i(textureLocation, 0);
+
+			glEnableVertexAttribArray(0); //Position
+			glEnableVertexAttribArray(1); //Color
+			glEnableVertexAttribArray(2); //Texture coordinates
+			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float32) * 9, NULL);
+			glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(float32) * 9, (GLvoid*)(sizeof(float32) * 3));
+			glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(float32) * 9, (GLvoid*)(sizeof(float32) * 7));
+			texture.bind();
 			glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 			glBindBuffer(GL_ARRAY_BUFFER, 0);
