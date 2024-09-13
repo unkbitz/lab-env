@@ -2,6 +2,7 @@
 #include "meshResources.h"
 #include <cstring>
 #include "math/mat4.h"
+#include "Render/Grid.h"
 
 const GLchar* vs =
 "#version 430\n"
@@ -9,9 +10,11 @@ const GLchar* vs =
 "layout(location=1) in vec4 color;\n"
 "layout(location=0) out vec4 Color;\n"
 "uniform mat4 rotation;\n"
+"uniform mat4 projection;\n"
+"uniform mat4 view;\n"
 "void main()\n"
 "{\n"
-"	gl_Position = rotation * vec4(pos, 1);\n"
+"	gl_Position = projection * view * rotation * vec4(pos, 1);\n"
 "	Color = color;\n"
 "}\n";
 
@@ -25,32 +28,25 @@ const GLchar* ps =
 "}\n";
 
 using namespace Display;
-namespace Mesh
-{
-	MeshResources::MeshResources()
-	{
+namespace Mesh {
+	MeshResources::MeshResources() {
 		// empty
 	}
 
-	MeshResources::~MeshResources()
-	{
-		// empty
+	MeshResources::~MeshResources()	{
+		CleanUp();
 	}
 
-	bool
-	MeshResources::Open()
-	{
+	bool MeshResources::Open() {
 		App::Open();
 		this->window = new Display::Window;
-		window->SetKeyPressFunction([this](int key, int scancode, int action, int mods)
-		{
+		window->SetKeyPressFunction([this](int key, int scancode, int action, int mods)	{
 			if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
 				this->window->Close();
 			}
 		});
 
-		GLfloat buf[] =
-		{
+		GLfloat buf[] =	{
 			-0.5f,	-0.5f,	0.5f,			// pos 0
 			0.5,	0.5f,	0,		1,	// color 0
 			0.5f,	-0.5f,	0.5f,			// pos 1
@@ -90,8 +86,7 @@ namespace Mesh
 			3, 7, 4
 		};
 
-		if (this->window->Open())
-		{
+		if (this->window->Open()) {
 			// set clear color to gray
 			glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 
@@ -104,8 +99,7 @@ namespace Mesh
 			// get error log
 			GLint shaderLogSize;
 			glGetShaderiv(this->vertexShader, GL_INFO_LOG_LENGTH, &shaderLogSize);
-			if (shaderLogSize > 0)
-			{
+			if (shaderLogSize > 0) {
 				GLchar* buf = new GLchar[shaderLogSize];
 				glGetShaderInfoLog(this->vertexShader, shaderLogSize, NULL, buf);
 				printf("[SHADER COMPILE ERROR]: %s", buf);
@@ -121,8 +115,7 @@ namespace Mesh
 			// get error log
 			shaderLogSize;
 			glGetShaderiv(this->pixelShader, GL_INFO_LOG_LENGTH, &shaderLogSize);
-			if (shaderLogSize > 0)
-			{
+			if (shaderLogSize > 0) {
 				GLchar* buf = new GLchar[shaderLogSize];
 				glGetShaderInfoLog(this->pixelShader, shaderLogSize, NULL, buf);
 				printf("[SHADER COMPILE ERROR]: %s", buf);
@@ -135,8 +128,7 @@ namespace Mesh
 			glAttachShader(this->program, this->pixelShader);
 			glLinkProgram(this->program);
 			glGetProgramiv(this->program, GL_INFO_LOG_LENGTH, &shaderLogSize);
-			if (shaderLogSize > 0)
-			{
+			if (shaderLogSize > 0) {
 				GLchar* buf = new GLchar[shaderLogSize];
 				glGetProgramInfoLog(this->program, shaderLogSize, NULL, buf);
 				printf("[PROGRAM LINK ERROR]: %s", buf);
@@ -159,61 +151,83 @@ namespace Mesh
 		return false;
 	}
 
-	void
-	MeshResources::Close()
-	{
+	void MeshResources::Close() {
 		if (this->window->IsOpen())
 			this->window->Close();
 
 		Core::App::Close();
 	}
 
-	void
-		MeshResources::Run()
-	{
+	void MeshResources::Run() {
 		glEnable(GL_DEPTH_TEST);
 		float angle = 0.0f;
 		float positionX = 0.0f;
+		float positionY = 0.0f;
+		float positionZ = 0.0f;
 		float direction = 1.0f; // 1 for right, -1 for left
 		float speed = 0.01f; // Movement speed
 		float boundary = 0.5f; // Boundary for the movement (from -boundary to +boundary)
 
+		mat4 projectionMatrix = perspective(45.0f, 1.0f, 0.1f, 100.0f);
+		vec3 cameraPosition(0.0f, 5.0f, 5.0f); //eye
+		vec3 cameraTarget(0.0f, 0.0f, 0.0f); //at
+		vec3 cameraUp(0.0f, 1.0f, 0.0f); //up
+		mat4 viewMatrix = lookat(cameraPosition, cameraTarget, cameraUp);
 
-		while (this->window->IsOpen())
-		{
+		mat4 viewProjectionMatrix = projectionMatrix * viewMatrix;
+
+		while (this->window->IsOpen()) {
 			glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 			this->window->Update();
 
 			angle += 0.01;
-			positionX += speed * direction;
-			if (positionX > boundary || positionX < -boundary) {
-				direction *= -1.0f; // Change direction
-			}
+			positionX = 0;
+			//if (positionX > boundary || positionX < -boundary) {
+			//	direction *= -1.0f; // Change direction
+			//}
 
 			// do stuff
 			
 			glBindBuffer(GL_ARRAY_BUFFER, this->triangle);
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
 
-			mat4 rotationMatrix = rotationz(angle)* rotationx(angle);
-			rotationMatrix[3] += vec4(sin(angle), 0, 0, 0);
+			mat4 rotationMatrix = rotationz(angle) * rotationx(angle) * rotationy(angle);
+			//rotationMatrix[3] += vec4(sinf(angle), 0, 0, 0);
 			mat4 transformMatrix = rotationMatrix;
 
+			cameraTarget[0] = positionX;
+			cameraTarget[1] = positionY;
+			cameraTarget[2] = positionZ;
+			cameraPosition = vec3(cosf(angle) * 5, 5.0f, sinf(angle) * 5);
+			viewMatrix = lookat(cameraPosition, cameraTarget, cameraUp);
+			viewProjectionMatrix = projectionMatrix * viewMatrix;
+
 			glUseProgram(this->program);
+
 			GLint rotationLocation = glGetUniformLocation(this->program, "rotation");
 			if (rotationLocation != -1) {
 				glUniformMatrix4fv(rotationLocation, 1, GL_FALSE, &transformMatrix[0][0]);
 			}
 
+			GLint projectionLocation = glGetUniformLocation(this->program, "projection");
+			if (projectionLocation != -1) {
+				glUniformMatrix4fv(projectionLocation, 1, GL_FALSE, &projectionMatrix[0][0]);
+			}
+
+			GLint viewLocation = glGetUniformLocation(this->program, "view");
+			if (viewLocation != -1) {
+				glUniformMatrix4fv(viewLocation, 1, GL_FALSE, &viewMatrix[0][0]);
+			}
+			
 			glEnableVertexAttribArray(0);
 			glEnableVertexAttribArray(1);
 			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float32) * 7, NULL);
 			glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(float32) * 7, (GLvoid*)(sizeof(float32) * 3));
-			
 			glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 			glBindBuffer(GL_ARRAY_BUFFER, 0);
-
+			Render::Grid grid;
+			grid.Draw((GLfloat*) &viewProjectionMatrix[0][0]);
 			this->window->SwapBuffers();
 
 #ifdef CI_TEST
@@ -221,6 +235,15 @@ namespace Mesh
 			// break the loop and hopefully exit gracefully
 			break;
 #endif
+		}
+	}
+
+	void MeshResources::CleanUp() {
+		if (ibo != 0) {
+			glDeleteBuffers(1,&ibo);
+		}
+		if (triangle != 0) {
+			glDeleteBuffers(1, &triangle);
 		}
 	}
 

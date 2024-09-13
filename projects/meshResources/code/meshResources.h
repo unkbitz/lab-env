@@ -2,10 +2,8 @@
 #include "core/app.h"
 #include "render/window.h"
 
-namespace Mesh
-{
-	class MeshResources : public Core::App
-	{
+namespace Mesh {
+	class MeshResources : public Core::App {
 	public:
 		/// constructor
 		MeshResources();
@@ -15,6 +13,7 @@ namespace Mesh
 		bool Open();
 		void Close();
 		void Run();
+		void CleanUp();
 		
 	private:
 		GLuint program;

@@ -35,6 +35,8 @@ public:
 	bool operator!=(mat4 const& rhs) const;
 	vec4& operator[](uint32_t const i);
 	vec4 const& operator[](uint32_t const i) const;
+	mat4 perspective(float const fovy, float const aspect, float const near, float const far);
+	mat4 lookat(vec3 const& eye, vec3 const& at, vec3 const& up);
 };
 
 inline mat4 transpose(mat4 const& m) {
@@ -242,4 +244,28 @@ inline mat4 rotationaxis(vec3 const& v, float const rad) {
 		vec4(0, 0, 0, 1));
 	result = transpose(result);
 	return result;
+}
+
+inline mat4 perspective(float const fovy, float const aspect, float const near, float const far) {
+	float c = 1.0/tanf(fovy/2);
+	mat4 matperspective(
+		vec4(c / aspect,		0,		0,									0),
+		vec4(0,					c,		0,									0),
+		vec4(0,					0,		-(far + near) / (far - near),		-1),
+		vec4(0,					0,		-(2 * far * near) / (far - near),	0));
+	return matperspective;
+}
+
+inline mat4 lookat(vec3 const& eye, vec3 const& at, vec3 const& up) {
+	vec3 a = at;
+	vec3 v = normalize(a - eye);
+	vec3 r = -normalize(cross(v, up));
+	vec3 u = cross(r, v);
+
+	mat4 matlookat(
+		vec4(r.x,			u.x,			v.x,			0),
+		vec4(r.y,			u.y,			v.y,			0),
+		vec4(r.z,			u.z,			v.z,			0),
+		vec4(dot(r, eye),	dot(u, eye),	dot(v, eye),	1));
+	return matlookat;
 }
