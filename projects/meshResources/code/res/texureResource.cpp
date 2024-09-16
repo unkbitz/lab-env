@@ -2,6 +2,7 @@
 #include "textureResource.h"
 #include "stb_image.h"
 
+
 texture::TextureResource::TextureResource(const std::string& path) 
 	: rendererID(0), filePath(path), LocalBuffer(nullptr), 
 	width(0), height(0), bitsPerPixel(0)

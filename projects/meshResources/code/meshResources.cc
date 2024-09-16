@@ -1,9 +1,19 @@
 #include "config.h"
 #include "meshResources.h"
 #include <cstring>
+#include <fstream>
+#include <filesystem>
+#include <sstream>
+#include <iostream>
+#include <string>
 #include "math/mat4.h"
 #include "Render/Grid.h"
-#include "TextureResource.h"
+#include "res/TextureResource.h"
+
+bool FileExists(const std::string& path) {
+	std::ifstream file(path);
+	return file.good();
+}
 
 const GLchar* vs =
 "#version 430\n"
@@ -30,8 +40,43 @@ const GLchar* ps =
 "uniform sampler2D Texture;\n"
 "void main()\n"
 "{\n"
+"	Color = color;\n"
 "	Color= texture(Texture, TextureCoordinates);\n"
 "}\n";
+
+struct ShaderProgramSource {
+	std::string VertexSource;
+	std::string FragmentSource;
+};
+
+static ShaderProgramSource ParseShader(const std::string& path) {
+	std::ifstream stream(path);
+	if (!stream.is_open()) {
+		std::cerr << "ERROR: Could not open shader file: " << path << std::endl;
+		return { "", "" };
+	}
+	enum class ShaderType {
+		NONE = -1, VERTEX = 0, FRAGMENT = 1
+	};
+
+	std::string line;
+	std::stringstream ss[2];
+	ShaderType type = ShaderType::NONE;
+	while (getline(stream, line)) {
+		if (line.find("shader") != std::string::npos) {
+			if (line.find("vertex") != std::string::npos) {
+				type = ShaderType::VERTEX;
+			}
+			else if (line.find("fragment") != std::string::npos) {
+				type = ShaderType::FRAGMENT;
+			}
+		}
+		else {
+			ss[(int)type] << line << '\n';
+		}
+	}
+	return { ss[0].str(), ss[1].str() };
+}
 
 using namespace Display;
 namespace Mesh {
@@ -104,8 +149,19 @@ namespace Mesh {
 			// set clear color to gray
 			glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 
+			std::string path = "shader.txt"; // Adjust this path if needed
+			std::cout << "Checking file existence: " << path << std::endl;
+			if (FileExists(path)) {
+				std::cout << "File exists!" << std::endl;
+			}
+			else {
+				std::cout << "File does not exist!" << std::endl;
+			}
+
 			// setup vertex shader
 			this->vertexShader = glCreateShader(GL_VERTEX_SHADER);
+			ShaderProgramSource source = ParseShader("shader.txt");
+			const char* vertexSource = source.VertexSource.c_str();
 			GLint length = static_cast<GLint>(std::strlen(vs));
 			glShaderSource(this->vertexShader, 1, &vs, &length);
 			glCompileShader(this->vertexShader);
@@ -122,7 +178,9 @@ namespace Mesh {
 
 			// setup pixel shader
 			this->pixelShader = glCreateShader(GL_FRAGMENT_SHADER);
+			const char* fragmentSource = source.FragmentSource.c_str();
 			length = static_cast<GLint>(std::strlen(ps));
+			
 			glShaderSource(this->pixelShader, 1, &ps, &length);
 			glCompileShader(this->pixelShader);
 
@@ -159,7 +217,6 @@ namespace Mesh {
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
 			glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(iBuf), iBuf, GL_STATIC_DRAW);
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
 			return true;
 		}
 		return false;
@@ -175,14 +232,18 @@ namespace Mesh {
 	void MeshResources::Run() {
 		glEnable(GL_DEPTH_TEST);
 		float angle = 0.0f;
-		float positionX = 0.0f;
-		float positionY = 0.0f;
-		float positionZ = 0.0f;
-		float direction = 1.0f; // 1 for right, -1 for left
 		float speed = 0.01f; // Movement speed
-		float boundary = 0.5f; // Boundary for the movement (from -boundary to +boundary)
-
-		texture::TextureResource texture("Capture.JPG");
+		
+		
+		std::string texturePath = "projects/meshResources/code/Capture.JPG";
+		std::cout << "Checking file existence: " << texturePath << std::endl;
+		if (FileExists(texturePath)) {
+			std::cout << "File exists!" << std::endl;
+		}
+		else {
+			std::cout << "File does not exist!" << std::endl;
+		}
+		texture::TextureResource texture(texturePath);
 		GLint textureLocation = glGetUniformLocation(this->program, "Texture");
 		
 		mat4 projectionMatrix = perspective(45.0f, 1.0f, 0.1f, 100.0f);
@@ -192,27 +253,26 @@ namespace Mesh {
 		mat4 viewMatrix = lookat(cameraPosition, cameraTarget, cameraUp);
 
 		mat4 viewProjectionMatrix = projectionMatrix * viewMatrix;
-
 		while (this->window->IsOpen()) {
 			glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 			this->window->Update();
 
-			angle += 0.01;
+			angle += 0.0005;
 
 			// do stuff
 			
 			glBindBuffer(GL_ARRAY_BUFFER, this->triangle);
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
 
-			mat4 rotationMatrix = rotationz(angle) * rotationx(angle) * rotationy(angle);
-			vec4 meshPosition(sinf(angle), -0.5f, 0, 0);
+			mat4 rotationMatrix;
+			vec4 meshPosition(0.7, -0.5f, 0, 0);
 			rotationMatrix[3] += meshPosition;
 			mat4 transformMatrix = rotationMatrix;
 
-			cameraPosition = vec3(cosf(angle) * 5 + meshPosition.x, 5.0f + meshPosition.y, sinf(angle) * 5 + meshPosition.z);
-			cameraTarget[0] = meshPosition.x;
-			cameraTarget[1] = meshPosition.y;
-			cameraTarget[2] = meshPosition.z;
+			float radius = 5.0f;
+			cameraPosition = vec3(cosf(angle) * radius + meshPosition.x, 5.0f, sinf(angle) * radius + meshPosition.z);
+			cameraTarget = vec3(meshPosition.x, meshPosition.y, meshPosition.z);
+
 			viewMatrix = lookat(cameraPosition, cameraTarget, cameraUp);
 			viewProjectionMatrix = projectionMatrix * viewMatrix;
 

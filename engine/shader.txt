@@ -1,0 +1,31 @@
+#shader vertex
+#version 430
+
+layout(location=0) in vec3 pos;
+layout(location=1) in vec4 color;
+layout(location=2) in vec2 textureCoordinates;
+layout(location=0) out vec4 Color;
+uniform mat4 rotation;
+uniform mat4 projection;
+uniform mat4 view;
+layout(location=2) out vec2 TextureCoordinates;
+
+void main()
+{
+	gl_Position = projection * view * rotation * vec4(pos, 1);
+	Color = color;
+	TextureCoordinates = textureCoordinates;
+};
+
+#shader fragment
+#version 430
+
+layout(location=2) in vec2 TextureCoordinates;
+layout(location=0) in vec4 color;
+out vec4 Color;
+uniform sampler2D Texture;
+
+void main()
+{
+	Color= texture(Texture, TextureCoordinates);
+};
