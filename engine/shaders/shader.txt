@@ -13,7 +13,6 @@ layout(location=2) out vec2 TextureCoordinates;
 void main()
 {
 	gl_Position = projection * view * rotation * vec4(pos, 1);
-	Color = color;
 	TextureCoordinates = textureCoordinates;
 };
 

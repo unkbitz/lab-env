@@ -8,6 +8,7 @@
 #include <string>
 #include "math/mat4.h"
 #include "Render/Grid.h"
+#include "../engine/camera/camera.cpp"
 #include "../engine/textures/TextureResource.h"
 
 bool FileExists(const std::string& path) {
@@ -74,26 +75,26 @@ namespace Mesh {
 			0,		0,					//texture coordinates
 			0.5f,	-0.5f,	0.5f,			// pos 1
 			0.5f,	0,		0.5f,	1,	// color 0
-			0,		1,					//texture coordinates
+			1,		0,					//texture coordinates
 			0.5f,	0.5f,	0.5f,			// pos 2
 			0,		0,		0.5f,	1,	// color 0
 			1,		1,					//texture coordinates
 			-0.5f,	0.5f,	0.5f,			// pos 2
 			0,		1,		0,		1,	// color 0
-			1,		0,					//texture coordinates
+			0,		1,					//texture coordinates
 
 			-0.5f,	-0.5f,	-0.5f,			// pos 0
 			0.5,	0.5f,	0,		1,	// color 0
 			0,		0,					//texture coordinates
 			0.5f,	-0.5f,	-0.5f,			// pos 1
 			0.5f,	0,		0.5f,	1,	// color 0
-			0,		1,					//texture coordinates
+			1,		0,					//texture coordinates
 			0.5f,	0.5f,	-0.5f,			// pos 2
 			0,		0,		0.5f,	1,	// color 0
 			1,		1,					//texture coordinates
 			-0.5f,	0.5f,	-0.5f,			// pos 2
 			0,		1,		0,		1,	// color 0
-			1,		0,					//texture coordinates
+			0,		1,					//texture coordinates
 		};
 
 		GLint iBuf[] = {
@@ -115,6 +116,9 @@ namespace Mesh {
 			0, 3, 4,
 			3, 7, 4
 		};
+
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glEnable(GL_BLEND);
 
 		if (this->window->Open()) {
 			// set clear color to gray
@@ -203,11 +207,9 @@ namespace Mesh {
 		texture::TextureResource texture(texturePath);
 		GLint textureLocation = glGetUniformLocation(this->program, "Texture");
 		
-		mat4 projectionMatrix = perspective(45.0f, 1.0f, 0.1f, 100.0f);
-		vec3 cameraPosition(0.0f, 5.0f, 5.0f); //eye
-		vec3 cameraTarget(0.0f, 0.0f, 0.0f); //at
-		vec3 cameraUp(0.0f, 1.0f, 0.0f); //up
-		mat4 viewMatrix = lookat(cameraPosition, cameraTarget, cameraUp);
+		camera cam;
+		mat4 viewMatrix = cam.getViewMatrix();
+		mat4 projectionMatrix = cam.getprojectionMatrix();
 
 		mat4 viewProjectionMatrix = projectionMatrix * viewMatrix;
 		while (this->window->IsOpen()) {
@@ -222,15 +224,18 @@ namespace Mesh {
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
 
 			mat4 rotationMatrix;
-			vec4 meshPosition(0.7, -0.5f, 0, 0);
-			rotationMatrix[3] += meshPosition;
+			vec4 MeshPos(0.7, -0.5f, 0, 0);
+			rotationMatrix[3] += MeshPos;
 			mat4 transformMatrix = rotationMatrix;
+			vec4 worldMeshPos = transformMatrix[3];
 
 			float radius = 5.0f;
-			cameraPosition = vec3(cosf(angle) * radius + meshPosition.x, 5.0f, sinf(angle) * radius + meshPosition.z);
-			cameraTarget = vec3(meshPosition.x, meshPosition.y, meshPosition.z);
+			
+			cam.setPosition(vec3(cosf(angle) * radius, 5.0f, sinf(angle) * radius));
+			vec3 target(worldMeshPos.x, worldMeshPos.y, worldMeshPos.z);
+			cam.setTarget(target);
 
-			viewMatrix = lookat(cameraPosition, cameraTarget, cameraUp);
+			viewMatrix = cam.getViewMatrix();
 			viewProjectionMatrix = projectionMatrix * viewMatrix;
 
 			glUseProgram(this->program);

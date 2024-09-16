@@ -35,8 +35,6 @@ public:
 	bool operator!=(mat4 const& rhs) const;
 	vec4& operator[](uint32_t const i);
 	vec4 const& operator[](uint32_t const i) const;
-	mat4 perspective(float const fovy, float const aspect, float const near, float const far);
-	mat4 lookat(vec3 const& eye, vec3 const& at, vec3 const& up);
 };
 
 inline mat4 transpose(mat4 const& m) {
