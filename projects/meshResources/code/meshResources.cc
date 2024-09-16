@@ -15,35 +15,6 @@ bool FileExists(const std::string& path) {
 	return file.good();
 }
 
-const GLchar* vs =
-"#version 430\n"
-"layout(location=0) in vec3 pos;\n"
-"layout(location=1) in vec4 color;\n"
-"layout(location=2) in vec2 textureCoordinates;\n"
-"layout(location=0) out vec4 Color;\n"
-"uniform mat4 rotation;\n"
-"uniform mat4 projection;\n"
-"uniform mat4 view;\n"
-"layout(location=2) out vec2 TextureCoordinates;\n"
-"void main()\n"
-"{\n"
-"	gl_Position = projection * view * rotation * vec4(pos, 1);\n"
-"	Color = color;\n"
-"	TextureCoordinates = textureCoordinates;\n"
-"}\n";
-
-const GLchar* ps =
-"#version 430\n"
-"layout(location=2) in vec2 TextureCoordinates;\n"
-"layout(location=0) in vec4 color;\n"
-"out vec4 Color;\n"
-"uniform sampler2D Texture;\n"
-"void main()\n"
-"{\n"
-"	Color = color;\n"
-"	Color= texture(Texture, TextureCoordinates);\n"
-"}\n";
-
 struct ShaderProgramSource {
 	std::string VertexSource;
 	std::string FragmentSource;
@@ -149,14 +120,7 @@ namespace Mesh {
 			// set clear color to gray
 			glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 
-			std::string Shaderpath = "../engine/shaders/shader.txt"; // Adjust this path if needed
-			std::cout << "Checking file existence: " << Shaderpath << std::endl;
-			if (FileExists(Shaderpath)) {
-				std::cout << "File exists!" << std::endl;
-			}
-			else {
-				std::cout << "File does not exist!" << std::endl;
-			}
+			std::string Shaderpath = "../engine/shaders/shader.txt";
 
 			// setup vertex shader
 			this->vertexShader = glCreateShader(GL_VERTEX_SHADER);
@@ -235,14 +199,7 @@ namespace Mesh {
 		float speed = 0.01f; // Movement speed
 		
 		
-		std::string texturePath = "../projects/meshResources/code/Capture.JPG";
-		std::cout << "Checking file existence: " << texturePath << std::endl;
-		if (FileExists(texturePath)) {
-			std::cout << "File exists!" << std::endl;
-		}
-		else {
-			std::cout << "File does not exist!" << std::endl;
-		}
+		std::string texturePath = "../engine/textures/Capture.JPG";
 		texture::TextureResource texture(texturePath);
 		GLint textureLocation = glGetUniformLocation(this->program, "Texture");
 		
