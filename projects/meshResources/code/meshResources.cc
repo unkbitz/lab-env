@@ -8,7 +8,7 @@
 #include <string>
 #include "math/mat4.h"
 #include "Render/Grid.h"
-#include "res/TextureResource.h"
+#include "../engine/textures/TextureResource.h"
 
 bool FileExists(const std::string& path) {
 	std::ifstream file(path);
@@ -149,9 +149,9 @@ namespace Mesh {
 			// set clear color to gray
 			glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 
-			std::string path = "shader.txt"; // Adjust this path if needed
-			std::cout << "Checking file existence: " << path << std::endl;
-			if (FileExists(path)) {
+			std::string Shaderpath = "../engine/shaders/shader.txt"; // Adjust this path if needed
+			std::cout << "Checking file existence: " << Shaderpath << std::endl;
+			if (FileExists(Shaderpath)) {
 				std::cout << "File exists!" << std::endl;
 			}
 			else {
@@ -160,10 +160,10 @@ namespace Mesh {
 
 			// setup vertex shader
 			this->vertexShader = glCreateShader(GL_VERTEX_SHADER);
-			ShaderProgramSource source = ParseShader("shader.txt");
+			ShaderProgramSource source = ParseShader(Shaderpath);
 			const char* vertexSource = source.VertexSource.c_str();
-			GLint length = static_cast<GLint>(std::strlen(vs));
-			glShaderSource(this->vertexShader, 1, &vs, &length);
+			GLint length = static_cast<GLint>(std::strlen(vertexSource));
+			glShaderSource(this->vertexShader, 1, &vertexSource, &length);
 			glCompileShader(this->vertexShader);
 
 			// get error log
@@ -179,9 +179,9 @@ namespace Mesh {
 			// setup pixel shader
 			this->pixelShader = glCreateShader(GL_FRAGMENT_SHADER);
 			const char* fragmentSource = source.FragmentSource.c_str();
-			length = static_cast<GLint>(std::strlen(ps));
+			length = static_cast<GLint>(std::strlen(fragmentSource));
 			
-			glShaderSource(this->pixelShader, 1, &ps, &length);
+			glShaderSource(this->pixelShader, 1, &fragmentSource, &length);
 			glCompileShader(this->pixelShader);
 
 			// get error log
@@ -235,7 +235,7 @@ namespace Mesh {
 		float speed = 0.01f; // Movement speed
 		
 		
-		std::string texturePath = "projects/meshResources/code/Capture.JPG";
+		std::string texturePath = "../projects/meshResources/code/Capture.JPG";
 		std::cout << "Checking file existence: " << texturePath << std::endl;
 		if (FileExists(texturePath)) {
 			std::cout << "File exists!" << std::endl;
