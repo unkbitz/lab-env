@@ -1,11 +1,7 @@
 #include "config.h"
 #include "meshResources.h"
-#include <cstring>
 #include <fstream>
-#include <filesystem>
 #include <sstream>
-#include <iostream>
-#include <string>
 #include "math/mat4.h"
 #include "Render/Grid.h"
 #include "../engine/camera/camera.cpp"
