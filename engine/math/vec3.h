@@ -32,7 +32,7 @@ public:
 
 	//Unary Negation Operator: This method returns a new vector that is the negation of the current vector. 
 	//Each component of the vector is negated (e.g., if the vector is (x, y, z), it returns (-x, -y, -z)).
-	vec3 operator-() {
+	vec3 operator-() const{
 		vec3 invVector;
 		invVector.x = x * -1;
 		invVector.y = y * -1;
@@ -61,7 +61,7 @@ public:
 
 	//Binary Subtraction Operator: This method subtracts the vector rhs from the current vector and returns the resulting vector. 
 	//It doesn’t modify the current vector or rhs (e.g., if the vectors are (x1, y1, z1) and (x2, y2, z2), it returns (x1 - x2, y1 - y2, z1 - z2)).
-	vec3 operator-(vec3 const& rhs) {
+	vec3 operator-(vec3 const& rhs) const{
 		vec3 subtVector;
 		subtVector.x = x - rhs.x;
 		subtVector.y = y - rhs.y;

@@ -201,17 +201,16 @@ namespace Mesh {
 		glEnable(GL_DEPTH_TEST);
 		float angle = 0.0f;
 		float speed = 0.01f; // Movement speed
-		
+		camera cam;
 		
 		std::string texturePath = "../engine/textures/Capture.JPG";
 		texture::TextureResource texture(texturePath);
 		GLint textureLocation = glGetUniformLocation(this->program, "Texture");
+
 		vec4 meshPos(0.5, -0.5, 0, 0); 
-		camera cam;
 		mat4 viewMatrix = cam.getViewMatrix();
 		mat4 projectionMatrix = cam.getprojectionMatrix();
-		vec3 target(-meshPos.x, -meshPos.y, -meshPos.z);
-
+		
 		mat4 viewProjectionMatrix = projectionMatrix * viewMatrix;
 		while (this->window->IsOpen()) {
 			glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
@@ -223,21 +222,21 @@ namespace Mesh {
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
 
 			float radius = 5.0f;
-			angle += 0.05;
+			angle += 0.005;
 
+			mat4 rotationMatrix = rotationaxis(vec3(0, 1, 0), angle);
+			rotationMatrix[3] += meshPos;
+			mat4 transformMatrix = rotationMatrix;
+			vec3 target(meshPos.x, meshPos.y, meshPos.z);
 			cam.setTarget(target);
 			cam.setPosition(vec3(
-				(cosf(angle) * radius - meshPos.x), 
-				(5.0f - meshPos.y), 
-				(sinf(angle) * radius - meshPos.z)));
+				(cosf(angle) * radius + meshPos.x), 
+				(5.0f + meshPos.y), 
+				(sinf(angle) * radius + meshPos.z)));
 
 			viewMatrix = cam.getViewMatrix();
 			viewProjectionMatrix = projectionMatrix * viewMatrix;
 			
-			mat4 rotationMatrix;
-			rotationMatrix[3] += meshPos;
-			mat4 transformMatrix = rotationMatrix;
-
 			GLint rotationLocation = glGetUniformLocation(this->program, "rotation");
 			if (rotationLocation != -1) {
 				glUniformMatrix4fv(rotationLocation, 1, GL_FALSE, &transformMatrix[0][0]);

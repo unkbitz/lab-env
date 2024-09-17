@@ -254,18 +254,16 @@ inline mat4 perspective(float const fovy, float const aspect, float const near, 
 	return matperspective;
 }
 
-inline mat4 lookat(vec3 const& eye, vec3 const& at, vec3 const& up) {
-	vec3 a = at;
-	vec3 v = normalize(a - eye);
+inline mat4 lookat(vec3 eye, vec3 const& at, vec3 const& up) {
+	eye.y = -eye.y;
+	vec3 v = normalize(eye - at);
 	vec3 r = -normalize(cross(v, up));
 	vec3 u = cross(r, v);
-	vec3 e = eye;
 
 	mat4 matlookat(
 		vec4(r.x, u.x, v.x, 0),
 		vec4(r.y, u.y, v.y, 0),
 		vec4(r.z, u.z, v.z, 0),
-		vec4(dot(r, e), dot(u, e), dot(v, e), 1));
+		vec4(dot(r, -eye), dot(u, -eye), dot(v, -eye), 1));
 	return matlookat;
 }
-
