@@ -265,6 +265,7 @@ inline mat4 lookat(vec3 const& eye, vec3 const& at, vec3 const& up) {
 		vec4(r.x, u.x, v.x, 0),
 		vec4(r.y, u.y, v.y, 0),
 		vec4(r.z, u.z, v.z, 0),
-		vec4(dot(e, r), dot(e, u), dot(e, v), 1));
+		vec4(dot(r, e), dot(u, e), dot(v, e), 1));
 	return matlookat;
 }
+

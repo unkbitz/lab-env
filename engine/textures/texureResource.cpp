@@ -37,4 +37,3 @@ void texture::TextureResource::bind(GLuint slot) const {
 void texture::TextureResource::unbind()const {
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
-

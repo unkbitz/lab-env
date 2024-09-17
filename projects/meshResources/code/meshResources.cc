@@ -11,7 +11,7 @@
 #include "../engine/camera/camera.cpp"
 #include "../engine/textures/TextureResource.h"
 
-bool FileExists(const std::string& path) {
+static bool FileExists(const std::string& path) {
 	std::ifstream file(path);
 	return file.good();
 }
@@ -206,41 +206,37 @@ namespace Mesh {
 		std::string texturePath = "../engine/textures/Capture.JPG";
 		texture::TextureResource texture(texturePath);
 		GLint textureLocation = glGetUniformLocation(this->program, "Texture");
-		
+		vec4 meshPos(0.5, -0.5, 0, 0); 
 		camera cam;
 		mat4 viewMatrix = cam.getViewMatrix();
 		mat4 projectionMatrix = cam.getprojectionMatrix();
+		vec3 target(-meshPos.x, -meshPos.y, -meshPos.z);
 
 		mat4 viewProjectionMatrix = projectionMatrix * viewMatrix;
 		while (this->window->IsOpen()) {
 			glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 			this->window->Update();
-
-			angle += 0.05;
+			glUseProgram(this->program);
 
 			// do stuff
 			glBindBuffer(GL_ARRAY_BUFFER, this->triangle);
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
 
-			mat4 rotationMatrix;
-			vec4 MeshPos(0.0, -0.5f, 0, 0);
-			rotationMatrix[3] += MeshPos;
-			mat4 transformMatrix = rotationMatrix;
-
 			float radius = 5.0f;
-			
-			cam.setPosition(vec3(
-				(cosf(angle) * radius + MeshPos.x), 
-				(5.0f + MeshPos.y), 
-				(sinf(angle) * radius + MeshPos.z)));
+			angle += 0.05;
 
-			vec3 target(MeshPos.x, MeshPos.y, MeshPos.z);
 			cam.setTarget(target);
+			cam.setPosition(vec3(
+				(cosf(angle) * radius - meshPos.x), 
+				(5.0f - meshPos.y), 
+				(sinf(angle) * radius - meshPos.z)));
 
 			viewMatrix = cam.getViewMatrix();
 			viewProjectionMatrix = projectionMatrix * viewMatrix;
-
-			glUseProgram(this->program);
+			
+			mat4 rotationMatrix;
+			rotationMatrix[3] += meshPos;
+			mat4 transformMatrix = rotationMatrix;
 
 			GLint rotationLocation = glGetUniformLocation(this->program, "rotation");
 			if (rotationLocation != -1) {
@@ -289,5 +285,4 @@ namespace Mesh {
 			glDeleteBuffers(1, &triangle);
 		}
 	}
-
 } // namespace Mesh
