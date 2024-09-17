@@ -224,15 +224,18 @@ namespace Mesh {
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
 
 			mat4 rotationMatrix;
-			vec4 MeshPos(0.7, -0.5f, 0, 0);
+			vec4 MeshPos(0.6, -0.5f, 0, 0);
 			rotationMatrix[3] += MeshPos;
 			mat4 transformMatrix = rotationMatrix;
-			vec4 worldMeshPos = transformMatrix[3];
 
 			float radius = 5.0f;
 			
-			cam.setPosition(vec3(cosf(angle) * radius, 5.0f, sinf(angle) * radius));
-			vec3 target(worldMeshPos.x, worldMeshPos.y, worldMeshPos.z);
+			cam.setPosition(vec3(
+				(cosf(angle) * radius + MeshPos.x), 
+				(5.0f + MeshPos.y), 
+				(sinf(angle) * radius + MeshPos.z)));
+
+			vec3 target(MeshPos.x, MeshPos.y, MeshPos.z);
 			cam.setTarget(target);
 
 			viewMatrix = cam.getViewMatrix();
