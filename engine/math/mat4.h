@@ -259,11 +259,12 @@ inline mat4 lookat(vec3 const& eye, vec3 const& at, vec3 const& up) {
 	vec3 v = normalize(a - eye);
 	vec3 r = -normalize(cross(v, up));
 	vec3 u = cross(r, v);
+	vec3 e = eye;
 
 	mat4 matlookat(
-		vec4(r.x,			u.x,			v.x,			0),
-		vec4(r.y,			u.y,			v.y,			0),
-		vec4(r.z,			u.z,			v.z,			0),
-		vec4(dot(r, eye),	dot(u, eye),	dot(v, eye),	1));
+		vec4(r.x, u.x, v.x, 0),
+		vec4(r.y, u.y, v.y, 0),
+		vec4(r.z, u.z, v.z, 0),
+		vec4(dot(e, r), dot(e, u), dot(e, v), 1));
 	return matlookat;
 }

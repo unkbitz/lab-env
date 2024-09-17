@@ -7,9 +7,8 @@ texture::TextureResource::TextureResource(const std::string& path)
 	: rendererID(0), filePath(path), LocalBuffer(nullptr), 
 	width(0), height(0), bitsPerPixel(0)
 {
-	stbi_set_flip_vertically_on_load(1); //flip image
-	LocalBuffer = stbi_load(path.c_str(), &width, &height, &bitsPerPixel, 0);
-
+	//stbi_set_flip_vertically_on_load(1); //flip image
+	LocalBuffer = stbi_load(path.c_str(), &width, &height, &bitsPerPixel, 4);
 	glGenTextures(1, &rendererID);
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, rendererID);

@@ -216,15 +216,14 @@ namespace Mesh {
 			glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 			this->window->Update();
 
-			angle += 0.0005;
+			angle += 0.05;
 
 			// do stuff
-			
 			glBindBuffer(GL_ARRAY_BUFFER, this->triangle);
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
 
 			mat4 rotationMatrix;
-			vec4 MeshPos(0.6, -0.5f, 0, 0);
+			vec4 MeshPos(0.0, -0.5f, 0, 0);
 			rotationMatrix[3] += MeshPos;
 			mat4 transformMatrix = rotationMatrix;
 

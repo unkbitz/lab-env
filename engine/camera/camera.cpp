@@ -3,7 +3,7 @@
 
 camera::camera():
 	cameraUp(0.0f, 1.0f, 0.0f),
-	cameraPosition(2.0f, 2.0f, 2.0f),
+	cameraPosition(4.0f, 4.0f, 4.0f),
 	cameraTarget(0.0f, 0.0f, 0.0f)
 	{}
 camera::~camera() {
