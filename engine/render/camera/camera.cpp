@@ -1,4 +1,5 @@
 #pragma once
+#include "config.h"
 #include "camera.h"
 
 camera::camera():

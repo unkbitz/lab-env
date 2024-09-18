@@ -1,66 +1,11 @@
 #include "config.h"
-#include "meshResources.h"
+#include "meshResourcesSim.h"
 #include <fstream>
 #include <sstream>
 #include "math/mat4.h"
 #include "Render/Grid.h"
-#include "../engine/camera/camera.cpp"
-#include "../engine/textures/textureResource.h"
-#include "../engine/shaders/shaderResource.h"
-
-
-	void modUniformVec4(char* name, vec4 const& vector, GLuint program) {
-		GLint location = glGetUniformLocation(program, name);
-		if (location != -1) {
-			glUniform4fv(location, 1, &vector[0]);
-		}
-		
-	}
-	void modUniformMat4(char* name, mat4 const& matrix, GLuint program) {
-		GLint location = glGetUniformLocation(program, name);
-		if (location != -1) {
-			glUniformMatrix4fv(location, 1, GL_FALSE, &matrix[0][0]);
-		}
-	}
-
-static bool FileExists(const std::string& path) {
-	std::ifstream file(path);
-	return file.good();
-}
-
-struct ShaderProgramSource {
-	std::string VertexSource;
-	std::string FragmentSource;
-};
-
-static ShaderProgramSource ParseShader(const std::string& path) {
-	std::ifstream stream(path);
-	if (!stream.is_open()) {
-		std::cerr << "ERROR: Could not open shader file: " << path << std::endl;
-		return { "", "" };
-	}
-	enum class ShaderType {
-		NONE = -1, VERTEX = 0, FRAGMENT = 1
-	};
-
-	std::string line;
-	std::stringstream ss[2];
-	ShaderType type = ShaderType::NONE;
-	while (getline(stream, line)) {
-		if (line.find("shader") != std::string::npos) {
-			if (line.find("vertex") != std::string::npos) {
-				type = ShaderType::VERTEX;
-			}
-			else if (line.find("fragment") != std::string::npos) {
-				type = ShaderType::FRAGMENT;
-			}
-		}
-		else {
-			ss[(int)type] << line << '\n';
-		}
-	}
-	return { ss[0].str(), ss[1].str() };
-}
+#include "render/camera/camera.cpp"
+#include "render/textures/textureResource.h"
 
 using namespace Display;
 namespace Mesh {
@@ -133,56 +78,10 @@ namespace Mesh {
 			// set clear color to gray
 			glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 
-			std::string Shaderpath = "../engine/shaders/shader.txt";
-
-			// setup vertex shader
-			this->vertexShader = glCreateShader(GL_VERTEX_SHADER);
-			ShaderProgramSource source = ParseShader(Shaderpath);
-			const char* vertexSource = source.VertexSource.c_str();
-			GLint length = static_cast<GLint>(std::strlen(vertexSource));
-			glShaderSource(this->vertexShader, 1, &vertexSource, &length);
-			glCompileShader(this->vertexShader);
-
-			// get error log
-			GLint shaderLogSize;
-			glGetShaderiv(this->vertexShader, GL_INFO_LOG_LENGTH, &shaderLogSize);
-			if (shaderLogSize > 0) {
-				GLchar* buf = new GLchar[shaderLogSize];
-				glGetShaderInfoLog(this->vertexShader, shaderLogSize, NULL, buf);
-				printf("[SHADER COMPILE ERROR]: %s", buf);
-				delete[] buf;
-			}
-
-			// setup pixel shader
-			this->pixelShader = glCreateShader(GL_FRAGMENT_SHADER);
-			const char* fragmentSource = source.FragmentSource.c_str();
-			length = static_cast<GLint>(std::strlen(fragmentSource));
-			
-			glShaderSource(this->pixelShader, 1, &fragmentSource, &length);
-			glCompileShader(this->pixelShader);
-
-			// get error log
-			shaderLogSize;
-			glGetShaderiv(this->pixelShader, GL_INFO_LOG_LENGTH, &shaderLogSize);
-			if (shaderLogSize > 0) {
-				GLchar* buf = new GLchar[shaderLogSize];
-				glGetShaderInfoLog(this->pixelShader, shaderLogSize, NULL, buf);
-				printf("[SHADER COMPILE ERROR]: %s", buf);
-				delete[] buf;
-			}
-
-			// create a program object
-			this->program = glCreateProgram();
-			glAttachShader(this->program, this->vertexShader);
-			glAttachShader(this->program, this->pixelShader);
-			glLinkProgram(this->program);
-			glGetProgramiv(this->program, GL_INFO_LOG_LENGTH, &shaderLogSize);
-			if (shaderLogSize > 0) {
-				GLchar* buf = new GLchar[shaderLogSize];
-				glGetProgramInfoLog(this->program, shaderLogSize, NULL, buf);
-				printf("[PROGRAM LINK ERROR]: %s", buf);
-				delete[] buf;
-			}
+			// setup shader
+			std::string Shaderpath = "assets/shader.txt";
+			shader.Load(Shaderpath);
+			shader.Bind();
 
 			// setup vbo
 			glGenBuffers(1, &this->triangle);
@@ -213,9 +112,10 @@ namespace Mesh {
 		bool direction = true;
 		camera cam;
 		
-		std::string texturePath = "../engine/textures/Capture.JPG";
+		std::string texturePath = "assets/Capture.JPG";
 		texture::TextureResource texture(texturePath);
-		GLint textureLocation = glGetUniformLocation(this->program, "Texture");
+		const std::string Texture = "Texture";
+		GLint textureLocation = shader.GetUniformLocation(Texture);
 
 		vec4 meshPos(0.5f, 0.5f, 0.0f, 0); 
 		mat4 viewMatrix = cam.getViewMatrix();
@@ -225,7 +125,7 @@ namespace Mesh {
 		while (this->window->IsOpen()) {
 			glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 			this->window->Update();
-			glUseProgram(this->program);
+			glUseProgram(shader.getProgram());
 
 			// do stuff
 			glBindBuffer(GL_ARRAY_BUFFER, this->triangle);
@@ -258,10 +158,10 @@ namespace Mesh {
 
 			viewMatrix = cam.getViewMatrix();
 			viewProjectionMatrix = projectionMatrix * viewMatrix;
-
-			modUniformMat4("rotation", transformMatrix, this->program);
-			modUniformMat4("projection", projectionMatrix, this->program);
-			modUniformMat4("view", viewMatrix, this->program);
+			
+			shader.setUniformMat4("rotation", transformMatrix, shader.getProgram());
+			shader.setUniformMat4("projection", projectionMatrix, shader.getProgram());
+			shader.setUniformMat4("view", viewMatrix, shader.getProgram());
 			
 			glUniform1i(textureLocation, 0);
 

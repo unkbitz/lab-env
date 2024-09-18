@@ -10,9 +10,34 @@ SET(files_render_display
 	)
 SOURCE_GROUP("display" FILES ${files_render_display})
 
+SET(files_textures
+	textures/textureResource.h
+	textures/textureResource.cpp
+	textures/stb_image.h
+	textures/stb_image.cpp
+	)
+
+SOURCE_GROUP("texture" FILES ${files_textures})
+
+SET(files_shaders
+	shaders/shaderResource.h
+	shaders/shaderResource.cpp
+	)
+
+SOURCE_GROUP("camera" FILES ${files_shaders})
+
+SET(files_camera
+	camera/camera.cpp
+	camera/camera.h
+	)
+
+SOURCE_GROUP("shaders" FILES ${files_camera})
 
 SET(files_render
 	${files_render_display}
+	${files_textures}
+	${files_shaders}
+	${files_camera}
 	${files_render_pch})
 
 SET(files_pch ../config.h ../config.cc)

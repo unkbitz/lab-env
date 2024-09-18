@@ -1,16 +1,22 @@
 #pragma once
+#include "config.h"
 #include "shaderResource.h"
 #include <iostream>
 #include <fstream>
 #include <sstream>
 
-ShaderResource::ShaderResource(const std::string& filepath)
-	: m_FilePath(filepath), m_RendererID(0)
-{
-	ShaderProgramSource source = ParseShader(filepath);
-	m_RendererID = CreateShader(source.VertexSource, source.FragmentSource);
-	 
+ShaderResource::ShaderResource()
+	: m_RendererID(0) {
+
 }
+
+//ShaderResource::ShaderResource(const std::string& filepath)
+//	: m_FilePath(filepath), m_RendererID(0)
+//{
+//	ShaderProgramSource source = ParseShader(filepath);
+//	m_RendererID = CreateShader(source.VertexSource, source.FragmentSource);
+//	 
+//}
 ShaderResource::~ShaderResource() {
 	glDeleteProgram(m_RendererID);
 }
@@ -25,7 +31,7 @@ unsigned int ShaderResource::CompileShader(unsigned int type, const std::string&
 	const char* src = source.c_str();
 	glShaderSource(id, 1, &src, nullptr);
 	glCompileShader(id);
-
+	GLint length= static_cast<GLint>(std::strlen(src));
 	int result;
 	glGetShaderiv(id, GL_COMPILE_STATUS, &result);
 	if (result == GL_FALSE) {
@@ -70,18 +76,23 @@ ShaderProgramSource ShaderResource::ParseShader(const std::string& path) {
 
 unsigned int ShaderResource::CreateShader(const std::string& vertexShader, const std::string& fragmentShader) {
 	unsigned int program = glCreateProgram();
-	unsigned int vs = compileShader(GL_VERTEX_SHADER, vertexShader);
-	unsigned int fs = compileShader(GL_FRAGMENT_SHADER, fragmentShader);
+	unsigned int vs = CompileShader(GL_VERTEX_SHADER, vertexShader);
+	unsigned int fs = CompileShader(GL_FRAGMENT_SHADER, fragmentShader);
 
 	glAttachShader(program, vs);
-	glAttachShader(progra, fs);
+	glAttachShader(program, fs);
 	glLinkProgram(program);
-	glValitadeProgram(program);
+	glValidateProgram(program);
 	
 	glDeleteShader(vs);
 	glDeleteShader(fs);
 
 	return program;
+}
+
+void ShaderResource::Load(const std::string& filepath) {
+	ShaderProgramSource source = ParseShader(filepath);
+	m_RendererID = CreateShader(source.VertexSource, source.FragmentSource);
 }
 void ShaderResource::Bind() const {
 	glUseProgram(m_RendererID);
@@ -105,10 +116,14 @@ GLint ShaderResource::GetUniformLocation(const std::string& name) {
 	if (m_UniformLocationCache.find(name) != m_UniformLocationCache.end()) {
 		return m_UniformLocationCache[name];
 	}
-	GLint location = glGetUniformLocation(m_RendererID, name.c_str);
+	GLint location = glGetUniformLocation(m_RendererID, name.c_str());
 	if (location == -1) {
 		std::cout << "Warning: uniform '" << name <<"' don't exsist." << endl;
 	}
 	m_UniformLocationCache[name] = location;
 	return location;
+}
+
+GLint ShaderResource::getProgram() {
+	return m_RendererID;
 }
