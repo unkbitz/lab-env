@@ -197,13 +197,14 @@ namespace Mesh {
 		glEnable(GL_DEPTH_TEST);
 		float angle = 0.0f;
 		float speed = 0.01f; // Movement speed
+		bool directionRight = true;
 		camera cam;
 		
 		std::string texturePath = "../engine/textures/Capture.JPG";
 		texture::TextureResource texture(texturePath);
 		GLint textureLocation = glGetUniformLocation(this->program, "Texture");
 
-		vec4 meshPos(0.5, -0.5, 0, 0); 
+		vec4 meshPos(0.5f, -0.5f, 0.0f, 0); 
 		mat4 viewMatrix = cam.getViewMatrix();
 		mat4 projectionMatrix = cam.getprojectionMatrix();
 		
@@ -221,8 +222,21 @@ namespace Mesh {
 			angle += 0.005;
 
 			mat4 rotationMatrix = rotationaxis(vec3(0, 1, 0), angle);
+			if (directionRight) {
+				meshPos.x += 0.01f;
+				if (meshPos.x >= 1) {
+					directionRight = false;
+				}
+			}
+			if (!directionRight) {
+				meshPos.x -= 0.01f;
+				if (meshPos.x <= -1) {
+					directionRight = true;
+				}
+			}
 			rotationMatrix[3] += meshPos;
 			mat4 transformMatrix = rotationMatrix;
+
 			vec3 target(meshPos.x, meshPos.y, meshPos.z);
 			cam.setTarget(target);
 			cam.setPosition(vec3(
