@@ -149,7 +149,7 @@ vec3 cross(vec3 const& a, vec3 const& b) {
 	vec3 cV(0, 0, 0);
 	cV.x = a.y * b.z - a.z * b.y;
 	cV.y = a.z * b.x - a.x * b.z;
-	cV.z = a.x * b.y - a.y * b.z;
+	cV.z = a.x * b.y - a.y * b.x;
 	return cV;
 }
 

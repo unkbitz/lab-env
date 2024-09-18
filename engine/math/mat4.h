@@ -255,10 +255,9 @@ inline mat4 perspective(float const fovy, float const aspect, float const near, 
 }
 
 inline mat4 lookat(vec3 eye, vec3 const& at, vec3 const& up) {
-	eye.y = -eye.y;
 	vec3 v = normalize(eye - at);
 	vec3 r = -normalize(cross(v, up));
-	vec3 u = cross(r, v);
+	vec3 u = cross(v, r);
 
 	mat4 matlookat(
 		vec4(r.x, u.x, v.x, 0),

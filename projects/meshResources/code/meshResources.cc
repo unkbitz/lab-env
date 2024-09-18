@@ -5,7 +5,23 @@
 #include "math/mat4.h"
 #include "Render/Grid.h"
 #include "../engine/camera/camera.cpp"
-#include "../engine/textures/TextureResource.h"
+#include "../engine/textures/textureResource.h"
+#include "../engine/shaders/shaderResource.h"
+
+
+	void modUniformVec4(char* name, vec4 const& vector, GLuint program) {
+		GLint location = glGetUniformLocation(program, name);
+		if (location != -1) {
+			glUniform4fv(location, 1, &vector[0]);
+		}
+		
+	}
+	void modUniformMat4(char* name, mat4 const& matrix, GLuint program) {
+		GLint location = glGetUniformLocation(program, name);
+		if (location != -1) {
+			glUniformMatrix4fv(location, 1, GL_FALSE, &matrix[0][0]);
+		}
+	}
 
 static bool FileExists(const std::string& path) {
 	std::ifstream file(path);
@@ -68,29 +84,29 @@ namespace Mesh {
 		GLfloat buf[] =	{
 			-0.5f,	-0.5f,	0.5f,			// pos 0
 			0.5,	0.5f,	0,		1,	// color 0
-			0,		0,					//texture coordinates
+			1,		1,					//texture coordinates
 			0.5f,	-0.5f,	0.5f,			// pos 1
 			0.5f,	0,		0.5f,	1,	// color 0
-			1,		0,					//texture coordinates
+			0,		1,					//texture coordinates
 			0.5f,	0.5f,	0.5f,			// pos 2
 			0,		0,		0.5f,	1,	// color 0
-			1,		1,					//texture coordinates
+			0,		0,					//texture coordinates
 			-0.5f,	0.5f,	0.5f,			// pos 2
 			0,		1,		0,		1,	// color 0
-			0,		1,					//texture coordinates
+			1,		0,					//texture coordinates
 
 			-0.5f,	-0.5f,	-0.5f,			// pos 0
 			0.5,	0.5f,	0,		1,	// color 0
-			0,		0,					//texture coordinates
+			1,		1,					//texture coordinates
 			0.5f,	-0.5f,	-0.5f,			// pos 1
 			0.5f,	0,		0.5f,	1,	// color 0
-			1,		0,					//texture coordinates
+			0,		1,					//texture coordinates
 			0.5f,	0.5f,	-0.5f,			// pos 2
 			0,		0,		0.5f,	1,	// color 0
-			1,		1,					//texture coordinates
+			0,		0,					//texture coordinates
 			-0.5f,	0.5f,	-0.5f,			// pos 2
 			0,		1,		0,		1,	// color 0
-			0,		1,					//texture coordinates
+			1,		0,					//texture coordinates
 		};
 
 		GLint iBuf[] = {
@@ -112,9 +128,6 @@ namespace Mesh {
 			0, 3, 4,
 			3, 7, 4
 		};
-
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		glEnable(GL_BLEND);
 
 		if (this->window->Open()) {
 			// set clear color to gray
@@ -197,14 +210,14 @@ namespace Mesh {
 		glEnable(GL_DEPTH_TEST);
 		float angle = 0.0f;
 		float speed = 0.01f; // Movement speed
-		bool directionRight = true;
+		bool direction = true;
 		camera cam;
 		
 		std::string texturePath = "../engine/textures/Capture.JPG";
 		texture::TextureResource texture(texturePath);
 		GLint textureLocation = glGetUniformLocation(this->program, "Texture");
 
-		vec4 meshPos(0.5f, -0.5f, 0.0f, 0); 
+		vec4 meshPos(0.5f, 0.5f, 0.0f, 0); 
 		mat4 viewMatrix = cam.getViewMatrix();
 		mat4 projectionMatrix = cam.getprojectionMatrix();
 		
@@ -220,18 +233,17 @@ namespace Mesh {
 
 			float radius = 5.0f;
 			angle += 0.005;
-
 			mat4 rotationMatrix = rotationaxis(vec3(0, 1, 0), angle);
-			if (directionRight) {
+			if (direction) {
 				meshPos.x += 0.01f;
 				if (meshPos.x >= 1) {
-					directionRight = false;
+					direction = false;
 				}
 			}
-			if (!directionRight) {
+			if (!direction) {
 				meshPos.x -= 0.01f;
 				if (meshPos.x <= -1) {
-					directionRight = true;
+					direction = true;
 				}
 			}
 			rotationMatrix[3] += meshPos;
@@ -246,21 +258,10 @@ namespace Mesh {
 
 			viewMatrix = cam.getViewMatrix();
 			viewProjectionMatrix = projectionMatrix * viewMatrix;
-			
-			GLint rotationLocation = glGetUniformLocation(this->program, "rotation");
-			if (rotationLocation != -1) {
-				glUniformMatrix4fv(rotationLocation, 1, GL_FALSE, &transformMatrix[0][0]);
-			}
 
-			GLint projectionLocation = glGetUniformLocation(this->program, "projection");
-			if (projectionLocation != -1) {
-				glUniformMatrix4fv(projectionLocation, 1, GL_FALSE, &projectionMatrix[0][0]);
-			}
-
-			GLint viewLocation = glGetUniformLocation(this->program, "view");
-			if (viewLocation != -1) {
-				glUniformMatrix4fv(viewLocation, 1, GL_FALSE, &viewMatrix[0][0]);
-			}
+			modUniformMat4("rotation", transformMatrix, this->program);
+			modUniformMat4("projection", projectionMatrix, this->program);
+			modUniformMat4("view", viewMatrix, this->program);
 			
 			glUniform1i(textureLocation, 0);
 

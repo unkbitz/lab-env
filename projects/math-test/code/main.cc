@@ -7,6 +7,7 @@
 #include "math/vec4.h"
 #include "math/mat4.h"
 
+#define TEST_VIEW_PERSPECTIVE
 
 const char* programName = "Math library";
 const char* s = "OK";
