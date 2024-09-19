@@ -2,6 +2,9 @@
 #include "core/app.h"
 #include "render/window.h"
 #include "render/shaders/shaderResource.h"
+#include "render/camera/camera.h"
+#include "render/textures/textureResource.h"
+#include "render/meshes/meshResource.h"
 
 namespace Example {
 	class ExampleApp : public Core::App {
@@ -15,14 +18,13 @@ namespace Example {
 		void Close();
 		void Run();
 		void CleanUp();
-		
+
 	private:
-		//GLuint program;
-		GLuint vertexShader;
-		GLuint pixelShader;
-		GLuint triangle;
-		GLuint ibo;
+		camera cam;
+		TextureResource texture;
 		ShaderResource shader;
 		Display::Window* window;
+		MeshResource cube;
+		MeshResource cube2;
 	};
 } // namespace Example

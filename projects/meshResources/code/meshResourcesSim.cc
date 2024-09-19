@@ -8,16 +8,16 @@
 #include "render/textures/textureResource.h"
 
 using namespace Display;
-namespace Mesh {
-	MeshResources::MeshResources() {
+namespace Example {
+	ExampleApp::ExampleApp() {
 		// empty
 	}
 
-	MeshResources::~MeshResources()	{
+	ExampleApp::~ExampleApp()	{
 		CleanUp();
 	}
 
-	bool MeshResources::Open() {
+	bool ExampleApp::Open() {
 		App::Open();
 		this->window = new Display::Window;
 		window->SetKeyPressFunction([this](int key, int scancode, int action, int mods)	{
@@ -98,14 +98,14 @@ namespace Mesh {
 		return false;
 	}
 
-	void MeshResources::Close() {
+	void ExampleApp::Close() {
 		if (this->window->IsOpen())
 			this->window->Close();
 
 		Core::App::Close();
 	}
 
-	void MeshResources::Run() {
+	void ExampleApp::Run() {
 		glEnable(GL_DEPTH_TEST);
 		float angle = 0.0f;
 		float speed = 0.01f; // Movement speed
@@ -187,7 +187,7 @@ namespace Mesh {
 		}
 	}
 
-	void MeshResources::CleanUp() {
+	void ExampleApp::CleanUp() {
 		if (ibo != 0) {
 			glDeleteBuffers(1,&ibo);
 		}

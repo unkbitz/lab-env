@@ -24,20 +24,28 @@ SET(files_shaders
 	shaders/shaderResource.cpp
 	)
 
-SOURCE_GROUP("camera" FILES ${files_shaders})
+SOURCE_GROUP("shaders" FILES ${files_shaders})
 
 SET(files_camera
 	camera/camera.cpp
 	camera/camera.h
 	)
 
-SOURCE_GROUP("shaders" FILES ${files_camera})
+SOURCE_GROUP("camera" FILES ${files_camera})
+
+SET(files_meshes
+	meshes/meshResource.h
+	meshes/meshResource.cpp
+	)
+
+SOURCE_GROUP("meshes" FILES ${files_meshes})
 
 SET(files_render
 	${files_render_display}
 	${files_textures}
 	${files_shaders}
 	${files_camera}
+	${files_meshes}
 	${files_render_pch})
 
 SET(files_pch ../config.h ../config.cc)

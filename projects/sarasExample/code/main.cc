@@ -1,6 +1,5 @@
 #include "config.h"
-#include "meshResourcesSim.h"
-
+#include "sarasExampleApp.h"
 
 int
 main(int argc, const char** argv)
