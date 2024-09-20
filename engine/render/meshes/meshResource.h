@@ -2,12 +2,13 @@
 #include "render/Grid.h"
 #include <unordered_map>
 #include "math/mat4.h"
+#include "meshTransform.h"
 
 class MeshResource {
 private:
-	GLuint vbo;
-	GLuint ibo;
-	GLuint vao;
+	GLuint vbo = 0;
+	GLuint ibo = 0;
+	GLuint vao = 0;
 
 	vec3 meshPos;
 	mat4 rotationMatrix;
@@ -17,11 +18,12 @@ private:
 public:
 	MeshResource();
 	~MeshResource();
+
+	MeshTransform transform;
+
 	void bindBuffers() const;
 	void setUpBuffers();
 	void drawMesh();
-	vec3 getPosition() const;
-	void setPosition(const vec3& position);
-	static MeshResource createCube();
-	void CleanUp();
+	static MeshResource createCube(float width, float height, float depth);
+	void cleanUp();
 };

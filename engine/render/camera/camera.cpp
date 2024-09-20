@@ -2,43 +2,43 @@
 #include "config.h"
 #include "camera.h"
 
-camera::camera():
+Camera::Camera():
 	cameraUp(0.0f, 1.0f, 0.0f),
 	cameraPosition(4.0f, 4.0f, 4.0f),
 	cameraTarget(0.0f, 0.0f, 0.0f)
 	{}
-camera::~camera() {
+Camera::~Camera() {
 	
 }
 
-vec3 camera::getPosition() const {
+vec3 Camera::getPosition() const {
 	return cameraPosition;
 }
 
-void camera::setPosition(const vec3& position) {
+void Camera::setPosition(const vec3& position) {
 	cameraPosition = position;
 }
 
-vec3 camera::getTarget() const{
+vec3 Camera::getTarget() const{
 	return cameraTarget;
 }
 
-void camera::setTarget(const vec3& target) {
+void Camera::setTarget(const vec3& target) {
 	cameraTarget = target;
 }
 
-vec3 camera::getUp() const {
+vec3 Camera::getUp() const {
 	return cameraUp;
 }
 
-void camera::setUp(const vec3& up) {
+void Camera::setUp(const vec3& up) {
 	cameraUp = up;
 }
 
-mat4 camera::getViewMatrix() const {
+mat4 Camera::getViewMatrix() const {
 	return lookat(cameraPosition, cameraTarget, cameraUp);
 }
 
-mat4 camera::getprojectionMatrix() const {
+mat4 Camera::getprojectionMatrix() const {
 	return perspective(45.0f, 1.0f, 0.1f, 100.0f);
 }

@@ -110,7 +110,7 @@ namespace Example {
 		float angle = 0.0f;
 		float speed = 0.01f; // Movement speed
 		bool direction = true;
-		camera cam;
+		Camera cam;
 		
 		std::string texturePath = "assets/Capture.JPG";
 		texture::TextureResource texture(texturePath);

@@ -2,8 +2,6 @@
 #include "render/Grid.h"
 #include <iostream>
 
-
-
 class TextureResource {
 private:
 	GLuint rendererID;

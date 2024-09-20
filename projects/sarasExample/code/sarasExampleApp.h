@@ -1,10 +1,7 @@
 #pragma once
 #include "core/app.h"
 #include "render/window.h"
-#include "render/shaders/shaderResource.h"
-#include "render/camera/camera.h"
-#include "render/textures/textureResource.h"
-#include "render/meshes/meshResource.h"
+#include "render/graphics/graphics.h"
 
 namespace Example {
 	class ExampleApp : public Core::App {
@@ -20,7 +17,7 @@ namespace Example {
 		void CleanUp();
 
 	private:
-		camera cam;
+		Camera cam;
 		TextureResource texture;
 		ShaderResource shader;
 		Display::Window* window;

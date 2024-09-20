@@ -36,9 +36,18 @@ SOURCE_GROUP("camera" FILES ${files_camera})
 SET(files_meshes
 	meshes/meshResource.h
 	meshes/meshResource.cpp
+	meshes/meshTransform.h
+	meshes/meshTransform.cpp
 	)
 
 SOURCE_GROUP("meshes" FILES ${files_meshes})
+
+SET(files_graphics
+	graphics/graphics.cpp
+	graphics/graphics.h
+	)
+
+SOURCE_GROUP("graphics" FILES ${files_graphics})
 
 SET(files_render
 	${files_render_display}
@@ -46,6 +55,7 @@ SET(files_render
 	${files_shaders}
 	${files_camera}
 	${files_meshes}
+	${files_graphics}
 	${files_render_pch})
 
 SET(files_pch ../config.h ../config.cc)

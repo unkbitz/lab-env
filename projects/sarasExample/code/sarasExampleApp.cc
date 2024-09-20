@@ -26,8 +26,8 @@ bool ExampleApp::Open()
 		}
 	});
 
-	cube = MeshResource::createCube();
-	cube2 = MeshResource::createCube();
+	cube = MeshResource::createCube(1.0, 1.0, 1.0);
+	//cube2 = MeshResource::createCube();
 	if (this->window->Open())
 	{
 		// set clear color to gray
@@ -57,61 +57,56 @@ void ExampleApp::Run() {
 	float angle = 0.0f;
 	float speed = 0.01f; // Movement speed
 	bool direction = true;
-	mat4 rotationMatrix;
-	mat4 transformMatrix;
 	vec3 target;
+	vec4 meshPos(0.0f, 0.5f, 0.0f, 0.0f);
+	mat4 rotationMatrix;
 	
-
 	std::string texturePath = "assets/Capture.JPG";
 	texture.load(texturePath);
 	const std::string Texture = "Texture";
 	GLint textureLocation = shader.GetUniformLocation(Texture);
 
-	vec4 meshPos(0.5f, 0.5f, 0.0f, 0);
-	mat4 viewMatrix = cam.getViewMatrix();
-	mat4 projectionMatrix = cam.getprojectionMatrix();
-
-	mat4 viewProjectionMatrix = projectionMatrix * viewMatrix;
+	cube.transform.setPosition(meshPos);
+	mat4 viewProjectionMatrix = cam.getprojectionMatrix() * cam.getViewMatrix();
 	while (this->window->IsOpen()) {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		this->window->Update();
 		glUseProgram(shader.getProgram());
 
 		// do stuff
-
 		float radius = 5.0f;
 		angle += 0.005;
-		rotationMatrix = rotationaxis(vec3(0, 1, 0), angle);
+		cube.transform.setRotation(rotationaxis(vec3(0, 1, 0), angle));
+		rotationMatrix = cube.transform.getRotation();
 		if (direction) {
-			meshPos.x += 0.01f;
-			if (meshPos.x >= 1) {
+			cube.transform.setPosition(vec4(cube.transform.getPosition().x + speed, 0.5f, 0.0f, 0.0f));
+			if (cube.transform.getPosition().x >= 1) {
 				direction = false;
 			}
 		}
 		if (!direction) {
-			meshPos.x -= 0.01f;
-			if (meshPos.x <= -1) {
+			cube.transform.setPosition(vec4(cube.transform.getPosition().x - speed, 0.5f, 0.0f, 0.0f));
+			if (cube.transform.getPosition().x <= -1) {
 				direction = true;
 			}
 		}
-		rotationMatrix[3] += meshPos;
-		transformMatrix = rotationMatrix;
-		target.x = meshPos.x;
-		target.y = meshPos.y;
-		target.z = meshPos.z;
+		rotationMatrix[3] += cube.transform.getPosition();
+		cube.transform.setTransformMatrix(rotationMatrix);
+		target.x = cube.transform.getPosition().x;
+		target.y = cube.transform.getPosition().y;
+		target.z = cube.transform.getPosition().z;
 
 		cam.setTarget(target);
 		cam.setPosition(vec3(
-			(cosf(angle) * radius + meshPos.x),
-			(5.0f + meshPos.y),
-			(sinf(angle) * radius + meshPos.z)));
+			(cosf(angle) * radius + cube.transform.getPosition().x),
+			(5.0f + cube.transform.getPosition().y),
+			(sinf(angle) * radius + cube.transform.getPosition().z)));
 
-		viewMatrix = cam.getViewMatrix();
-		viewProjectionMatrix = projectionMatrix * viewMatrix;
+		viewProjectionMatrix = cam.getprojectionMatrix() * cam.getViewMatrix();
 
-		shader.setUniformMat4("rotation", transformMatrix, shader.getProgram());
-		shader.setUniformMat4("projection", projectionMatrix, shader.getProgram());
-		shader.setUniformMat4("view", viewMatrix, shader.getProgram());
+		shader.setUniformMat4("rotation", cube.transform.getTransformMatrix(), shader.getProgram());
+		shader.setUniformMat4("projection", cam.getprojectionMatrix(), shader.getProgram());
+		shader.setUniformMat4("view", cam.getViewMatrix(), shader.getProgram());
 
 		glUniform1i(textureLocation, 0);
 		cube.bindBuffers();

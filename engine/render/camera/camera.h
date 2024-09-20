@@ -2,14 +2,14 @@
 #include "config.h"
 #include "math/mat4.h"
 
-class camera {
+class Camera {
 private:
 	vec3 cameraUp;
 	vec3 cameraPosition;
 	vec3 cameraTarget;
 public:
-	camera();
-	~camera();
+	Camera();
+	~Camera();
 	
 	vec3 getPosition() const;
 	void setPosition(const vec3& position);

@@ -2,49 +2,44 @@
 #include "config.h"
 #include "meshResource.h"
 
-MeshResource::MeshResource() : 
-	meshPos(0.0f, 0.0f, 0.0f), rotationMatrix(), transformMatrix() {
+MeshResource::MeshResource() {
 }
 
 MeshResource::~MeshResource() {
-	CleanUp();
+	cleanUp();
 }
 
-vec3 MeshResource::getPosition() const {
-	return meshPos;
-}
-void MeshResource::setPosition(const vec3& position) {
-	meshPos = position;
-}
-
-MeshResource MeshResource::createCube() {
+MeshResource MeshResource::createCube(float width, float height, float depth) {
 	MeshResource mesh;
+	height = height / 2;
+	width = width / 2;
+	depth = depth / 2;
 	mesh.vertices.insert(mesh.vertices.begin(),
 		{
-		-0.5f,	-0.5f,	0.5f,			// pos 0
-		0.5,	0.5f,	0,		1,	// color 0
+		-width,	-height,	depth,			// pos 0
+		0.5,	0.5f,		0,		1,	// color 0
 		1,		1,					//texture coordinates
-		0.5f,	-0.5f,	0.5f,			// pos 1
-		0.5f,	0,		0.5f,	1,	// color 0
+		width,	-height,	depth,			// pos 1
+		0.5f,	0,			0.5f,	1,	// color 0
 		0,		1,					//texture coordinates
-		0.5f,	0.5f,	0.5f,			// pos 2
-		0,		0,		0.5f,	1,	// color 0
+		width,	height,		depth,			// pos 2
+		0,		0,			0.5f,	1,	// color 0
 		0,		0,					//texture coordinates
-		-0.5f,	0.5f,	0.5f,			// pos 2
-		0,		1,		0,		1,	// color 0
+		-width,	height,		depth,			// pos 2
+		0,		1,			0,		1,	// color 0
 		1,		0,					//texture coordinates
 
-		-0.5f,	-0.5f,	-0.5f,			// pos 0
-		0.5,	0.5f,	0,		1,	// color 0
+		-width,	-height,	-depth,			// pos 0
+		0.5,	0.5f,		0,		1,	// color 0
 		1,		1,					//texture coordinates
-		0.5f,	-0.5f,	-0.5f,			// pos 1
-		0.5f,	0,		0.5f,	1,	// color 0
+		width,	-height,	-depth,			// pos 1
+		0.5f,	0,			0.5f,	1,	// color 0
 		0,		1,					//texture coordinates
-		0.5f,	0.5f,	-0.5f,			// pos 2
-		0,		0,		0.5f,	1,	// color 0
+		width,	height,		-depth,			// pos 2
+		0,		0,			0.5f,	1,	// color 0
 		0,		0,					//texture coordinates
-		-0.5f,	0.5f,	-0.5f,			// pos 2
-		0,		1,		0,		1,	// color 0
+		-width,	height,		-depth,			// pos 2
+		0,		1,			0,		1,	// color 0
 		1,		0,					//texture coordinates
 		});
 
@@ -67,6 +62,7 @@ MeshResource MeshResource::createCube() {
 		0, 3, 4,
 		3, 7, 4
 		});
+	std::cout << "Cube created" << endl;
 	return mesh;
 }
 
@@ -80,6 +76,7 @@ void MeshResource::setUpBuffers() {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(int), indices.data(), GL_STATIC_DRAW);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	std::cout << "Buffer set up" << endl;
 }
 
 void MeshResource::bindBuffers() const{
@@ -92,6 +89,7 @@ void MeshResource::bindBuffers() const{
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float32) * 9, NULL);
 	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(float32) * 9, (GLvoid*)(sizeof(float32) * 3));
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(float32) * 9, (GLvoid*)(sizeof(float32) * 7));
+	std::cout << "Buffer bound" << endl;
 }
 
 void MeshResource::drawMesh() {
@@ -100,11 +98,14 @@ void MeshResource::drawMesh() {
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-void MeshResource::CleanUp() {
-	//if (vbo != 0) {
-	//	glDeleteBuffers(1, &vbo);
-	//}
-	//if (ibo != 0) {
-	//	glDeleteBuffers(1, &ibo);
-	//}
+void MeshResource::cleanUp() {
+	if (vbo != 0) {
+		glDeleteBuffers(1, &vbo);
+		vbo = 0;
+	}
+	if (ibo != 0) {
+		glDeleteBuffers(1, &ibo);
+		ibo = 0;
+	}
+	std::cout << "Buffers deleted" << endl;
 }
