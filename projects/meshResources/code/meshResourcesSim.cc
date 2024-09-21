@@ -80,8 +80,8 @@ namespace Example {
 
 			// setup shader
 			std::string Shaderpath = "assets/shader.txt";
-			shader.Load(Shaderpath);
-			shader.Bind();
+			shader.load(Shaderpath);
+			shader.bind();
 
 			// setup vbo
 			glGenBuffers(1, &this->triangle);

@@ -2,7 +2,7 @@
 #include "config.h"
 #include "meshResource.h"
 
-MeshResource::MeshResource() {
+MeshResource::MeshResource() :vbo(0), ibo(0), vao(0) {
 }
 
 MeshResource::~MeshResource() {
@@ -67,6 +67,11 @@ MeshResource MeshResource::createCube(float width, float height, float depth) {
 }
 
 void MeshResource::setUpBuffers() {
+	if (vertices.empty() || indices.empty()) {
+		std::cerr << "Error: No vertex or index data available to set up buffers." << std::endl;
+		return; // Exit early to avoid exceptions
+	}
+	std::cout << "Vertices size: " << vertices.size() << ", Indices size: " << indices.size() << std::endl;
 	glGenBuffers(1, &vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STATIC_DRAW);
@@ -76,13 +81,18 @@ void MeshResource::setUpBuffers() {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(int), indices.data(), GL_STATIC_DRAW);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+	glGenVertexArrays(1, &vao);
+	glBindVertexArray(vao);
+	
+
 	std::cout << "Buffer set up" << endl;
 }
 
 void MeshResource::bindBuffers() const{
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-
+	glBindVertexArray(vao);
 	glEnableVertexAttribArray(0); //Position
 	glEnableVertexAttribArray(1); //Color
 	glEnableVertexAttribArray(2); //Texture coordinates
@@ -93,19 +103,28 @@ void MeshResource::bindBuffers() const{
 }
 
 void MeshResource::drawMesh() {
+	glBindVertexArray(vao);
 	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
+	
 }
 
 void MeshResource::cleanUp() {
 	if (vbo != 0) {
 		glDeleteBuffers(1, &vbo);
 		vbo = 0;
+		std::cout << "vbo deleted" << endl;
 	}
 	if (ibo != 0) {
 		glDeleteBuffers(1, &ibo);
 		ibo = 0;
+		std::cout << "ibo deleted" << endl;
 	}
-	std::cout << "Buffers deleted" << endl;
+	if (vao != 0) {
+		glDeleteVertexArrays(1, &vao);
+		vao = 0;
+		std::cout << "vao deleted" << endl;
+	}
 }

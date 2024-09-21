@@ -21,12 +21,12 @@ ShaderResource::~ShaderResource() {
 	glDeleteProgram(m_RendererID);
 }
 
-bool ShaderResource::FileExists(const std::string& path) {
+bool ShaderResource::fileExists(const std::string& path) {
 	std::ifstream file(path);
 	return file.good();
 }
 
-unsigned int ShaderResource::CompileShader(unsigned int type, const std::string& source) {
+unsigned int ShaderResource::compileShader(unsigned int type, const std::string& source) {
 	unsigned int id = glCreateShader(type);
 	const char* src = source.c_str();
 	glShaderSource(id, 1, &src, nullptr);
@@ -45,7 +45,7 @@ unsigned int ShaderResource::CompileShader(unsigned int type, const std::string&
 	return id;
 }
 
-ShaderProgramSource ShaderResource::ParseShader(const std::string& path) {
+ShaderProgramSource ShaderResource::parseShader(const std::string& path) {
 	std::ifstream stream(path);
 	if (!stream.is_open()) {
 		std::cerr << "ERROR: Could not open shader file: " << path << std::endl;
@@ -74,10 +74,10 @@ ShaderProgramSource ShaderResource::ParseShader(const std::string& path) {
 	return { ss[0].str(), ss[1].str() };
 }
 
-unsigned int ShaderResource::CreateShader(const std::string& vertexShader, const std::string& fragmentShader) {
+unsigned int ShaderResource::createShader(const std::string& vertexShader, const std::string& fragmentShader) {
 	unsigned int program = glCreateProgram();
-	unsigned int vs = CompileShader(GL_VERTEX_SHADER, vertexShader);
-	unsigned int fs = CompileShader(GL_FRAGMENT_SHADER, fragmentShader);
+	unsigned int vs = compileShader(GL_VERTEX_SHADER, vertexShader);
+	unsigned int fs = compileShader(GL_FRAGMENT_SHADER, fragmentShader);
 
 	glAttachShader(program, vs);
 	glAttachShader(program, fs);
@@ -90,14 +90,14 @@ unsigned int ShaderResource::CreateShader(const std::string& vertexShader, const
 	return program;
 }
 
-void ShaderResource::Load(const std::string& filepath) {
-	ShaderProgramSource source = ParseShader(filepath);
-	m_RendererID = CreateShader(source.VertexSource, source.FragmentSource);
+void ShaderResource::load(const std::string& filepath) {
+	ShaderProgramSource source = parseShader(filepath);
+	m_RendererID = createShader(source.VertexSource, source.FragmentSource);
 }
-void ShaderResource::Bind() const {
+void ShaderResource::bind() const {
 	glUseProgram(m_RendererID);
 }
-void ShaderResource::Unbind() const {
+void ShaderResource::unbind() const {
 	glUseProgram(0);
 }
 

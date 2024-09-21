@@ -17,6 +17,8 @@ namespace Example {
 		void CleanUp();
 
 	private:
+		std::shared_ptr<MeshResource> cubeMesh;
+		std::shared_ptr<GraphicsNode> cubeNode;
 		Camera cam;
 		TextureResource texture;
 		ShaderResource shader;

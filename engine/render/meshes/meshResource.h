@@ -6,9 +6,9 @@
 
 class MeshResource {
 private:
-	GLuint vbo = 0;
-	GLuint ibo = 0;
-	GLuint vao = 0;
+	GLuint vbo;
+	GLuint ibo;
+	GLuint vao;
 
 	vec3 meshPos;
 	mat4 rotationMatrix;
