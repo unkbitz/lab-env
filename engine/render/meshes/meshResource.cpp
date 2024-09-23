@@ -9,12 +9,12 @@ MeshResource::~MeshResource() {
 	cleanUp();
 }
 
-MeshResource MeshResource::createCube(float width, float height, float depth) {
-	MeshResource mesh;
+std::shared_ptr<MeshResource> MeshResource::createCube(float width, float height, float depth) {
+	std::shared_ptr<MeshResource> mesh = std::make_shared<MeshResource>();
 	height = height / 2;
 	width = width / 2;
 	depth = depth / 2;
-	mesh.vertices.insert(mesh.vertices.begin(),
+	mesh->vertices.insert(mesh->vertices.begin(),
 		{
 		-width,	-height,	depth,			// pos 0
 		0.5,	0.5f,		0,		1,	// color 0
@@ -43,7 +43,7 @@ MeshResource MeshResource::createCube(float width, float height, float depth) {
 		1,		0,					//texture coordinates
 		});
 
-	mesh.indices.insert(mesh.indices.begin(), {
+	mesh->indices.insert(mesh->indices.begin(), {
 		0, 1, 2,
 		2, 3, 0,
 
@@ -84,7 +84,6 @@ void MeshResource::setUpBuffers() {
 
 	glGenVertexArrays(1, &vao);
 	glBindVertexArray(vao);
-	
 
 	std::cout << "Buffer set up" << endl;
 }

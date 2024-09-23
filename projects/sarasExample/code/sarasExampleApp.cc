@@ -26,41 +26,41 @@ bool ExampleApp::Open()
 		}
 	});
 
-	//Creating the cube
-	cubeMesh = std::make_shared<MeshResource>(MeshResource::createCube(1.0f, 1.0f, 1.0f));
-	if (!cubeMesh) {
-		std::cerr << "Failed to create cube mesh" << std::endl;
-		return false;
-	}
-	cubeMesh->setUpBuffers();
-
-	//Loading shader
-	std::shared_ptr<ShaderResource> shader = std::make_shared<ShaderResource>();
-	std::string Shaderpath = "assets/shader.txt";
-	shader->load(Shaderpath);
-
-	//Loading texture
-	std::shared_ptr<TextureResource> texture = std::make_shared<TextureResource>();
-	std::string texturePath = "assets/Capture.JPG";
-	texture->load(texturePath);
-
-	//Creating a GraphicsNode to manage the cube
-	cubeNode = std::make_shared<GraphicsNode>();
-	cubeNode->setMesh(cubeMesh);
-	cubeNode->setShader(shader);
-	cubeNode->setTexture(texture);
-
-	cubeNode->getTransform().setPosition(vec4(0.0f, 0.5f, 0.0f, 0.0f));
-
 	if (this->window->Open())
 	{
+		//Creating the cube
+		cubeMesh = MeshResource::createCube(1.0f, 1.0f, 1.0f);
+		if (!cubeMesh) {
+			std::cerr << "Failed to create cube mesh" << std::endl;
+			return false;
+		}
+		cubeMesh->setUpBuffers();
+
+		//Loading shader
+		std::shared_ptr<ShaderResource> shader = std::make_shared<ShaderResource>();
+		std::string Shaderpath = "assets/shader.txt";
+		shader->load(Shaderpath);
+
+		//Loading texture
+		std::shared_ptr<TextureResource> texture = std::make_shared<TextureResource>();
+		std::string texturePath = "assets/Capture.JPG";
+		texture->load(texturePath);
+
+		//Creating a GraphicsNode to manage the cube
+		cubeNode = std::make_shared<GraphicsNode>();
+		cubeNode->setMesh(cubeMesh);
+		cubeNode->setShader(shader);
+		cubeNode->setTexture(texture);
+
+		cubeNode->getTransform().setPosition(vec4(0.0f, 0.5f, 0.0f, 0.0f));
+
 		// set clear color to gray
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		return true;
 	}
 	return false;
 }
-
+ 
 void ExampleApp::Close()
 {
 	if (this->window->IsOpen())

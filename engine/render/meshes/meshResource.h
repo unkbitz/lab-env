@@ -24,6 +24,6 @@ public:
 	void bindBuffers() const;
 	void setUpBuffers();
 	void drawMesh();
-	static MeshResource createCube(float width, float height, float depth);
+	static std::shared_ptr<MeshResource>  createCube(float width, float height, float depth);
 	void cleanUp();
 };

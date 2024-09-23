@@ -9,7 +9,7 @@
 #include "render/meshes/meshTransform.h"
 
 class GraphicsNode {
-private:
+public:
 	std::shared_ptr<MeshResource> mesh;
 	std::shared_ptr<TextureResource> texture;
 	std::shared_ptr<MeshTransform> transform;

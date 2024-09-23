@@ -19,6 +19,7 @@ namespace Example {
 	private:
 		std::shared_ptr<MeshResource> cubeMesh;
 		std::shared_ptr<GraphicsNode> cubeNode;
+		//GraphicsNode graphicsNode;
 		Camera cam;
 		TextureResource texture;
 		ShaderResource shader;
