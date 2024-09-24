@@ -2,6 +2,7 @@
 #include "config.h"
 #include "meshTransform.h"
 
+
 MeshTransform::MeshTransform() : meshScale(1, 1, 1), meshPos(0,0,0,0),
 rotationMatrix(vec4(1, 0, 0, 0), vec4(0, 1, 0, 0), vec4(0, 0, 1, 0), vec4(0, 0, 0, 1)),
 transformMatrix(vec4(1, 0, 0, 0), vec4(0, 1, 0, 0), vec4(0, 0, 1, 0), vec4(0, 0, 0, 1)) {
@@ -40,10 +41,7 @@ void MeshTransform::setScale(const vec3& scale)
 
 mat4 MeshTransform::getTransformMatrix() const
 {
-	return transformMatrix;
-}
-
-void MeshTransform::setTransformMatrix(const mat4& transform)
-{
-	transformMatrix = transform;
+	mat4 scaleMatrix = scaling(meshScale);
+	mat4 translationMatrix = translation(meshPos.x, meshPos.y, meshPos.z);
+	return translationMatrix * rotationMatrix * scaleMatrix;
 }

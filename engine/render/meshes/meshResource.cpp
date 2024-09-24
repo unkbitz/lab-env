@@ -72,26 +72,26 @@ void MeshResource::setUpBuffers() {
 		return; // Exit early to avoid exceptions
 	}
 	std::cout << "Vertices size: " << vertices.size() << ", Indices size: " << indices.size() << std::endl;
+	glGenVertexArrays(1, &vao);
+	glBindVertexArray(vao);
+
 	glGenBuffers(1, &vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STATIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	glGenBuffers(1, &ibo);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(int), indices.data(), GL_STATIC_DRAW);
+	
+	bindBuffers();
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-	glGenVertexArrays(1, &vao);
-	glBindVertexArray(vao);
 
 	std::cout << "Buffer set up" << endl;
 }
 
 void MeshResource::bindBuffers() const{
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-	glBindVertexArray(vao);
 	glEnableVertexAttribArray(0); //Position
 	glEnableVertexAttribArray(1); //Color
 	glEnableVertexAttribArray(2); //Texture coordinates
@@ -104,10 +104,7 @@ void MeshResource::bindBuffers() const{
 void MeshResource::drawMesh() {
 	glBindVertexArray(vao);
 	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
-	
 }
 
 void MeshResource::cleanUp() {

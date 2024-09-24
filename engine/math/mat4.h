@@ -266,3 +266,21 @@ inline mat4 lookat(vec3 eye, vec3 const& at, vec3 const& up) {
 		vec4(dot(r, -eye), dot(u, -eye), dot(v, -eye), 1));
 	return matlookat;
 }
+inline mat4 translation(float const posX, float const posY, float const posZ)
+{
+	const mat4 trans(
+		vec4(1.0f, 0.0f, 0.0f, 0.0f),
+		vec4(0.0f, 1.0f, 0.0f, 0.0f),
+		vec4(0.0f, 0.0f, 1.0f, 0.0f),
+		vec4(posX, posY, posZ, 1.0f));
+	return trans;
+}
+
+inline mat4 scaling(vec3 scale) {
+	const mat4 scaling(
+		vec4(scale.x, 0.0f, 0.0f, 0.0f),
+		vec4(0.0f, scale.y, 0.0f, 0.0f),
+		vec4(0.0f, 0.0f, scale.z, 0.0f),
+		vec4(0.0f, 0.0f, 0.0f, 1.0f));
+	return scaling;
+}

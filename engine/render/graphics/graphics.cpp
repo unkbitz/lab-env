@@ -2,58 +2,72 @@
 #include "config.h"
 #include "graphics.h"
 
-GraphicsNode::GraphicsNode() {
-}
+GraphicsNode::GraphicsNode() 
+	: m_transform(std::make_shared<MeshTransform>()), 
+	m_mesh(nullptr),
+	m_texture(nullptr), 
+	m_shader(nullptr) {}
+
+GraphicsNode::GraphicsNode(std::shared_ptr<MeshTransform> transform)
+	: m_transform(transform), 
+	m_mesh(nullptr), 
+	m_texture(nullptr), 
+	m_shader(nullptr) {}
 
 GraphicsNode::~GraphicsNode() {
 }
 
 void GraphicsNode::setMesh(const std::shared_ptr<MeshResource>& newMesh) {
-	mesh = newMesh;
+	m_mesh = newMesh;
 }
 
 void GraphicsNode::setTexture(const std::shared_ptr<TextureResource>& newTexture) {
-	texture = newTexture;
+	m_texture = newTexture;
 }
 
 void GraphicsNode::setTransform(const std::shared_ptr<MeshTransform>& newTransform) {
-	transform = newTransform;
+	m_transform = newTransform;
 }
 
 void GraphicsNode::setShader(const std::shared_ptr<ShaderResource>& newShader) {
-	shader = newShader;
+	m_shader = newShader;
 }
 
-std::shared_ptr<MeshResource> GraphicsNode::getMesh() const
-{
-	return mesh;
+std::shared_ptr<MeshResource> GraphicsNode::getMesh() const {
+	return m_mesh;
 }
 
-std::shared_ptr<TextureResource> GraphicsNode::getTexture() const
-{
-	return texture;
+std::shared_ptr<TextureResource> GraphicsNode::getTexture() const {
+	return m_texture;
 }
 
-std::shared_ptr<ShaderResource> GraphicsNode::getShader() const
-{
-	return shader;
+std::shared_ptr<ShaderResource> GraphicsNode::getShader() const {
+	return m_shader;
 }
 
-MeshTransform GraphicsNode::getTransform() const
-{
-	return *transform;
+std::shared_ptr<MeshTransform> GraphicsNode::getTransform() const {
+	return m_transform;
+}
+
+void GraphicsNode::setTransform(vec4 newPos, mat4 newRot) {
+	if (m_transform == nullptr)	{
+		std::cout << "Input MeshTransform is invalid" << std::endl;
+		assert(false);
+	}
+	m_transform->setPosition(newPos);
+	m_transform->setRotation(newRot);
 }
 
 void GraphicsNode::draw(const Camera& camera) {
-	shader->bind();
-	shader->setUniformMat4("u_ViewProjection", camera.getprojectionMatrix(), shader->getProgram());
-	shader->setUniformMat4("u_Model", transform->getTransformMatrix(), shader->getProgram());
+	m_shader->bind();
+	m_shader->setUniformMat4("u_ViewProjection", camera.getprojectionMatrix(), m_shader->getProgram());
+	m_shader->setUniformMat4("u_Model", m_transform->getTransformMatrix(), m_shader->getProgram());
 
-	texture->bind(0);
+	m_texture->bind(0);
 
-	mesh->bindBuffers();
-	mesh->drawMesh();
+	//m_mesh->bindBuffers();
+	m_mesh->drawMesh();
 
-	texture->unbind();
-	shader->unbind();
+	m_texture->unbind();
+	m_shader->unbind();
 }

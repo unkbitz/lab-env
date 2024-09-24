@@ -112,12 +112,12 @@ namespace Example {
 		bool direction = true;
 		Camera cam;
 		
-		std::string texturePath = "assets/Capture.JPG";
+		/*std::string texturePath = "assets/Capture.JPG";
 		texture::TextureResource texture(texturePath);
 		const std::string Texture = "Texture";
 		GLint textureLocation = shader.GetUniformLocation(Texture);
 
-		vec4 meshPos(0.5f, 0.5f, 0.0f, 0); 
+		vec4 meshPos(0.5f, 0.5f, 0.0f, 0); */
 		mat4 viewMatrix = cam.getViewMatrix();
 		mat4 projectionMatrix = cam.getprojectionMatrix();
 		
@@ -133,7 +133,7 @@ namespace Example {
 
 			float radius = 5.0f;
 			angle += 0.005;
-			mat4 rotationMatrix = rotationaxis(vec3(0, 1, 0), angle);
+			/*mat4 rotationMatrix = rotationaxis(vec3(0, 1, 0), angle);
 			if (direction) {
 				meshPos.x += 0.01f;
 				if (meshPos.x >= 1) {
@@ -147,34 +147,34 @@ namespace Example {
 				}
 			}
 			rotationMatrix[3] += meshPos;
-			mat4 transformMatrix = rotationMatrix;
+			mat4 transformMatrix = rotationMatrix;*/
 
-			vec3 target(meshPos.x, meshPos.y, meshPos.z);
-			cam.setTarget(target);
-			cam.setPosition(vec3(
-				(cosf(angle) * radius + meshPos.x), 
-				(5.0f + meshPos.y), 
-				(sinf(angle) * radius + meshPos.z)));
+			//vec3 target(meshPos.x, meshPos.y, meshPos.z);
+			//cam.setTarget(target);
+			//cam.setPosition(vec3(
+			//	(cosf(angle) * radius + meshPos.x), 
+			//	(5.0f + meshPos.y), 
+			//	(sinf(angle) * radius + meshPos.z)));
 
-			viewMatrix = cam.getViewMatrix();
-			viewProjectionMatrix = projectionMatrix * viewMatrix;
-			
-			shader.setUniformMat4("rotation", transformMatrix, shader.getProgram());
-			shader.setUniformMat4("projection", projectionMatrix, shader.getProgram());
-			shader.setUniformMat4("view", viewMatrix, shader.getProgram());
-			
-			glUniform1i(textureLocation, 0);
+			//viewMatrix = cam.getViewMatrix();
+			//viewProjectionMatrix = projectionMatrix * viewMatrix;
+			//
+			//shader.setUniformMat4("rotation", transformMatrix, shader.getProgram());
+			//shader.setUniformMat4("projection", projectionMatrix, shader.getProgram());
+			//shader.setUniformMat4("view", viewMatrix, shader.getProgram());
+			//
+			//glUniform1i(textureLocation, 0);
 
-			glEnableVertexAttribArray(0); //Position
-			glEnableVertexAttribArray(1); //Color
-			glEnableVertexAttribArray(2); //Texture coordinates
-			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float32) * 9, NULL);
-			glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(float32) * 9, (GLvoid*)(sizeof(float32) * 3));
-			glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(float32) * 9, (GLvoid*)(sizeof(float32) * 7));
-			texture.bind();
-			glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-			glBindBuffer(GL_ARRAY_BUFFER, 0);
+			//glEnableVertexAttribArray(0); //Position
+			//glEnableVertexAttribArray(1); //Color
+			//glEnableVertexAttribArray(2); //Texture coordinates
+			//glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float32) * 9, NULL);
+			//glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(float32) * 9, (GLvoid*)(sizeof(float32) * 3));
+			//glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(float32) * 9, (GLvoid*)(sizeof(float32) * 7));
+			//texture.bind();
+			//glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+			//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+			//glBindBuffer(GL_ARRAY_BUFFER, 0);
 			Render::Grid grid;
 			grid.Draw((GLfloat*) &viewProjectionMatrix[0][0]);
 			this->window->SwapBuffers();

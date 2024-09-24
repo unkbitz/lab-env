@@ -10,9 +10,6 @@ private:
 	GLuint ibo;
 	GLuint vao;
 
-	vec3 meshPos;
-	mat4 rotationMatrix;
-	mat4 transformMatrix;
 	std::vector<float> vertices;
 	std::vector<int> indices;
 public:

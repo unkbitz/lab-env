@@ -9,7 +9,6 @@ private:
 	vec4 meshPos;
 	mat4 rotationMatrix;
 	mat4 transformMatrix;
-
 public:
 	MeshTransform();
 	~MeshTransform();
@@ -21,5 +20,4 @@ public:
 	vec3 getScale() const;
 	void setScale(const vec3& scale);
 	mat4 getTransformMatrix() const;
-	void setTransformMatrix(const mat4& tranform);
 };
