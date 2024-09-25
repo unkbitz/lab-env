@@ -22,7 +22,7 @@ namespace Example {
 		Render::Grid* grid;
 		Camera cam;
 		Display::Window* window;
-		vec3 cubePosition = vec3(0.0f, 0.0f, -5.0f);
+		vec4 cubePosition = vec4(0.0f, 0.0f, -5.0f, 1.0f);
 		vec3 cubeRotation = vec3(0.0f, 0.0f, 0.0f);
 		float moveSpeed = 0.05f;
 		bool mouseHeld = false;

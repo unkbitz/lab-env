@@ -3,7 +3,7 @@
 #include "meshTransform.h"
 
 
-MeshTransform::MeshTransform() : meshScale(1, 1, 1), meshPos(0,0,0,0),
+MeshTransform::MeshTransform() : meshScale(1, 1, 1), meshPos(0,0,0,1),
 rotationMatrix(vec4(1, 0, 0, 0), vec4(0, 1, 0, 0), vec4(0, 0, 1, 0), vec4(0, 0, 0, 1)),
 transformMatrix(vec4(1, 0, 0, 0), vec4(0, 1, 0, 0), vec4(0, 0, 1, 0), vec4(0, 0, 0, 1)) {
 

@@ -59,6 +59,46 @@ bool ExampleApp::Open()
 		// set clear color to gray
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 
+		window->SetKeyPressFunction([this](int key, int scancode, int action, int mods) {
+			if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
+				this->window->Close();
+			}
+			if (action == GLFW_PRESS || action == GLFW_REPEAT) {
+				switch (key) {
+				case GLFW_KEY_W: cubePosition.z -= moveSpeed; break;
+				case GLFW_KEY_S: cubePosition.z += moveSpeed; break;
+				case GLFW_KEY_A: cubePosition.x -= moveSpeed; break;
+				case GLFW_KEY_D: cubePosition.x += moveSpeed; break;
+				}
+			}
+		});
+
+		window->SetMouseMoveFunction([this](float xpos, float ypos) {
+			if (mouseHeld) {
+				float xoffset = xpos - lastMouseX;
+				float yoffset = ypos - lastMouseY;
+
+				lastMouseX = xpos;
+				lastMouseY = ypos;
+
+				float sensitivity = 0.01f;
+				xoffset *= sensitivity;
+				yoffset *= sensitivity;
+
+				cubeRotation.y += xoffset;
+				cubeRotation.x += yoffset;
+			}
+		});
+
+		window->SetMousePressFunction([this](int button, int action, int mods) {
+			if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
+				mouseHeld = true;
+			}
+			else if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE) {
+				mouseHeld = false;
+			}
+		});
+
 		return true;
 	}
 	return false;
@@ -75,22 +115,25 @@ void ExampleApp::Close()
 
 void ExampleApp::Run() {
 	glEnable(GL_DEPTH_TEST);
-	float angle = 0.0f;
-	float speed = 0.0f; // Movement speed
+	//float angle = 0.0f;
+	//float speed = 0.0f; // Movement speed
 
 	mat4 rotationMatrix;
 	mat4 viewProjectionMatrix = cam.getprojectionMatrix() * cam.getViewMatrix();
+
 	while (this->window->IsOpen()) {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		this->window->Update();
 
 		// do stuff
 
-		
-		speed -= 0.001f;
-		angle += 0.01f;
-		rotationMatrix = rotationaxis(vec3(0, 1, 0), angle);
+		// Apply rotation
+		rotationMatrix = rotationaxis(vec3(1, 0, 0), cubeRotation.x) * 
+			rotationaxis(vec3(0, 1, 0), cubeRotation.y);
+
 		cubeNode->getTransform()->setRotation(rotationMatrix);
+		cubeNode->getTransform()->setPosition(cubePosition);
+
 		cubeNode->getShader()->bind();
 		viewProjectionMatrix = cam.getprojectionMatrix() * cam.getViewMatrix();
 		cubeNode->draw(cam);
