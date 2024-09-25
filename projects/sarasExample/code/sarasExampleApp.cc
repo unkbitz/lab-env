@@ -19,12 +19,6 @@ bool ExampleApp::Open()
 {
 	App::Open();
 	this->window = new Display::Window;
-	window->SetKeyPressFunction([this](int key, int scancode, int action, int mods) {
-		if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
-			this->window->Close();
-		}
-	});
-
 
 
 	if (this->window->Open())
@@ -52,8 +46,11 @@ bool ExampleApp::Open()
 		cubeNode->setMesh(cubeMesh);
 		cubeNode->setShader(shader);
 		cubeNode->setTexture(texture);
-		//cubeNode->getTransform()->setScale(vec3(0.1f, 0.1f, 0.1f));
-		cubeNode->getTransform()->setPosition(vec4(0.0, 0.0, -5.0, 1.0));
+
+		mat4 rotationMatrix = rotationaxis(vec3(1, 0, 0), 0) *
+			rotationaxis(vec3(0, 1, 0), 0);
+		cubeNode->setRotation(rotationMatrix * cam.getViewMatrix());
+		cubeNode->setPosition(cam.getViewMatrix() * vec4(4.0, 5.0, 4.0, 1.0));
 		grid = new Render::Grid();
 		  
 		// set clear color to gray
@@ -63,41 +60,89 @@ bool ExampleApp::Open()
 			if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
 				this->window->Close();
 			}
-			if (action == GLFW_PRESS || action == GLFW_REPEAT) {
-				switch (key) {
-				case GLFW_KEY_W: cubePosition.z -= moveSpeed; break;
-				case GLFW_KEY_S: cubePosition.z += moveSpeed; break;
-				case GLFW_KEY_A: cubePosition.x -= moveSpeed; break;
-				case GLFW_KEY_D: cubePosition.x += moveSpeed; break;
+			vec4 cubeMovement(0, 0, 0, 0);
+			
+			if (mouseRightHeld) {
+				if (action == GLFW_PRESS || action == GLFW_REPEAT) {
+					switch (key) {
+					case GLFW_KEY_W: camPosition.z -= moveSpeed; break;
+					case GLFW_KEY_S: camPosition.z += moveSpeed; break;
+					case GLFW_KEY_A: camPosition.x -= moveSpeed; break;
+					case GLFW_KEY_D: camPosition.x += moveSpeed; break;
+					}
 				}
 			}
+			
+			else if (!mouseRightHeld) {
+				if (action == GLFW_PRESS || action == GLFW_REPEAT) {
+					switch (key) {
+					case GLFW_KEY_W: cubeMovement.z -= moveSpeed; break;
+					case GLFW_KEY_S: cubeMovement.z += moveSpeed; break;
+					case GLFW_KEY_A: cubeMovement.x -= moveSpeed; break;
+					case GLFW_KEY_D: cubeMovement.x += moveSpeed; break;
+					}
+				}
+			}
+			cubeMovement = cam.getViewMatrix() * cubeMovement;
+			cubeNode->setPosition(cubeNode->getPosition() + cubeMovement);
 		});
 
 		window->SetMouseMoveFunction([this](float xpos, float ypos) {
-			if (mouseHeld) {
-				float xoffset = xpos - lastMouseX;
-				float yoffset = ypos - lastMouseY;
+			vec3 cubeRotation(0,0,0);
+			if (mouseRightHeld) {
+				if (mouseLeftHeld) {
+					float xoffset = xpos - lastMouseX;
+					float yoffset = ypos - lastMouseY;
 
-				lastMouseX = xpos;
-				lastMouseY = ypos;
+					lastMouseX = xpos;
+					lastMouseY = ypos;
 
-				float sensitivity = 0.01f;
-				xoffset *= sensitivity;
-				yoffset *= sensitivity;
+					float camSense = 0.01f;
+					xoffset *= camSense;
+					yoffset *= camSense;
 
-				cubeRotation.y += xoffset;
-				cubeRotation.x += yoffset;
+					camRotation.y += xoffset;
+					camRotation.x += yoffset;
+				}
 			}
+
+			else if (!mouseRightHeld) {
+				if (mouseLeftHeld) {
+					float xoffset = xpos - lastMouseX;
+					float yoffset = ypos - lastMouseY;
+
+					lastMouseX = xpos;
+					lastMouseY = ypos;
+
+					float cubeSense = 0.01f;
+					xoffset *= cubeSense;
+					yoffset *= cubeSense;
+
+					cubeRotation.y += xoffset;
+					cubeRotation.x += yoffset;
+				}
+			}
+			//mat4 rotationMatrix = rotationx(cubeRotation.x) * rotationy(cubeRotation.y);
+			mat4 rotationMatrix = rotationaxis(vec3(1, 0, 0), cubeRotation.x) *
+				rotationaxis(vec3(0, 1, 0), cubeRotation.y);
+			cubeNode->setRotation(rotationMatrix*cam.getViewMatrix());
 		});
 
 		window->SetMousePressFunction([this](int button, int action, int mods) {
 			if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
-				mouseHeld = true;
+				mouseLeftHeld = true;
 			}
 			else if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE) {
-				mouseHeld = false;
+				mouseLeftHeld = false;
+			}
+			if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS) {
+				mouseRightHeld = true;
+			}
+			else if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_RELEASE) {
+				mouseRightHeld = false;
 			}
 		});
+		
 
 		return true;
 	}
@@ -128,12 +173,8 @@ void ExampleApp::Run() {
 		// do stuff
 
 		// Apply rotation
-		rotationMatrix = rotationaxis(vec3(1, 0, 0), cubeRotation.x) * 
-			rotationaxis(vec3(0, 1, 0), cubeRotation.y);
-
-		cubeNode->getTransform()->setRotation(rotationMatrix);
-		cubeNode->getTransform()->setPosition(cubePosition);
-
+		cam.setPosition(camPosition);
+		cam.setTarget(camRotation);
 		cubeNode->getShader()->bind();
 		viewProjectionMatrix = cam.getprojectionMatrix() * cam.getViewMatrix();
 		cubeNode->draw(cam);

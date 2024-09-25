@@ -18,14 +18,16 @@ namespace Example {
 		void CleanUp();
 
 	private:
-		std::shared_ptr<GraphicsNode> cubeNode;
+		std::shared_ptr<GraphicsNode> cubeNode; // update to vector
 		Render::Grid* grid;
 		Camera cam;
 		Display::Window* window;
-		vec4 cubePosition = vec4(0.0f, 0.0f, -5.0f, 1.0f);
-		vec3 cubeRotation = vec3(0.0f, 0.0f, 0.0f);
+		vec3 camPosition = vec3(4.0f, 4.0f, 4.0f);
+		vec3 camRotation = vec3(0.0f, 0.0f, 0.0f);
+		vec3 forward;
 		float moveSpeed = 0.05f;
-		bool mouseHeld = false;
+		bool mouseLeftHeld = false;
+		bool mouseRightHeld = false;
 		double lastMouseX = 0.0, lastMouseY = 0.0;
 	};
 } // namespace Example

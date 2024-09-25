@@ -4,20 +4,25 @@
 #include "math/mat4.h"
 
 class MeshTransform {
-private:
-	vec3 meshScale;
-	vec4 meshPos;
-	mat4 rotationMatrix;
-	mat4 transformMatrix;
 public:
 	MeshTransform();
 	~MeshTransform();
 
 	vec4 getPosition() const;
-	void setPosition(const vec4& position);
 	mat4 getRotation() const;
-	void setRotation(const mat4& rotation);
 	vec3 getScale() const;
-	void setScale(const vec3& scale);
 	mat4 getTransformMatrix() const;
+	void setPosition(const vec4& position);
+	void setRotation(const mat4& rotation);
+	void setScale(const vec3& scale);
+
+private:
+	vec3 meshScale;
+	vec4 meshPos;
+	mat4 rotationMatrix;
+	mat4 translationMatrix;
+	mat4 transformMatrix;
+	mat4 scaleMatrix;
+
+	void recalculate();
 };

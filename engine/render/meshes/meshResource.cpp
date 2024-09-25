@@ -124,3 +124,29 @@ void MeshResource::cleanUp() {
 		std::cout << "vao deleted" << endl;
 	}
 }
+
+mat4 MeshResource::getTransform() {
+	return transform.getTransformMatrix();
+}
+
+void MeshResource::setPosition(vec4 const position) {
+	transform.setPosition(position);
+}
+
+void MeshResource::setRotation(mat4 const rotation) {
+	transform.setRotation(rotation);
+}
+
+void MeshResource::setScale(vec3 const scale) {
+	transform.setScale(scale);
+}
+
+vec4 MeshResource::getPosition()
+{
+	return transform.getPosition();
+}
+
+mat4 MeshResource::getRotation()
+{
+	return transform.getRotation();
+}
