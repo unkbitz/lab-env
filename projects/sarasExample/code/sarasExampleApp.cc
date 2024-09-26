@@ -49,7 +49,7 @@ bool ExampleApp::Open()
 
 		mat4 rotationMatrix = rotationaxis(vec3(1, 0, 0), 0) *
 			rotationaxis(vec3(0, 1, 0), 0);
-		cubeNode->setRotation(rotationMatrix * cam.getViewMatrix());
+		cubeNode->setRotation(cam.getViewMatrix() * rotationMatrix);
 		cubeNode->setPosition(cam.getViewMatrix() * vec4(4.0, 5.0, 4.0, 1.0));
 		grid = new Render::Grid();
 		  
@@ -114,7 +114,7 @@ bool ExampleApp::Open()
 					lastMouseX = xpos;
 					lastMouseY = ypos;
 
-					float cubeSense = 0.01f;
+					float cubeSense = 0.1f;
 					xoffset *= cubeSense;
 					yoffset *= cubeSense;
 
@@ -122,10 +122,9 @@ bool ExampleApp::Open()
 					cubeRotation.x += yoffset;
 				}
 			}
-			//mat4 rotationMatrix = rotationx(cubeRotation.x) * rotationy(cubeRotation.y);
 			mat4 rotationMatrix = rotationaxis(vec3(1, 0, 0), cubeRotation.x) *
 				rotationaxis(vec3(0, 1, 0), cubeRotation.y);
-			cubeNode->setRotation(rotationMatrix*cam.getViewMatrix());
+			cubeNode->setRotation(cam.getViewMatrix() * rotationMatrix);
 		});
 
 		window->SetMousePressFunction([this](int button, int action, int mods) {
