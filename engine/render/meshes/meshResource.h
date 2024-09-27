@@ -11,7 +11,7 @@ private:
 	GLuint vao;
 	std::vector<float> vertices;
 	std::vector<int> indices;
-
+	std::vector<float> normals;
 	MeshTransform transform;
 
 public:
@@ -22,6 +22,7 @@ public:
 	void setUpBuffers();
 	void drawMesh();
 	static std::shared_ptr<MeshResource>  createCube(float width, float height, float depth);
+	static std::shared_ptr<MeshResource> loadFromOBJ(const std::string& filename);
 	void cleanUp();
 	mat4 getTransform();
 	void setPosition(vec4 const position);

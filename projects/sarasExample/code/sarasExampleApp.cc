@@ -23,13 +23,20 @@ bool ExampleApp::Open()
 
 	if (this->window->Open())
 	{
+		//Creating a mesh by loading OBJ
+		std::shared_ptr<MeshResource> deer = MeshResource::loadFromOBJ("assets/lowpolydeer/deer.obj");
+		if (!deer) { 
+			std::cerr << "Failed to load OBJ mesh" << std::endl;
+			return false;
+		}
+
 		//Creating the cube
-		auto cubeMesh = MeshResource::createCube(1.0f, 1.0f, 1.0f);
+		std::shared_ptr<MeshResource> cubeMesh = MeshResource::createCube(1.0f, 1.0f, 1.0f);
 		if (!cubeMesh) {
 			std::cerr << "Failed to create cube mesh" << std::endl;
 			return false;
 		}
-		cubeMesh->setUpBuffers();
+		
 
 		//Loading shader
 		std::shared_ptr<ShaderResource> shader = std::make_shared<ShaderResource>();
@@ -43,14 +50,19 @@ bool ExampleApp::Open()
 
 		//Creating a GraphicsNode to manage the cube
 		cubeNode = std::make_shared<GraphicsNode>();
+		deerNode = std::make_shared<GraphicsNode>();
 		cubeNode->setMesh(cubeMesh);
 		cubeNode->setShader(shader);
 		cubeNode->setTexture(texture);
+		deerNode->setMesh(deer);
+		deerNode->setShader(shader);
+		deerNode->setTexture(texture);
 
-		mat4 rotationMatrix = rotationaxis(vec3(1, 0, 0), 0) *
-			rotationaxis(vec3(0, 1, 0), 0);
+		mat4 rotationMatrix;
 		cubeNode->setRotation(cam.getViewMatrix() * rotationMatrix);
 		cubeNode->setPosition(cam.getViewMatrix() * vec4(4.0, 5.0, 4.0, 1.0));
+		deerNode->setRotation(cam.getViewMatrix() * rotationMatrix);
+		deerNode->setPosition(cam.getViewMatrix() * vec4(-100.0, 0.0, -100.0, 1.0));
 		grid = new Render::Grid();
 		  
 		// set clear color to gray
@@ -61,14 +73,14 @@ bool ExampleApp::Open()
 				this->window->Close();
 			}
 			vec4 cubeMovement(0, 0, 0, 0);
-			
+			vec4 deerMovement(0, 0, 0, 0);
 			if (mouseRightHeld) {
 				if (action == GLFW_PRESS || action == GLFW_REPEAT) {
 					switch (key) {
-					case GLFW_KEY_W: camPosition.z -= moveSpeed; break;
-					case GLFW_KEY_S: camPosition.z += moveSpeed; break;
-					case GLFW_KEY_A: camPosition.x -= moveSpeed; break;
-					case GLFW_KEY_D: camPosition.x += moveSpeed; break;
+					case GLFW_KEY_W: deerMovement.z -= moveSpeed; break;
+					case GLFW_KEY_S: deerMovement.z += moveSpeed; break;
+					case GLFW_KEY_A: deerMovement.x -= moveSpeed; break;
+					case GLFW_KEY_D: deerMovement.x += moveSpeed; break;
 					}
 				}
 			}
@@ -83,12 +95,13 @@ bool ExampleApp::Open()
 					}
 				}
 			}
+			deerMovement = cam.getViewMatrix() * deerMovement;
+			deerNode->setPosition(cubeNode->getPosition() + deerMovement);
 			cubeMovement = cam.getViewMatrix() * cubeMovement;
 			cubeNode->setPosition(cubeNode->getPosition() + cubeMovement);
 		});
-
-		window->SetMouseMoveFunction([this](float xpos, float ypos) {
-			vec3 cubeRotation(0,0,0);
+		vec3 cubeRotation(0, 0, 0);
+		window->SetMouseMoveFunction([this, &cubeRotation](float xpos, float ypos) {
 			if (mouseRightHeld) {
 				if (mouseLeftHeld) {
 					float xoffset = xpos - lastMouseX;
@@ -114,7 +127,7 @@ bool ExampleApp::Open()
 					lastMouseX = xpos;
 					lastMouseY = ypos;
 
-					float cubeSense = 0.1f;
+					float cubeSense = 0.05f;
 					xoffset *= cubeSense;
 					yoffset *= cubeSense;
 
@@ -126,6 +139,7 @@ bool ExampleApp::Open()
 				rotationaxis(vec3(0, 1, 0), cubeRotation.y);
 			cubeNode->setRotation(cam.getViewMatrix() * rotationMatrix);
 		});
+		
 
 		window->SetMousePressFunction([this](int button, int action, int mods) {
 			if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
@@ -175,8 +189,10 @@ void ExampleApp::Run() {
 		cam.setPosition(camPosition);
 		cam.setTarget(camRotation);
 		cubeNode->getShader()->bind();
+		deerNode->getShader()->bind();
 		viewProjectionMatrix = cam.getprojectionMatrix() * cam.getViewMatrix();
 		cubeNode->draw(cam);
+		//deerNode->draw(cam);
 		grid->Draw((GLfloat*)&viewProjectionMatrix[0][0]);
 		this->window->SwapBuffers();
 

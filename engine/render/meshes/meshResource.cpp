@@ -1,5 +1,8 @@
 #pragma once
 #include "config.h"
+#include <iostream>
+#include <fstream>
+#include <sstream>
 #include "meshResource.h"
 
 MeshResource::MeshResource() :vbo(0), ibo(0), vao(0) {
@@ -63,6 +66,7 @@ std::shared_ptr<MeshResource> MeshResource::createCube(float width, float height
 		3, 7, 4
 		});
 	std::cout << "Cube created" << endl;
+	mesh->setUpBuffers();
 	return mesh;
 }
 
@@ -77,7 +81,13 @@ void MeshResource::setUpBuffers() {
 
 	glGenBuffers(1, &vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STATIC_DRAW);
+
+
+	size_t totalSize = (vertices.size() + normals.size()) * sizeof(float);
+	glBufferData(GL_ARRAY_BUFFER, totalSize, nullptr, GL_STATIC_DRAW);
+	glBufferSubData(GL_ARRAY_BUFFER, 0, vertices.size() * sizeof(float), vertices.data());
+	glBufferSubData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), normals.size() * sizeof(float), normals.data());
+
 
 	glGenBuffers(1, &ibo);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
@@ -91,6 +101,8 @@ void MeshResource::setUpBuffers() {
 	std::cout << "Buffer set up" << endl;
 }
 
+
+
 void MeshResource::bindBuffers() const{
 	glEnableVertexAttribArray(0); //Position
 	glEnableVertexAttribArray(1); //Color
@@ -98,6 +110,7 @@ void MeshResource::bindBuffers() const{
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float32) * 9, NULL);
 	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(float32) * 9, (GLvoid*)(sizeof(float32) * 3));
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(float32) * 9, (GLvoid*)(sizeof(float32) * 7));
+	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(float32) * 11, (GLvoid*)(sizeof(float32) * 9));
 	std::cout << "Buffer bound" << endl;
 }
 
@@ -149,4 +162,109 @@ vec4 MeshResource::getPosition()
 mat4 MeshResource::getRotation()
 {
 	return transform.getRotation();
+}
+
+std::shared_ptr<MeshResource> MeshResource::loadFromOBJ(const std::string& filename)
+{
+	std::shared_ptr<MeshResource> mesh = std::make_shared<MeshResource>();
+	std::ifstream file(filename);
+
+	if (!file.is_open()) {
+		std::cerr << "Error opening OBJ file: " << filename << std::endl;
+		return nullptr;
+	}
+
+	std::vector<vec3> positions;
+	std::vector<vec2> texCoords;
+	std::vector<vec3> norm;
+
+	std::string line;
+
+	while (std::getline(file, line)) {
+		std::istringstream ss(line);
+		std::string type;
+		ss >> type;
+
+		if (type == "v") {
+			// Vertex position
+			vec3 pos;
+			ss >> pos.x >> pos.y >> pos.z;
+			positions.push_back(pos);
+		}
+		else if (type == "vt") {
+			// Texture coordinate
+			vec2 tex;
+			ss >> tex.x >> tex.y;
+			texCoords.push_back(tex);
+		}
+		else if (type == "vn") {
+			// Normal
+			vec3 n;
+			ss >> n.x >> n.y >> n.z;
+			norm.push_back(n);
+		}
+		else if (type == "f") {
+			// Face (triangulated or quad)
+			std::string vertex[4];  // In case of quads
+			ss >> vertex[0] >> vertex[1] >> vertex[2] >> vertex[3];
+
+			for (int i = 0; i < (vertex[3].empty() ? 3 : 4); i++) {
+				std::istringstream vss(vertex[i]);
+				std::string indices;
+				int posIdx, texIdx, normIdx;
+
+				std::getline(vss, indices, '/');
+				posIdx = std::stoi(indices) - 1;  // OBJ index starts at 1
+
+				std::getline(vss, indices, '/');
+				texIdx = !indices.empty() ? std::stoi(indices) - 1 : -1;
+
+				std::getline(vss, indices);
+				normIdx = !indices.empty() ? std::stoi(indices) - 1 : -1;
+
+				// Combine the vertices, texCoords, and normals
+				mesh->vertices.push_back(positions[posIdx].x);
+				mesh->vertices.push_back(positions[posIdx].y);
+				mesh->vertices.push_back(positions[posIdx].z);
+
+				if (texIdx != -1 && texIdx < texCoords.size()) {
+					mesh->vertices.push_back(texCoords[texIdx].x);
+					mesh->vertices.push_back(texCoords[texIdx].y);
+				}
+				else {
+					mesh->vertices.push_back(0.0f); // Default values if no texture
+					mesh->vertices.push_back(0.0f);
+				}
+
+				if (normIdx != -1 && normIdx < norm.size()) {
+					mesh->normals.push_back(norm[normIdx].x);
+					mesh->normals.push_back(norm[normIdx].y);
+					mesh->normals.push_back(norm[normIdx].z);
+				}
+			}
+
+			// For quads, we split into two triangles
+			if (!vertex[3].empty()) {
+				// Add two triangles from quad face
+				mesh->indices.push_back(mesh->indices.size());
+				mesh->indices.push_back(mesh->indices.size());
+				mesh->indices.push_back(mesh->indices.size());
+
+				mesh->indices.push_back(mesh->indices.size());
+				mesh->indices.push_back(mesh->indices.size());
+				mesh->indices.push_back(mesh->indices.size());
+			}
+			else {
+				// Standard triangle
+				mesh->indices.push_back(mesh->indices.size());
+				mesh->indices.push_back(mesh->indices.size());
+				mesh->indices.push_back(mesh->indices.size());
+			}
+		}
+	}
+
+	file.close();
+	std::cout << "Mesh created" << endl;
+	mesh->setUpBuffers();
+	return mesh;
 }
