@@ -19,51 +19,67 @@ std::shared_ptr<MeshResource> MeshResource::createCube(float width, float height
 	depth = depth / 2;
 	mesh->vertices.insert(mesh->vertices.begin(),
 		{
-		-width,	-height,	depth,			// pos 0
-		0.5,	0.5f,		0,		1,	// color 0
-		1,		1,					//texture coordinates
-		width,	-height,	depth,			// pos 1
-		0.5f,	0,			0.5f,	1,	// color 0
-		0,		1,					//texture coordinates
-		width,	height,		depth,			// pos 2
-		0,		0,			0.5f,	1,	// color 0
-		0,		0,					//texture coordinates
-		-width,	height,		depth,			// pos 2
-		0,		1,			0,		1,	// color 0
-		1,		0,					//texture coordinates
+		// Front face
+		-width,	-height,	depth,	/*bottom - left*/	0, 0, 0, 0,	/*color*/	0.0f, 0.0f,  /*Texture coordinates*/
+		width,	-height,	depth,	/*bottom - right*/	0, 0, 0, 0,	/*color*/	1.0f, 0.0f,  /*Texture coordinates*/
+		width,	height,		depth,	/*top - right*/		0, 0, 0, 0,	/*color*/	1.0f, 1.0f,  /*Texture coordinates*/
+		-width,	height,		depth,	/*top - left*/		0, 0, 0, 0,	/*color*/	0.0f, 1.0f,  /*Texture coordinates*/
 
-		-width,	-height,	-depth,			// pos 0
-		0.5,	0.5f,		0,		1,	// color 0
-		1,		1,					//texture coordinates
-		width,	-height,	-depth,			// pos 1
-		0.5f,	0,			0.5f,	1,	// color 0
-		0,		1,					//texture coordinates
-		width,	height,		-depth,			// pos 2
-		0,		0,			0.5f,	1,	// color 0
-		0,		0,					//texture coordinates
-		-width,	height,		-depth,			// pos 2
-		0,		1,			0,		1,	// color 0
-		1,		0,					//texture coordinates
+		// Back face
+		-width,	-height,	-depth,	/*bottom-left*/		0, 0, 0, 0,	/*color*/	0.0f, 0.0f,  /*Texture coordinates*/
+		width,	-height,	-depth,	/*bottom-right*/	0, 0, 0, 0,	/*color*/	1.0f, 0.0f,  /*Texture coordinates*/
+		width,	height,		-depth,	/*top-right*/		0, 0, 0, 0,	/*color*/	1.0f, 1.0f,  /*Texture coordinates*/
+		-width,	height,		-depth,	/*top-left*/		0, 0, 0, 0,	/*color*/	0.0f, 1.0f,  /*Texture coordinates*/
+
+		// Left face
+		-width,	-height,	-depth,	/*bottom-left*/		0, 0, 0, 0,	/*color*/	0.0f, 0.0f,  /*Texture coordinates*/
+		-width,	-height,	depth,	/*bottom-right*/	0, 0, 0, 0,	/*color*/	1.0f, 0.0f,  /*Texture coordinates*/ 
+		-width,	height,		depth,	/*top-right*/		0, 0, 0, 0,	/*color*/	1.0f, 1.0f,  /*Texture coordinates*/ 
+		-width,	height,		-depth,	/*top-left*/		0, 0, 0, 0,	/*color*/	0.0f, 1.0f,  /*Texture coordinates*/ 
+
+		// Right face
+		width,	-height,	-depth,	/*bottom-left*/		0, 0, 0, 0,	/*color*/	0.0f, 0.0f,  /*Texture coordinates*/ 
+		width,	-height,	depth,	/*bottom-right*/	0, 0, 0, 0,	/*color*/	1.0f, 0.0f,  /*Texture coordinates*/ 
+		width,	height,		depth,	/*top-right*/		0, 0, 0, 0,	/*color*/	1.0f, 1.0f,  /*Texture coordinates*/ 
+		width,	height,		-depth,	/*top-left*/		0, 0, 0, 0,	/*color*/	0.0f, 1.0f,  /*Texture coordinates*/ 
+
+		// Top face
+		-width,	height,		-depth,	/*top-left*/		0, 0, 0, 0,	/*color*/	0.0f, 0.0f,  /*Texture coordinates*/ 
+		width,	height,		-depth,	/*top-right*/		0, 0, 0, 0,	/*color*/	1.0f, 0.0f,  /*Texture coordinates*/ 
+		width,	height,		depth,	/*bottom-right*/	0, 0, 0, 0,	/*color*/	1.0f, 1.0f,  /*Texture coordinates*/ 
+		-width,	height,		depth,	/*bottom-left*/		0, 0, 0, 0,	/*color*/	0.0f, 1.0f,  /*Texture coordinates*/ 
+
+		// Bottom face
+		-width,	-height,	-depth,	/*bottom-left*/		0, 0, 0, 0,	/*color*/	0.0f, 0.0f,  /*Texture coordinates*/ 
+		width,	-height,	-depth,	/*bottom-right*/	0, 0, 0, 0,	/*color*/	1.0f, 0.0f,  /*Texture coordinates*/ 
+		width,	-height,	depth,	/*top-right*/		0, 0, 0, 0,	/*color*/	1.0f, 1.0f,  /*Texture coordinates*/ 
+		-width,	-height,	depth,	/*top-left*/		0, 0, 0, 0,	/*color*/	0.0f, 1.0f   /*Texture coordinates*/ 
 		});
 
 	mesh->indices.insert(mesh->indices.begin(), {
+		// Front face
 		0, 1, 2,
 		2, 3, 0,
 
-		4, 6, 5,
-		7, 6, 4,
+		// Back face
+		4, 5, 6,
+		6, 7, 4,
 
-		0, 4, 1,
-		4, 5, 1,
+		// Left face
+		8, 9, 10,
+		10, 11, 8,
 
-		6, 7, 3,
-		3, 2, 6,
+		// Right face
+		12, 13, 14,
+		14, 15, 12,
 
-		6, 5, 1,
-		2, 6, 1,
+		// Top face
+		16, 17, 18,
+		18, 19, 16,
 
-		0, 3, 4,
-		3, 7, 4
+		// Bottom face
+		20, 21, 22,
+		22, 23, 20
 		});
 	std::cout << "Cube created" << endl;
 	mesh->setUpBuffers();
@@ -100,8 +116,6 @@ void MeshResource::setUpBuffers() {
 
 	std::cout << "Buffer set up" << endl;
 }
-
-
 
 void MeshResource::bindBuffers() const{
 	glEnableVertexAttribArray(0); //Position
@@ -164,6 +178,11 @@ mat4 MeshResource::getRotation()
 	return transform.getRotation();
 }
 
+vec3 MeshResource::getScale()
+{
+	return transform.getScale();
+}
+
 std::shared_ptr<MeshResource> MeshResource::loadFromOBJ(const std::string& filename)
 {
 	std::shared_ptr<MeshResource> mesh = std::make_shared<MeshResource>();
@@ -190,37 +209,49 @@ std::shared_ptr<MeshResource> MeshResource::loadFromOBJ(const std::string& filen
 			vec3 pos;
 			ss >> pos.x >> pos.y >> pos.z;
 			positions.push_back(pos);
+			std::cout << "Vertex Position: " << pos.x << ", " << pos.y << ", " << pos.z << std::endl;
 		}
 		else if (type == "vt") {
 			// Texture coordinate
 			vec2 tex;
 			ss >> tex.x >> tex.y;
 			texCoords.push_back(tex);
+			std::cout << "Texture Coord: " << tex.x << ", " << tex.y << std::endl;
 		}
 		else if (type == "vn") {
 			// Normal
 			vec3 n;
 			ss >> n.x >> n.y >> n.z;
 			norm.push_back(n);
+			std::cout << "Normal: " << n.x << ", " << n.y << ", " << n.z << std::endl;
+
 		}
 		else if (type == "f") {
 			// Face (triangulated or quad)
 			std::string vertex[4];  // In case of quads
-			ss >> vertex[0] >> vertex[1] >> vertex[2] >> vertex[3];
+			int count = 0;
+			while (ss >> vertex[count++] && count < 4){}
 
-			for (int i = 0; i < (vertex[3].empty() ? 3 : 4); i++) {
+			std::vector<int> vertexIndices;
+
+			for (int i = 0; i < (count == 4 ? 4 : 3); i++) {
 				std::istringstream vss(vertex[i]);
 				std::string indices;
-				int posIdx, texIdx, normIdx;
+				int posIdx, texIdx = -1, normIdx = -1;
 
 				std::getline(vss, indices, '/');
-				posIdx = std::stoi(indices) - 1;  // OBJ index starts at 1
+				posIdx = std::stoi(indices) - 1;
 
-				std::getline(vss, indices, '/');
-				texIdx = !indices.empty() ? std::stoi(indices) - 1 : -1;
+				if (std::getline(vss, indices, '/')) {
+					texIdx = !indices.empty() ? std::stoi(indices) -1 : -1;
+				}
 
-				std::getline(vss, indices);
-				normIdx = !indices.empty() ? std::stoi(indices) - 1 : -1;
+				if (std::getline(vss, indices)) {
+					normIdx = !indices.empty() ? std::stoi(indices) - 1 : -1;
+				}
+				std::cout << "Face vertex " << i << ": Position index: " << posIdx
+					<< ", TexCoord index: " << texIdx
+					<< ", Normal index: " << normIdx << std::endl;
 
 				// Combine the vertices, texCoords, and normals
 				mesh->vertices.push_back(positions[posIdx].x);
@@ -241,24 +272,23 @@ std::shared_ptr<MeshResource> MeshResource::loadFromOBJ(const std::string& filen
 					mesh->normals.push_back(norm[normIdx].y);
 					mesh->normals.push_back(norm[normIdx].z);
 				}
+				vertexIndices.push_back(mesh->vertices.size() / 9 - 1);
+			}
+			for (int idx : vertexIndices) {
+				mesh->indices.push_back(idx);
 			}
 
 			// For quads, we split into two triangles
-			if (!vertex[3].empty()) {
+			if (count == 4) {
+				
 				// Add two triangles from quad face
-				mesh->indices.push_back(mesh->indices.size());
-				mesh->indices.push_back(mesh->indices.size());
-				mesh->indices.push_back(mesh->indices.size());
+				mesh->indices.push_back(vertexIndices[1]);
+				mesh->indices.push_back(vertexIndices[2]);
+				mesh->indices.push_back(vertexIndices[0]);
 
-				mesh->indices.push_back(mesh->indices.size());
-				mesh->indices.push_back(mesh->indices.size());
-				mesh->indices.push_back(mesh->indices.size());
-			}
-			else {
-				// Standard triangle
-				mesh->indices.push_back(mesh->indices.size());
-				mesh->indices.push_back(mesh->indices.size());
-				mesh->indices.push_back(mesh->indices.size());
+				mesh->indices.push_back(vertexIndices[2]);
+				mesh->indices.push_back(vertexIndices[3]);
+				mesh->indices.push_back(vertexIndices[0]);
 			}
 		}
 	}

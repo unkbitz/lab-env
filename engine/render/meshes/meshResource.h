@@ -30,4 +30,5 @@ public:
 	void setScale(vec3 const scale);
 	vec4 getPosition();
 	mat4 getRotation();
+	vec3 getScale();
 };

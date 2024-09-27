@@ -24,14 +24,14 @@ bool ExampleApp::Open()
 	if (this->window->Open())
 	{
 		//Creating a mesh by loading OBJ
-		std::shared_ptr<MeshResource> deer = MeshResource::loadFromOBJ("assets/lowpolydeer/deer.obj");
-		if (!deer) { 
+		std::shared_ptr<MeshResource> meshTest = MeshResource::loadFromOBJ("assets/RubixCube.obj");
+		if (!meshTest) { 
 			std::cerr << "Failed to load OBJ mesh" << std::endl;
 			return false;
 		}
-
+		
 		//Creating the cube
-		std::shared_ptr<MeshResource> cubeMesh = MeshResource::createCube(1.0f, 1.0f, 1.0f);
+		std::shared_ptr<MeshResource> cubeMesh = MeshResource::createCube(0.5f, 0.5f, 0.5f);
 		if (!cubeMesh) {
 			std::cerr << "Failed to create cube mesh" << std::endl;
 			return false;
@@ -45,24 +45,27 @@ bool ExampleApp::Open()
 
 		//Loading texture
 		std::shared_ptr<TextureResource> texture = std::make_shared<TextureResource>();
-		std::string texturePath = "assets/Capture.JPG";
-		texture->load(texturePath);
+		std::shared_ptr<TextureResource> rubikTex = std::make_shared<TextureResource>();
+		rubikTex->load("assets/Rubik2.png");
+		texture->load("assets/Capture.JPG");
 
 		//Creating a GraphicsNode to manage the cube
 		cubeNode = std::make_shared<GraphicsNode>();
-		deerNode = std::make_shared<GraphicsNode>();
+		meshTestNode = std::make_shared<GraphicsNode>();
 		cubeNode->setMesh(cubeMesh);
 		cubeNode->setShader(shader);
 		cubeNode->setTexture(texture);
-		deerNode->setMesh(deer);
-		deerNode->setShader(shader);
-		deerNode->setTexture(texture);
+		meshTestNode->setMesh(meshTest);
+		meshTestNode->setShader(shader);
+		meshTestNode->setTexture(rubikTex);
 
 		mat4 rotationMatrix;
+		//meshTestNode->setScale(vec3(0.01, 0.01, 0.01));
 		cubeNode->setRotation(cam.getViewMatrix() * rotationMatrix);
 		cubeNode->setPosition(cam.getViewMatrix() * vec4(4.0, 5.0, 4.0, 1.0));
-		deerNode->setRotation(cam.getViewMatrix() * rotationMatrix);
-		deerNode->setPosition(cam.getViewMatrix() * vec4(-100.0, 0.0, -100.0, 1.0));
+		meshTestNode->setRotation(cam.getViewMatrix() * rotationMatrix);
+		meshTestNode->setPosition(cam.getViewMatrix() * vec4(0.0, 0.0, 0.0, 1.0));
+		//meshTestNode->setScale(vec3(1, 1, 1));
 		grid = new Render::Grid();
 		  
 		// set clear color to gray
@@ -73,14 +76,13 @@ bool ExampleApp::Open()
 				this->window->Close();
 			}
 			vec4 cubeMovement(0, 0, 0, 0);
-			vec4 deerMovement(0, 0, 0, 0);
 			if (mouseRightHeld) {
 				if (action == GLFW_PRESS || action == GLFW_REPEAT) {
 					switch (key) {
-					case GLFW_KEY_W: deerMovement.z -= moveSpeed; break;
-					case GLFW_KEY_S: deerMovement.z += moveSpeed; break;
-					case GLFW_KEY_A: deerMovement.x -= moveSpeed; break;
-					case GLFW_KEY_D: deerMovement.x += moveSpeed; break;
+					case GLFW_KEY_W: camPosition.z -= moveSpeed; break;
+					case GLFW_KEY_S: camPosition.z += moveSpeed; break;
+					case GLFW_KEY_A: camPosition.x -= moveSpeed; break;
+					case GLFW_KEY_D: camPosition.x += moveSpeed; break;
 					}
 				}
 			}
@@ -95,8 +97,7 @@ bool ExampleApp::Open()
 					}
 				}
 			}
-			deerMovement = cam.getViewMatrix() * deerMovement;
-			deerNode->setPosition(cubeNode->getPosition() + deerMovement);
+
 			cubeMovement = cam.getViewMatrix() * cubeMovement;
 			cubeNode->setPosition(cubeNode->getPosition() + cubeMovement);
 		});
@@ -175,7 +176,7 @@ void ExampleApp::Run() {
 	glEnable(GL_DEPTH_TEST);
 	//float angle = 0.0f;
 	//float speed = 0.0f; // Movement speed
-
+	//deerNode->setScale(vec3(0.001, 0.001, 0.001));
 	mat4 rotationMatrix;
 	mat4 viewProjectionMatrix = cam.getprojectionMatrix() * cam.getViewMatrix();
 
@@ -189,10 +190,10 @@ void ExampleApp::Run() {
 		cam.setPosition(camPosition);
 		cam.setTarget(camRotation);
 		cubeNode->getShader()->bind();
-		deerNode->getShader()->bind();
+		meshTestNode->getShader()->bind();
 		viewProjectionMatrix = cam.getprojectionMatrix() * cam.getViewMatrix();
 		cubeNode->draw(cam);
-		//deerNode->draw(cam);
+		meshTestNode->draw(cam);
 		grid->Draw((GLfloat*)&viewProjectionMatrix[0][0]);
 		this->window->SwapBuffers();
 

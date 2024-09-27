@@ -96,6 +96,22 @@ mat4 GraphicsNode::getRotation() {
 	return m_mesh->getRotation();
 }
 
+void GraphicsNode::setScale(vec3 const newScale) {
+	if (m_mesh == nullptr) {
+		std::cout << "Input MeshTransform is invalid" << std::endl;
+		assert(false);
+	}
+	m_mesh->setScale(newScale);
+}
+
+vec3 GraphicsNode::getScale() {
+	if (m_mesh == nullptr) {
+		std::cout << "Input MeshTransform is invalid" << std::endl;
+		assert(false);
+	}
+	return m_mesh->getScale();
+}
+
 void GraphicsNode::draw(const Camera& camera) {
 	m_shader->bind();
 	m_shader->setUniformMat4("u_ViewProjection", camera.getprojectionMatrix(), m_shader->getProgram());

@@ -44,9 +44,9 @@ void MeshTransform::setScale(const vec3& scale) {
 }
 
 mat4 MeshTransform::getTransformMatrix() const {
-	return translationMatrix * rotationMatrix * scaleMatrix;
+	return transformMatrix;
 }
 
 void MeshTransform::recalculate() {
-	transformMatrix = translationMatrix * rotationMatrix * scaleMatrix;
+	transformMatrix = translationMatrix * rotationMatrix;// *scaleMatrix;
 }

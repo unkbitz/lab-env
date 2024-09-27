@@ -32,5 +32,7 @@ public:
 	vec4 getPosition();
 	void setRotation(mat4 const newRot);
 	mat4 getRotation();
+	void setScale(vec3 const newScale);
+	vec3 getScale();
 	void draw(const Camera& camera);
 };

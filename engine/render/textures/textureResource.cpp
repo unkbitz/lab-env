@@ -24,7 +24,6 @@ void TextureResource::unbind()const {
 }
 
 void TextureResource::load(const std::string& path) {
-	//stbi_set_flip_vertically_on_load(1); //flip image
 	localBuffer = stbi_load(path.c_str(), &width, &height, &bitsPerPixel, 4);
 	glGenTextures(1, &rendererID);
 	glActiveTexture(GL_TEXTURE0);
@@ -32,8 +31,8 @@ void TextureResource::load(const std::string& path) {
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
 
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, localBuffer);
 
