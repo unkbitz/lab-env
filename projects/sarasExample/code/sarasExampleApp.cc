@@ -24,7 +24,7 @@ bool ExampleApp::Open()
 	if (this->window->Open())
 	{
 		//Creating a mesh by loading OBJ
-		std::shared_ptr<MeshResource> meshTest = MeshResource::loadFromOBJ("assets/RubixCube.obj");
+		std::shared_ptr<MeshResource> meshTest = MeshResource::loadFromOBJ("assets/plant.obj");//"assets/lowpolydeer/deer.obj"
 		if (!meshTest) { 
 			std::cerr << "Failed to load OBJ mesh" << std::endl;
 			return false;
@@ -37,7 +37,6 @@ bool ExampleApp::Open()
 			return false;
 		}
 		
-
 		//Loading shader
 		std::shared_ptr<ShaderResource> shader = std::make_shared<ShaderResource>();
 		std::string Shaderpath = "assets/shader.txt";
@@ -54,18 +53,19 @@ bool ExampleApp::Open()
 		meshTestNode = std::make_shared<GraphicsNode>();
 		cubeNode->setMesh(cubeMesh);
 		cubeNode->setShader(shader);
-		cubeNode->setTexture(texture);
+		cubeNode->setTexture(rubikTex);
 		meshTestNode->setMesh(meshTest);
 		meshTestNode->setShader(shader);
-		meshTestNode->setTexture(rubikTex);
+		meshTestNode->setTexture(texture);
 
 		mat4 rotationMatrix;
-		//meshTestNode->setScale(vec3(0.01, 0.01, 0.01));
 		cubeNode->setRotation(cam.getViewMatrix() * rotationMatrix);
-		cubeNode->setPosition(cam.getViewMatrix() * vec4(4.0, 5.0, 4.0, 1.0));
+		cubeNode->setPosition(cam.getViewMatrix() * vec4(5.0, 5.0, 5.0, 1.0));
 		meshTestNode->setRotation(cam.getViewMatrix() * rotationMatrix);
 		meshTestNode->setPosition(cam.getViewMatrix() * vec4(0.0, 0.0, 0.0, 1.0));
-		//meshTestNode->setScale(vec3(1, 1, 1));
+
+		//meshTestNode->setScale(vec3(0.01, 0.01, 0.01));
+		
 		grid = new Render::Grid();
 		  
 		// set clear color to gray

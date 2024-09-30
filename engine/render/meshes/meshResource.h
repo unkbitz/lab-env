@@ -6,12 +6,17 @@
 
 class MeshResource {
 private:
+	struct Vertex {
+		vec4 position;
+		vec3 normal;
+		vec2 texCoord;
+	};
+
 	GLuint vbo;
 	GLuint ibo;
 	GLuint vao;
-	std::vector<float> vertices;
+	std::vector<Vertex> vertices;
 	std::vector<int> indices;
-	std::vector<float> normals;
 	MeshTransform transform;
 
 public:
@@ -28,6 +33,7 @@ public:
 	void setPosition(vec4 const position);
 	void setRotation(mat4 const rotation);
 	void setScale(vec3 const scale);
+	void setVertices(std::vector<Vertex> const vertices);
 	vec4 getPosition();
 	mat4 getRotation();
 	vec3 getScale();
