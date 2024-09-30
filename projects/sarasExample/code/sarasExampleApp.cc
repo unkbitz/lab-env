@@ -24,7 +24,7 @@ bool ExampleApp::Open()
 	if (this->window->Open())
 	{
 		//Creating a mesh by loading OBJ
-		std::shared_ptr<MeshResource> meshTest = MeshResource::loadFromOBJ("assets/plant.obj");//"assets/lowpolydeer/deer.obj"
+		std::shared_ptr<MeshResource> meshTest = MeshResource::loadFromOBJ("assets/KUBEN.obj");//"assets/lowpolydeer/deer.obj"
 		if (!meshTest) { 
 			std::cerr << "Failed to load OBJ mesh" << std::endl;
 			return false;
@@ -62,7 +62,7 @@ bool ExampleApp::Open()
 		cubeNode->setRotation(cam.getViewMatrix() * rotationMatrix);
 		cubeNode->setPosition(cam.getViewMatrix() * vec4(5.0, 5.0, 5.0, 1.0));
 		meshTestNode->setRotation(cam.getViewMatrix() * rotationMatrix);
-		meshTestNode->setPosition(cam.getViewMatrix() * vec4(0.0, 0.0, 0.0, 1.0));
+		meshTestNode->setPosition(cam.getViewMatrix() * vec4(-10.0, 5.0, -10.0, 1.0));
 
 		//meshTestNode->setScale(vec3(0.01, 0.01, 0.01));
 		
@@ -76,13 +76,14 @@ bool ExampleApp::Open()
 				this->window->Close();
 			}
 			vec4 cubeMovement(0, 0, 0, 0);
+			vec4 meshMovement(0, 0, 0, 0);
 			if (mouseRightHeld) {
 				if (action == GLFW_PRESS || action == GLFW_REPEAT) {
 					switch (key) {
-					case GLFW_KEY_W: camPosition.z -= moveSpeed; break;
-					case GLFW_KEY_S: camPosition.z += moveSpeed; break;
-					case GLFW_KEY_A: camPosition.x -= moveSpeed; break;
-					case GLFW_KEY_D: camPosition.x += moveSpeed; break;
+					case GLFW_KEY_W: meshMovement.z -= moveSpeed; break;
+					case GLFW_KEY_S: meshMovement.z += moveSpeed; break;
+					case GLFW_KEY_A: meshMovement.x -= moveSpeed; break;
+					case GLFW_KEY_D: meshMovement.x += moveSpeed; break;
 					}
 				}
 			}
@@ -97,10 +98,12 @@ bool ExampleApp::Open()
 					}
 				}
 			}
-
+			meshMovement = cam.getViewMatrix() * meshMovement;
+			meshTestNode->setPosition(meshTestNode->getPosition() + meshMovement);
 			cubeMovement = cam.getViewMatrix() * cubeMovement;
 			cubeNode->setPosition(cubeNode->getPosition() + cubeMovement);
 		});
+
 		vec3 cubeRotation(0, 0, 0);
 		window->SetMouseMoveFunction([this, &cubeRotation](float xpos, float ypos) {
 			if (mouseRightHeld) {
@@ -176,7 +179,6 @@ void ExampleApp::Run() {
 	glEnable(GL_DEPTH_TEST);
 	//float angle = 0.0f;
 	//float speed = 0.0f; // Movement speed
-	//deerNode->setScale(vec3(0.001, 0.001, 0.001));
 	mat4 rotationMatrix;
 	mat4 viewProjectionMatrix = cam.getprojectionMatrix() * cam.getViewMatrix();
 
@@ -187,8 +189,7 @@ void ExampleApp::Run() {
 		// do stuff
 
 		// Apply rotation
-		cam.setPosition(camPosition);
-		cam.setTarget(camRotation);
+
 		cubeNode->getShader()->bind();
 		meshTestNode->getShader()->bind();
 		viewProjectionMatrix = cam.getprojectionMatrix() * cam.getViewMatrix();

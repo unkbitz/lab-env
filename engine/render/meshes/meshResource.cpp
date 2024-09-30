@@ -295,37 +295,39 @@ std::shared_ptr<MeshResource> MeshResource::loadFromOBJ(const std::string& filen
 	// Construct the vertices from the loaded data
 	std::vector<Vertex> vertices(positionIndices.size());
 
+	std::unordered_map<int, Vertex> uniqueVertices; // Store unique vertices
+	std::vector<int> vertexIndices;
+
 	for (size_t i = 0; i < positionIndices.size(); ++i) {
-		vertices[i].position = positions[positionIndices[i]];
+		int posIdx = positionIndices[i];
 
-		// Check and assign texture coordinates, if available
-		if (!texCoordIndices.empty()) {
-			vertices[i].texCoord = texCoords[texCoordIndices[i]];
-		}
-		else {
-			vertices[i].texCoord = vec2(0.0f, 0.0f); // Default texture coord if missing
+		// Create a key based on the position index (or all attributes if needed)
+		if (uniqueVertices.find(posIdx) == uniqueVertices.end()) {
+			Vertex vertex;
+			vertex.position = positions[posIdx];
+
+			// Set texture and normal if available
+			if (!texCoordIndices.empty()) {
+				vertex.texCoord = texCoords[texCoordIndices[i]];
+			}
+			if (!normalIndices.empty()) {
+				vertex.normal = normals[normalIndices[i]];
+			}
+
+			uniqueVertices[posIdx] = vertex;
 		}
 
-		// Check and assign normals, if available
-		if (!normalIndices.empty()) {
-			vertices[i].normal = normals[normalIndices[i]];
-		}
-		else {
-			vertices[i].normal = vec3(0.0f, 0.0f, 0.0f); // Default normal if missing
-		}
+		// Store the index of the unique vertex
+		vertexIndices.push_back(posIdx);
 	}
 
-	// Set the vertices into the MeshResource
-	mesh->setVertices(vertices);
-
-	// Make sure indices are created
-	if (positionIndices.empty()) {
-		std::cerr << "Error: No indices loaded from OBJ file." << std::endl;
-		return nullptr;
+	// Now create the vertices vector from uniqueVertices
+	mesh->vertices.reserve(uniqueVertices.size());
+	for (const auto& entry : uniqueVertices) {
+		mesh->vertices.push_back(entry.second);
 	}
 
-	// Set the index buffer to use the positionIndices as the element array
-	mesh->indices = positionIndices;
+	mesh->indices = vertexIndices;
 
 	mesh->setUpBuffers();
 	return mesh;
