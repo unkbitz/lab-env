@@ -34,5 +34,5 @@ public:
 	mat4 getRotation();
 	void setScale(vec3 const newScale);
 	vec3 getScale();
-	void draw(const Camera& camera);
+	void draw(Camera& camera);
 };

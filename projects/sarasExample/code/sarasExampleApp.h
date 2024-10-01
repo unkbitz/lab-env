@@ -23,12 +23,11 @@ namespace Example {
 		Render::Grid* grid;
 		Camera cam;
 		Display::Window* window;
-		vec3 camPosition = vec3(4.0f, 4.0f, 4.0f);
-		vec3 camRotation = vec3(0.0f, 0.0f, 0.0f);
 		vec3 forward;
 		float moveSpeed = 0.05f;
 		bool mouseLeftHeld = false;
 		bool mouseRightHeld = false;
 		double lastMouseX = 0.0, lastMouseY = 0.0;
+		bool firstMouse = true;
 	};
 } // namespace Example

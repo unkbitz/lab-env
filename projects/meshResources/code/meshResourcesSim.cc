@@ -119,7 +119,7 @@ namespace Example {
 
 		vec4 meshPos(0.5f, 0.5f, 0.0f, 0); */
 		mat4 viewMatrix = cam.getViewMatrix();
-		mat4 projectionMatrix = cam.getprojectionMatrix();
+		mat4 projectionMatrix = cam.getProjectionMatrix();
 		
 		mat4 viewProjectionMatrix = projectionMatrix * viewMatrix;
 		while (this->window->IsOpen()) {

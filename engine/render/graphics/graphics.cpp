@@ -112,9 +112,9 @@ vec3 GraphicsNode::getScale() {
 	return m_mesh->getScale();
 }
 
-void GraphicsNode::draw(const Camera& camera) {
+void GraphicsNode::draw(Camera& camera) {
 	m_shader->bind();
-	m_shader->setUniformMat4("u_ViewProjection", camera.getprojectionMatrix(), m_shader->getProgram());
+	m_shader->setUniformMat4("u_ViewProjection", camera.getViewProjectionMatrix(), m_shader->getProgram());
 	m_shader->setUniformMat4("u_Model", m_mesh->getTransform(), m_shader->getProgram());
 
 	m_texture->bind(0);

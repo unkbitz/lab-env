@@ -59,11 +59,13 @@ bool ExampleApp::Open()
 		meshTestNode->setTexture(texture);
 
 		mat4 rotationMatrix;
-		cubeNode->setRotation(cam.getViewMatrix() * rotationMatrix);
-		cubeNode->setPosition(cam.getViewMatrix() * vec4(5.0, 5.0, 5.0, 1.0));
-		meshTestNode->setRotation(cam.getViewMatrix() * rotationMatrix);
-		meshTestNode->setPosition(cam.getViewMatrix() * vec4(-10.0, 5.0, -10.0, 1.0));
+		cubeNode->setRotation(rotationMatrix);
+		cubeNode->setPosition(vec4(0.0, 0.25, 0.0, 1.0));
+		meshTestNode->setRotation(rotationMatrix);
+		meshTestNode->setPosition(vec4(0.0, 0.0, 0.0, 1.0));
 
+		//cam.setPosition(vec3(0, 0, 0));
+		//cam.updateCameraVectors();
 		//meshTestNode->setScale(vec3(0.01, 0.01, 0.01));
 		
 		grid = new Render::Grid();
@@ -77,17 +79,17 @@ bool ExampleApp::Open()
 			}
 			vec4 cubeMovement(0, 0, 0, 0);
 			vec4 meshMovement(0, 0, 0, 0);
+			vec3 camMovement(0, 0, 0);
 			if (mouseRightHeld) {
 				if (action == GLFW_PRESS || action == GLFW_REPEAT) {
 					switch (key) {
-					case GLFW_KEY_W: meshMovement.z -= moveSpeed; break;
-					case GLFW_KEY_S: meshMovement.z += moveSpeed; break;
-					case GLFW_KEY_A: meshMovement.x -= moveSpeed; break;
-					case GLFW_KEY_D: meshMovement.x += moveSpeed; break;
+					case GLFW_KEY_W: camMovement += cam.getFront() * moveSpeed; break;
+					case GLFW_KEY_S: camMovement -= cam.getFront() * moveSpeed; break;
+					case GLFW_KEY_A: camMovement -= normalize(cross(cam.getFront(), cam.getUp())) * moveSpeed; break;
+					case GLFW_KEY_D: camMovement += normalize(cross(cam.getFront(), cam.getUp())) * moveSpeed; break;
 					}
 				}
 			}
-			
 			else if (!mouseRightHeld) {
 				if (action == GLFW_PRESS || action == GLFW_REPEAT) {
 					switch (key) {
@@ -97,10 +99,18 @@ bool ExampleApp::Open()
 					case GLFW_KEY_D: cubeMovement.x += moveSpeed; break;
 					}
 				}
+				if (action == GLFW_PRESS || action == GLFW_REPEAT) {
+					switch (key) {
+					case GLFW_KEY_UP: meshMovement.z -= moveSpeed; break;
+					case GLFW_KEY_DOWN: meshMovement.z += moveSpeed; break;
+					case GLFW_KEY_LEFT: meshMovement.x -= moveSpeed; break;
+					case GLFW_KEY_RIGHT: meshMovement.x += moveSpeed; break;
+					}
+				}
 			}
-			meshMovement = cam.getViewMatrix() * meshMovement;
+			cam.setPosition(cam.getPosition() + camMovement);
+			cam.updateCameraVectors();
 			meshTestNode->setPosition(meshTestNode->getPosition() + meshMovement);
-			cubeMovement = cam.getViewMatrix() * cubeMovement;
 			cubeNode->setPosition(cubeNode->getPosition() + cubeMovement);
 		});
 
@@ -108,18 +118,36 @@ bool ExampleApp::Open()
 		window->SetMouseMoveFunction([this, &cubeRotation](float xpos, float ypos) {
 			if (mouseRightHeld) {
 				if (mouseLeftHeld) {
+					if (firstMouse) {
+						lastMouseX = xpos;
+						lastMouseY = ypos;
+						firstMouse = false;
+					}
+
 					float xoffset = xpos - lastMouseX;
 					float yoffset = ypos - lastMouseY;
-
 					lastMouseX = xpos;
 					lastMouseY = ypos;
-
-					float camSense = 0.01f;
+					float camSense = 0.05f;
 					xoffset *= camSense;
 					yoffset *= camSense;
 
-					camRotation.y += xoffset;
-					camRotation.x += yoffset;
+					float newYaw = cam.getYaw() + xoffset;
+					cam.setYaw(newYaw);
+					float newPitch = cam.getPitch() + yoffset;
+
+					// Constrain the pitch to avoid flipping
+					if (cam.getPitch() > 89.0f)
+						cam.setPitch(89.0f);
+					if (cam.getPitch() < -89.0f)
+						cam.setPitch(-89.0f);
+
+					// Update camera direction
+					cam.rotate(xoffset, -yoffset);
+				}
+				else {
+					// Reset firstMouse when the mouse button is released
+					firstMouse = true;
 				}
 			}
 
@@ -137,13 +165,15 @@ bool ExampleApp::Open()
 
 					cubeRotation.y += xoffset;
 					cubeRotation.x += yoffset;
+
+					mat4 cubeRotationMatrix = rotationaxis(vec3(1, 0, 0), cubeRotation.x) *
+						rotationaxis(vec3(0, 1, 0), cubeRotation.y);
+					cubeNode->setRotation(cubeRotationMatrix);
+					
 				}
 			}
-			mat4 rotationMatrix = rotationaxis(vec3(1, 0, 0), cubeRotation.x) *
-				rotationaxis(vec3(0, 1, 0), cubeRotation.y);
-			cubeNode->setRotation(cam.getViewMatrix() * rotationMatrix);
 		});
-		
+
 
 		window->SetMousePressFunction([this](int button, int action, int mods) {
 			if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
@@ -177,22 +207,18 @@ void ExampleApp::Close()
 
 void ExampleApp::Run() {
 	glEnable(GL_DEPTH_TEST);
-	//float angle = 0.0f;
-	//float speed = 0.0f; // Movement speed
 	mat4 rotationMatrix;
-	mat4 viewProjectionMatrix = cam.getprojectionMatrix() * cam.getViewMatrix();
+	mat4 viewProjectionMatrix = cam.getProjectionMatrix() * cam.getViewMatrix();
 
+	std::cout << "Camera Position: " << cam.getPosition().x << cam.getPosition().y << cam.getPosition().z << std::endl;
+	std::cout << "Camera Target: " << cam.getTarget().x << cam.getTarget().y << cam.getTarget().z << std::endl;
+	std::cout << "Camera Up: " << cam.getUp().x << cam.getUp().y << cam.getUp().z << std::endl;
 	while (this->window->IsOpen()) {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		this->window->Update();
 
 		// do stuff
-
-		// Apply rotation
-
-		cubeNode->getShader()->bind();
-		meshTestNode->getShader()->bind();
-		viewProjectionMatrix = cam.getprojectionMatrix() * cam.getViewMatrix();
+		viewProjectionMatrix = cam.getProjectionMatrix() * cam.getViewMatrix();
 		cubeNode->draw(cam);
 		meshTestNode->draw(cam);
 		grid->Draw((GLfloat*)&viewProjectionMatrix[0][0]);
