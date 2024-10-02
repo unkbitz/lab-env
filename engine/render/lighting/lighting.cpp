@@ -15,6 +15,7 @@ void Lighting::addToShader(const std::shared_ptr<ShaderResource>& shader) {
 	shader->setUniform3f("u_LightPos", pointLightPos.x, pointLightPos.y, pointLightPos.z);
 	shader->setUniform3f("u_LightColor", color.x, color.y, color.z);
 	shader->setUniform1f("u_LightIntensity", intensity);
+
 }
 
 vec3 Lighting::getPosition() const {

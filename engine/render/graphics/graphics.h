@@ -7,6 +7,7 @@
 #include "render/textures/textureResource.h"
 #include "render/meshes/meshResource.h"
 #include "render/meshes/meshTransform.h"
+#include "render/lighting/lighting.h"
 
 class GraphicsNode {
 private:

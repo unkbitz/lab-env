@@ -23,6 +23,9 @@ bool ExampleApp::Open()
 
 	if (this->window->Open())
 	{
+		//Creating light
+		std::shared_ptr<Lighting> light = std::make_shared<Lighting>();
+
 		//Creating a mesh by loading OBJ
 		std::shared_ptr<MeshResource> meshTest = MeshResource::loadFromOBJ("assets/KUBEN.obj");//"assets/lowpolydeer/deer.obj"
 		if (!meshTest) { 
@@ -39,8 +42,11 @@ bool ExampleApp::Open()
 		
 		//Loading shader
 		std::shared_ptr<ShaderResource> shader = std::make_shared<ShaderResource>();
-		std::string Shaderpath = "assets/shader.txt";
-		shader->load(Shaderpath);
+		std::shared_ptr<ShaderResource> blinnPhongShader = std::make_shared<ShaderResource>();
+		std::string lightShaderPath = "assets/blinn_phong.txt";
+		std::string shaderPath = "assets/shader.txt";
+		shader->load(shaderPath);
+		blinnPhongShader->load(lightShaderPath);
 
 		//Loading texture
 		std::shared_ptr<TextureResource> texture = std::make_shared<TextureResource>();
@@ -48,15 +54,18 @@ bool ExampleApp::Open()
 		rubikTex->load("assets/Rubik2.png");
 		texture->load("assets/Capture.JPG");
 
-		//Creating a GraphicsNode to manage the cube
+		//Creating a GraphicsNodes
 		cubeNode = std::make_shared<GraphicsNode>();
 		meshTestNode = std::make_shared<GraphicsNode>();
+		lightNode = std::make_shared<GraphicsNode>();
+		//Set Nodes meshes, shaders and textures
 		cubeNode->setMesh(cubeMesh);
 		cubeNode->setShader(shader);
 		cubeNode->setTexture(rubikTex);
 		meshTestNode->setMesh(meshTest);
 		meshTestNode->setShader(shader);
 		meshTestNode->setTexture(texture);
+		lightNode->setShader(blinnPhongShader);
 
 		mat4 rotationMatrix;
 		cubeNode->setRotation(rotationMatrix);

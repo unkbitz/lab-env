@@ -20,6 +20,7 @@ namespace Example {
 	private:
 		std::shared_ptr<GraphicsNode> cubeNode; // update to vector
 		std::shared_ptr<GraphicsNode> meshTestNode;
+		std::shared_ptr<GraphicsNode> lightNode;
 		Render::Grid* grid;
 		Camera cam;
 		Display::Window* window;

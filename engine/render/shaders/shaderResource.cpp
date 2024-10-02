@@ -105,6 +105,14 @@ void ShaderResource::setUniformMat4(char* name, mat4 const& matrix, GLuint progr
 	glUniformMatrix4fv(GetUniformLocation(name), 1, GL_FALSE, &matrix[0][0]);
 }
 
+void ShaderResource::setUniform3f(const std::string& name, float v0, float v1, float v2) {
+	glUniform3f(GetUniformLocation(name), v0, v1, v2);
+}
+
+void ShaderResource::setUniform1f(const std::string& name, float v0) {
+	glUniform1f(GetUniformLocation(name), v0);
+}
+
 GLint ShaderResource::GetUniformLocation(const std::string& name) {
 	if (m_UniformLocationCache.find(name) != m_UniformLocationCache.end()) {
 		return m_UniformLocationCache[name];
