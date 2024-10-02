@@ -8,7 +8,7 @@ Camera::Camera():
 	cameraTarget(0.0f, 0.0f, 0.0f),
 	yaw(-90.0f),
 	pitch(0.0f),
-	cameraFront(0.0f, 0.0f, -1.0f){
+	cameraFront(0.0f, 0.0f, -1.0f) {
 	cameraFront = normalize(cameraTarget - cameraPosition);
 	yaw = atan2(cameraFront.z, cameraFront.x) * 180.0f / 3.14159265358979323846f;
 	pitch = asin(cameraFront.y) * 180.0f / 3.14159265358979323846f;

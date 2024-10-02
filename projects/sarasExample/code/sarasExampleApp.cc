@@ -62,11 +62,9 @@ bool ExampleApp::Open()
 		cubeNode->setRotation(rotationMatrix);
 		cubeNode->setPosition(vec4(0.0, 0.25, 0.0, 1.0));
 		meshTestNode->setRotation(rotationMatrix);
-		meshTestNode->setPosition(vec4(0.0, 0.0, 0.0, 1.0));
+		meshTestNode->setPosition(vec4(1.0, 0.25, 1.0, 1.0));
 
-		//cam.setPosition(vec3(0, 0, 0));
-		//cam.updateCameraVectors();
-		//meshTestNode->setScale(vec3(0.01, 0.01, 0.01));
+		
 		
 		grid = new Render::Grid();
 		  
@@ -209,7 +207,7 @@ void ExampleApp::Run() {
 	glEnable(GL_DEPTH_TEST);
 	mat4 rotationMatrix;
 	mat4 viewProjectionMatrix = cam.getProjectionMatrix() * cam.getViewMatrix();
-
+	meshTestNode->setScale(vec3(0.25, 0.25, 0.25));
 	std::cout << "Camera Position: " << cam.getPosition().x << cam.getPosition().y << cam.getPosition().z << std::endl;
 	std::cout << "Camera Target: " << cam.getTarget().x << cam.getTarget().y << cam.getTarget().z << std::endl;
 	std::cout << "Camera Up: " << cam.getUp().x << cam.getUp().y << cam.getUp().z << std::endl;

@@ -49,11 +49,19 @@ SET(files_graphics
 
 SOURCE_GROUP("graphics" FILES ${files_graphics})
 
+SET(files_lighting
+	lighting/lighting.h
+	lighting/lighting.cpp
+	)
+
+SOURCE_GROUP("lighting" FILES ${files_lighting})
+
 SET(files_render
 	${files_render_display}
 	${files_textures}
 	${files_shaders}
 	${files_camera}
+	${files_lighting}
 	${files_meshes}
 	${files_graphics}
 	${files_render_pch})

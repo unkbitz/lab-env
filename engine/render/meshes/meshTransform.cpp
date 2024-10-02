@@ -48,5 +48,5 @@ mat4 MeshTransform::getTransformMatrix() const {
 }
 
 void MeshTransform::recalculate() {
-	transformMatrix = translationMatrix * rotationMatrix;// *scaleMatrix;
+	transformMatrix = translationMatrix * rotationMatrix *scaleMatrix;
 }
