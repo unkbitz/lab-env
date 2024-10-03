@@ -4,14 +4,6 @@
 #include "render/shaders/shaderResource.h"
 
 class Lighting {
-private:
-	vec3 pointLightPos;
-	vec3 pointLightColor;
-	float pointLightIntensity;
-
-	vec3 direktionalLightDir;
-	vec3 direktionalLightColor;
-	float direktionalLightIntensity;
 public:
 	Lighting();
 	~Lighting();
@@ -29,4 +21,12 @@ public:
 	void setDirektionalLightDir(const vec3& dir);
 	void setDirektionalLightColor(const vec3& col);
 	void setDirektionalLightIntensity(const float& intens);
+private:
+	vec3 pointLightPos;
+	vec3 pointLightColor;
+	float pointLightIntensity;
+
+	vec3 direktionalLightDir;
+	vec3 direktionalLightColor;
+	float direktionalLightIntensity;
 };

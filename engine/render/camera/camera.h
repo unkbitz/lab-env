@@ -4,14 +4,6 @@
 #include "math.h"
 
 class Camera {
-private:
-	vec3 cameraUp;
-	vec3 cameraPosition;
-	vec3 cameraTarget;
-	vec3 cameraFront;
-
-	float yaw;
-	float pitch;
 public:
 	Camera();
 	~Camera();
@@ -32,4 +24,12 @@ public:
 	float getPitch() const;
 	void setYaw(float newYaw);
 	void setPitch(float newPitch);
+private:
+	vec3 cameraUp;
+	vec3 cameraPosition;
+	vec3 cameraTarget;
+	vec3 cameraFront;
+
+	float yaw;
+	float pitch;
 };

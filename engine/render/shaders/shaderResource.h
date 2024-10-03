@@ -9,10 +9,6 @@ struct ShaderProgramSource {
 };
 
 class ShaderResource {
-private:
-	std::string m_FilePath;
-	unsigned int m_RendererID;
-	std::unordered_map<std::string, int> m_UniformLocationCache;
 public:
 	ShaderResource();
 	~ShaderResource();
@@ -28,6 +24,10 @@ public:
 	void setUniform3f(const std::string& name, float v0, float v1, float v2);
 	void setUniform1f(const std::string& name, float v0);
 private:
+	std::string m_FilePath;
+	unsigned int m_RendererID;
+	std::unordered_map<std::string, int> m_UniformLocationCache;
+
 	unsigned int compileShader(unsigned int type, const std::string& source);
 	unsigned int createShader(const std::string& vertexShader, const std::string& fragmentShader);
 	ShaderProgramSource parseShader(const std::string& path);

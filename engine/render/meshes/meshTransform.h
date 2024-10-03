@@ -15,7 +15,6 @@ public:
 	void setPosition(const vec4& position);
 	void setRotation(const mat4& rotation);
 	void setScale(const vec3& scale);
-
 private:
 	vec3 meshScale;
 	vec4 meshPos;

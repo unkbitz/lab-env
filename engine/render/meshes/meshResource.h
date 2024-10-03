@@ -18,21 +18,13 @@ struct TupleHash {
 	}
 };
 
+struct Vertex {
+	vec4 position;
+	vec3 normal;
+	vec2 texCoord;
+};
+
 class MeshResource {
-private:
-	struct Vertex {
-		vec4 position;
-		vec3 normal;
-		vec2 texCoord;
-	};
-
-	GLuint vbo;
-	GLuint ibo;
-	GLuint vao;
-	std::vector<Vertex> vertices;
-	std::vector<int> indices;
-	MeshTransform transform;
-
 public:
 	MeshResource();
 	~MeshResource();
@@ -51,4 +43,11 @@ public:
 	vec4 getPosition();
 	mat4 getRotation();
 	vec3 getScale();
+private:
+	GLuint vbo;
+	GLuint ibo;
+	GLuint vao;
+	std::vector<Vertex> vertices;
+	std::vector<int> indices;
+	MeshTransform transform;
 };

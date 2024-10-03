@@ -10,10 +10,6 @@
 #include "render/lighting/lighting.h"
 
 class GraphicsNode {
-private:
-	std::shared_ptr<MeshResource> m_mesh;
-	std::shared_ptr<TextureResource> m_texture;
-	std::shared_ptr<ShaderResource> m_shader;
 public:
 	GraphicsNode();
 	~GraphicsNode();
@@ -34,4 +30,8 @@ public:
 	void setScale(vec3 const newScale);
 	vec3 getScale();
 	void draw(Camera& camera, Lighting& light);
+private:
+	std::shared_ptr<MeshResource> m_mesh;
+	std::shared_ptr<TextureResource> m_texture;
+	std::shared_ptr<ShaderResource> m_shader;
 };
