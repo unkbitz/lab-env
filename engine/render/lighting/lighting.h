@@ -12,8 +12,6 @@ public:
 	Lighting();
 	~Lighting();
 
-	void addToShader(const std::shared_ptr<ShaderResource>& shader);
-
 	vec3 getPosition() const;
 	vec3 getColor() const;
 	float getIntesity() const;

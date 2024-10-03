@@ -3,20 +3,12 @@
 #include "lighting.h"
 
 Lighting::Lighting() :
-	pointLightPos(0.0, 10.0, 0),
+	pointLightPos(0.0, 2.0, 0),
 	color(1.0, 1.0, 1.0),
-	intensity(1) {
+	intensity(20) {
 }
 
-Lighting::~Lighting() {
-}
-
-void Lighting::addToShader(const std::shared_ptr<ShaderResource>& shader) {
-	shader->setUniform3f("u_LightPos", pointLightPos.x, pointLightPos.y, pointLightPos.z);
-	shader->setUniform3f("u_LightColor", color.x, color.y, color.z);
-	shader->setUniform1f("u_LightIntensity", intensity);
-
-}
+Lighting::~Lighting() {}
 
 vec3 Lighting::getPosition() const {
 	return pointLightPos;

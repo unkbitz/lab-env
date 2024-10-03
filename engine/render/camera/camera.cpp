@@ -64,10 +64,6 @@ void Camera::updateCameraVectors() {
 	front.y = sinf(pitchRadians);
 	front.z = sinf(yawRadians) * cosf(pitchRadians);
 
-	// Debug outputs for trigonometric values
-	std::cout << "cosYaw: " << cosf(yawRadians) << ", sinYaw: " << sinf(yawRadians) << std::endl;
-	std::cout << "cosPitch: " << cosf(pitchRadians) << ", sinPitch: " << sinf(pitchRadians) << std::endl;
-
 	cameraFront = normalize(front);
 }
 void Camera::rotate(float yawOffset, float pitchOffset) {

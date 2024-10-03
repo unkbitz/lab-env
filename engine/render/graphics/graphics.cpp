@@ -112,10 +112,15 @@ vec3 GraphicsNode::getScale() {
 	return m_mesh->getScale();
 }
 
-void GraphicsNode::draw(Camera& camera) {
+void GraphicsNode::draw(Camera& camera, Lighting& light) {
 	m_shader->bind();
 	m_shader->setUniformMat4("u_ViewProjection", camera.getViewProjectionMatrix(), m_shader->getProgram());
 	m_shader->setUniformMat4("u_Model", m_mesh->getTransform(), m_shader->getProgram());
+	// Set the lighting-related uniforms for the Blinn-Phong shader
+	m_shader->setUniform3f("u_LightPos", light.getPosition().x, light.getPosition().y, light.getPosition().z);
+	m_shader->setUniform3f("u_ViewPos", camera.getPosition().x, camera.getPosition().y, camera.getPosition().z);
+	m_shader->setUniform3f("u_LightColor", light.getColor().x, light.getColor().y, light.getColor().z);
+	m_shader->setUniform1f("u_LightIntensity", light.getIntesity());
 
 	m_texture->bind(0);
 

@@ -23,16 +23,32 @@ bool ExampleApp::Open()
 
 	if (this->window->Open())
 	{
-		//Creating light
-		std::shared_ptr<Lighting> light = std::make_shared<Lighting>();
 
 		//Creating a mesh by loading OBJ
-		std::shared_ptr<MeshResource> meshTest = MeshResource::loadFromOBJ("assets/KUBEN.obj");//"assets/lowpolydeer/deer.obj"
-		if (!meshTest) { 
+
+
+		std::shared_ptr<MeshResource> deerMesh = MeshResource::loadFromOBJ("assets/lowpolydeer/deer.obj");
+		if (!deerMesh) { 
 			std::cerr << "Failed to load OBJ mesh" << std::endl;
 			return false;
 		}
-		
+		std::shared_ptr<MeshResource> catMesh = MeshResource::loadFromOBJ("assets/cat.obj"); 
+		if (!catMesh) {
+			std::cerr << "Failed to load OBJ mesh" << std::endl;
+			return false;
+		}
+		std::shared_ptr<MeshResource> bunnyMesh = MeshResource::loadFromOBJ("assets/bunny.obj");
+		if (!bunnyMesh) {
+			std::cerr << "Failed to load OBJ mesh" << std::endl;
+			return false;
+		}
+
+		std::shared_ptr<MeshResource> lightMesh = MeshResource::loadFromOBJ("assets/light.obj");
+		if (!lightMesh) {
+			std::cerr << "Failed to load OBJ mesh" << std::endl;
+			return false;
+		}
+
 		//Creating the cube
 		std::shared_ptr<MeshResource> cubeMesh = MeshResource::createCube(0.5f, 0.5f, 0.5f);
 		if (!cubeMesh) {
@@ -42,39 +58,40 @@ bool ExampleApp::Open()
 		
 		//Loading shader
 		std::shared_ptr<ShaderResource> shader = std::make_shared<ShaderResource>();
-		std::shared_ptr<ShaderResource> blinnPhongShader = std::make_shared<ShaderResource>();
-		std::string lightShaderPath = "assets/blinn_phong.txt";
-		std::string shaderPath = "assets/shader.txt";
-		shader->load(shaderPath);
-		blinnPhongShader->load(lightShaderPath);
+		std::string shaderPath1 = "assets/shader.txt";
+		std::string shaderPath2 = "assets/blinn_phong.txt";
+		shader->load(shaderPath2);
 
 		//Loading texture
 		std::shared_ptr<TextureResource> texture = std::make_shared<TextureResource>();
 		std::shared_ptr<TextureResource> rubikTex = std::make_shared<TextureResource>();
+		std::shared_ptr<TextureResource> catTex = std::make_shared<TextureResource>();
 		rubikTex->load("assets/Rubik2.png");
 		texture->load("assets/Capture.JPG");
+		catTex->load("assets/Cat_bump.jpg");
 
-		//Creating a GraphicsNodes
+		//Creating a GraphicsNode to manage the cube
 		cubeNode = std::make_shared<GraphicsNode>();
-		meshTestNode = std::make_shared<GraphicsNode>();
-		lightNode = std::make_shared<GraphicsNode>();
-		//Set Nodes meshes, shaders and textures
+		lightMeshNode = std::make_shared<GraphicsNode>();
+		bunnyNode = std::make_shared<GraphicsNode>();
+		deerNode = std::make_shared<GraphicsNode>();
+		catNode = std::make_shared<GraphicsNode>();
 		cubeNode->setMesh(cubeMesh);
 		cubeNode->setShader(shader);
 		cubeNode->setTexture(rubikTex);
-		meshTestNode->setMesh(meshTest);
-		meshTestNode->setShader(shader);
-		meshTestNode->setTexture(texture);
-		lightNode->setShader(blinnPhongShader);
+		lightMeshNode->setMesh(lightMesh);
+		lightMeshNode->setShader(shader);
+		lightMeshNode->setTexture(texture);
+		bunnyNode->setMesh(bunnyMesh);
+		bunnyNode->setShader(shader);
+		bunnyNode->setTexture(texture);
+		deerNode->setMesh(deerMesh);
+		deerNode->setShader(shader);
+		deerNode->setTexture(texture);
+		catNode->setMesh(catMesh);
+		catNode->setShader(shader);
+		catNode->setTexture(catTex);
 
-		mat4 rotationMatrix;
-		cubeNode->setRotation(rotationMatrix);
-		cubeNode->setPosition(vec4(0.0, 0.25, 0.0, 1.0));
-		meshTestNode->setRotation(rotationMatrix);
-		meshTestNode->setPosition(vec4(1.0, 0.25, 1.0, 1.0));
-
-		
-		
 		grid = new Render::Grid();
 		  
 		// set clear color to gray
@@ -83,6 +100,16 @@ bool ExampleApp::Open()
 		window->SetKeyPressFunction([this](int key, int scancode, int action, int mods) {
 			if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
 				this->window->Close();
+			}
+			if (key == GLFW_KEY_SPACE && action == GLFW_PRESS) {
+				if (!lightPause) {
+					lightPause = true;
+					std :: cout << "Light movement paused" << std::endl;
+				}
+				else if (lightPause) {
+					lightPause = false;
+					std::cout << "Light movement restarted" << std::endl;
+				}
 			}
 			vec4 cubeMovement(0, 0, 0, 0);
 			vec4 meshMovement(0, 0, 0, 0);
@@ -117,7 +144,7 @@ bool ExampleApp::Open()
 			}
 			cam.setPosition(cam.getPosition() + camMovement);
 			cam.updateCameraVectors();
-			meshTestNode->setPosition(meshTestNode->getPosition() + meshMovement);
+			bunnyNode->setPosition(bunnyNode->getPosition() + meshMovement);
 			cubeNode->setPosition(cubeNode->getPosition() + cubeMovement);
 		});
 
@@ -213,21 +240,60 @@ void ExampleApp::Close()
 }
 
 void ExampleApp::Run() {
+	float speed = 0.0f;
+	float radius = 2.0f;
+	float elapsedTime = 0.0f;
+	float pauseTime = 0.0f;    // Total time spent paused
+	float lastPauseStart = 0.0f;  // When the pause started
+	bool isPaused = false;
 	glEnable(GL_DEPTH_TEST);
-	mat4 rotationMatrix;
+	mat4 cubeRotationMatrix;
+	mat4 deerRotationMatrix;
+	mat4 bunnyRotationMatrix;
+	mat4 catRotationmatrix;
 	mat4 viewProjectionMatrix = cam.getProjectionMatrix() * cam.getViewMatrix();
-	meshTestNode->setScale(vec3(0.25, 0.25, 0.25));
-	std::cout << "Camera Position: " << cam.getPosition().x << cam.getPosition().y << cam.getPosition().z << std::endl;
-	std::cout << "Camera Target: " << cam.getTarget().x << cam.getTarget().y << cam.getTarget().z << std::endl;
-	std::cout << "Camera Up: " << cam.getUp().x << cam.getUp().y << cam.getUp().z << std::endl;
+	bunnyNode->setScale(vec3(0.25, 0.25, 0.25));
+	deerNode->setScale(vec3(0.001, 0.001, 0.001));
+	lightMeshNode->setScale(vec3(0.05, 0.05, 0.05));
+	cubeNode->setScale(vec3(0.5, 0.5, 0.5));
+	cubeNode->setRotation(cubeRotationMatrix);
+	cubeNode->setPosition(vec4(0.0, 0.125, 0.0, 1.0));
+	bunnyNode->setRotation(bunnyRotationMatrix);
+	bunnyNode->setPosition(vec4(0.5, -0.006, 0.5, 1.0));
+	deerNode->setRotation(deerRotationMatrix);
+	deerNode->setPosition(vec4(-0.5, 0.0, -0.5, 1.0));
+	catNode->setRotation(catRotationmatrix);
+	catNode->setPosition(vec4(0.5, 0.0, -0.5, 1.0));
+	float initialTime = glfwGetTime();
 	while (this->window->IsOpen()) {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		this->window->Update();
-
 		// do stuff
+		
+		float currentTime = glfwGetTime();
+		
+		if (lightPause && !isPaused) {
+			// If paused, track when the pause started
+			lastPauseStart = currentTime;
+			isPaused = true;
+		}
+		if (!lightPause && isPaused) {
+			pauseTime += currentTime - lastPauseStart;
+			isPaused = false;
+		}
+		if (!lightPause) {
+			elapsedTime = glfwGetTime() - initialTime - pauseTime;
+			speed = elapsedTime;
+			vec4 newLightPos(radius * cosf(speed), light.getPosition().y, radius * sinf(speed), 1.0f);
+			light.setPosition(vec3(newLightPos.x, newLightPos.y, newLightPos.z));
+			lightMeshNode->setPosition(newLightPos);
+		}
 		viewProjectionMatrix = cam.getProjectionMatrix() * cam.getViewMatrix();
-		cubeNode->draw(cam);
-		meshTestNode->draw(cam);
+		cubeNode->draw(cam, light);
+		lightMeshNode->draw(cam, light);
+		bunnyNode->draw(cam, light);
+		deerNode->draw(cam, light);
+		catNode->draw(cam, light);
 		grid->Draw((GLfloat*)&viewProjectionMatrix[0][0]);
 		this->window->SwapBuffers();
 

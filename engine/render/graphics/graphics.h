@@ -13,11 +13,9 @@ class GraphicsNode {
 private:
 	std::shared_ptr<MeshResource> m_mesh;
 	std::shared_ptr<TextureResource> m_texture;
-	//std::shared_ptr<MeshTransform> m_transform;
 	std::shared_ptr<ShaderResource> m_shader;
 public:
 	GraphicsNode();
-	//GraphicsNode(std::shared_ptr<MeshTransform> m_tranform);
 	~GraphicsNode();
 
 	void setMesh(const std::shared_ptr<MeshResource>& newMesh);
@@ -35,5 +33,5 @@ public:
 	mat4 getRotation();
 	void setScale(vec3 const newScale);
 	vec3 getScale();
-	void draw(Camera& camera);
+	void draw(Camera& camera, Lighting& light);
 };

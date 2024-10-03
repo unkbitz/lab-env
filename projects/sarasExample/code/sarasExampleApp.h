@@ -19,9 +19,12 @@ namespace Example {
 
 	private:
 		std::shared_ptr<GraphicsNode> cubeNode; // update to vector
-		std::shared_ptr<GraphicsNode> meshTestNode;
-		std::shared_ptr<GraphicsNode> lightNode;
+		std::shared_ptr<GraphicsNode> bunnyNode;
+		std::shared_ptr<GraphicsNode> lightMeshNode;
+		std::shared_ptr<GraphicsNode> deerNode;
+		std::shared_ptr<GraphicsNode> catNode;
 		Render::Grid* grid;
+		Lighting light;
 		Camera cam;
 		Display::Window* window;
 		vec3 forward;
@@ -30,5 +33,6 @@ namespace Example {
 		bool mouseRightHeld = false;
 		double lastMouseX = 0.0, lastMouseY = 0.0;
 		bool firstMouse = true;
+		bool lightPause = false;
 	};
 } // namespace Example
