@@ -9,8 +9,7 @@ Lighting::Lighting() :
 	
 	direktionalLightDir(0.0f, -1.0f, 0.0f), 
 	direktionalLightColor(1.0f, 1.0f, 1.0f), 
-	direktionalLightIntensity(0.2f) {
-}
+	direktionalLightIntensity(0.2f) {}
 
 Lighting::~Lighting() {}
 

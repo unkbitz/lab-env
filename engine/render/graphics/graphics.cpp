@@ -7,8 +7,7 @@ GraphicsNode::GraphicsNode()
 	m_texture(nullptr), 
 	m_shader(nullptr) {}
 
-GraphicsNode::~GraphicsNode() {
-}
+GraphicsNode::~GraphicsNode() {}
 
 void GraphicsNode::setMesh(const std::shared_ptr<MeshResource>& newMesh) {
 	m_mesh = newMesh;
@@ -44,7 +43,6 @@ std::shared_ptr<ShaderResource> GraphicsNode::getShader() const {
 		assert(false);
 	}
 	return m_shader;
-
 }
 
 mat4 GraphicsNode::getTransform() const {

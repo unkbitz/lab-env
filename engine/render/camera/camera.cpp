@@ -15,9 +15,7 @@ Camera::Camera():
 	updateCameraVectors();
 }
 
-Camera::~Camera() {
-	
-}
+Camera::~Camera() {}
 
 vec3 Camera::getPosition() const {
 	return cameraPosition;
@@ -66,6 +64,7 @@ void Camera::updateCameraVectors() {
 
 	cameraFront = normalize(front);
 }
+
 void Camera::rotate(float yawOffset, float pitchOffset) {
 	yaw += yawOffset;
 	pitch += pitchOffset;

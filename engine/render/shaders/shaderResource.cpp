@@ -6,9 +6,7 @@
 #include <sstream>
 
 ShaderResource::ShaderResource()
-	: m_RendererID(0) {
-
-}
+	: m_RendererID(0) {}
 
 ShaderResource::~ShaderResource() {
 	glDeleteProgram(m_RendererID);
@@ -87,9 +85,11 @@ void ShaderResource::load(const std::string& filepath) {
 	ShaderProgramSource source = parseShader(filepath);
 	m_RendererID = createShader(source.VertexSource, source.FragmentSource);
 }
+
 void ShaderResource::bind() const {
 	glUseProgram(m_RendererID);
 }
+
 void ShaderResource::unbind() const {
 	glUseProgram(0);
 }
@@ -97,10 +97,12 @@ void ShaderResource::unbind() const {
 void ShaderResource::setUniform4fv(char* name, vec4 const& vector, GLuint program) {
 	glUniform4fv(GetUniformLocation(name), 1, &vector[0]);
 }
+
 void ShaderResource::setUnifrom4f(const std::string& name, float v0, float v1, float v2, float v3) {
 	glUniform4f(GetUniformLocation(name), v0, v1, v2, v3);
 	
 }
+
 void ShaderResource::setUniformMat4(char* name, mat4 const& matrix, GLuint program) {
 	glUniformMatrix4fv(GetUniformLocation(name), 1, GL_FALSE, &matrix[0][0]);
 }

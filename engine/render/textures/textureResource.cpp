@@ -7,10 +7,8 @@
 
 TextureResource::TextureResource() 
 	: rendererID(0), localBuffer(nullptr), 
-	width(0), height(0), bitsPerPixel(0)
-{
-	
-}
+	width(0), height(0), bitsPerPixel(0) {}
+
 TextureResource::~TextureResource() {
 	glDeleteTextures(1, &rendererID);
 }
@@ -19,6 +17,7 @@ void TextureResource::bind(GLuint slot) const {
 	glActiveTexture(GL_TEXTURE0 + slot);
 	glBindTexture(GL_TEXTURE_2D, rendererID);
 }
+
 void TextureResource::unbind()const {
 	glBindTexture(GL_TEXTURE_2D, 0);
 }

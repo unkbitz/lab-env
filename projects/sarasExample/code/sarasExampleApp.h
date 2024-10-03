@@ -22,16 +22,21 @@ namespace Example {
 		std::shared_ptr<GraphicsNode> bunnyNode;
 		std::shared_ptr<GraphicsNode> lightNode;
 		std::shared_ptr<GraphicsNode> deerNode;
+		
+		Display::Window* window;
 		Render::Grid* grid;
+		
 		Lighting light;
 		Camera cam;
-		Display::Window* window;
+		
 		vec3 forward;
 		float moveSpeed = 0.05f;
 		bool mouseLeftHeld = false;
 		bool mouseRightHeld = false;
-		double lastMouseX = 0.0, lastMouseY = 0.0;
 		bool firstMouse = true;
 		bool lightPause = false;
+
+		double lastMouseX = 0.0;
+		double lastMouseY = 0.0;
 	};
 } // namespace Example

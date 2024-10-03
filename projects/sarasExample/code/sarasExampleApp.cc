@@ -23,18 +23,20 @@ bool ExampleApp::Open()
 
 	if (this->window->Open())
 	{
-
-		//Creating a mesh by loading OBJ
-
-
-		std::shared_ptr<MeshResource> deerMesh = MeshResource::loadFromOBJ("assets/lowpolydeer/deer.obj");
-		if (!deerMesh) { 
+		std::shared_ptr<MeshResource> bunnyMesh = MeshResource::loadFromOBJ("assets/bunny.obj");
+		if (!bunnyMesh) {
 			std::cerr << "Failed to load OBJ mesh" << std::endl;
 			return false;
 		}
-		
-		std::shared_ptr<MeshResource> bunnyMesh = MeshResource::loadFromOBJ("assets/bunny.obj");
-		if (!bunnyMesh) {
+
+		std::shared_ptr<MeshResource> cubeMesh = MeshResource::createCube(0.5f, 0.5f, 0.5f);
+		if (!cubeMesh) {
+			std::cerr << "Failed to create cube mesh" << std::endl;
+			return false;
+		}
+
+		std::shared_ptr<MeshResource> deerMesh = MeshResource::loadFromOBJ("assets/lowpolydeer/deer.obj");
+		if (!deerMesh) { 
 			std::cerr << "Failed to load OBJ mesh" << std::endl;
 			return false;
 		}
@@ -42,13 +44,6 @@ bool ExampleApp::Open()
 		std::shared_ptr<MeshResource> lightMesh = MeshResource::loadFromOBJ("assets/light.obj");
 		if (!lightMesh) {
 			std::cerr << "Failed to load OBJ mesh" << std::endl;
-			return false;
-		}
-
-		//Creating the cube
-		std::shared_ptr<MeshResource> cubeMesh = MeshResource::createCube(0.5f, 0.5f, 0.5f);
-		if (!cubeMesh) {
-			std::cerr << "Failed to create cube mesh" << std::endl;
 			return false;
 		}
 		
@@ -61,32 +56,35 @@ bool ExampleApp::Open()
 		//Loading texture
 		std::shared_ptr<TextureResource> woodTex = std::make_shared<TextureResource>();
 		std::shared_ptr<TextureResource> rubikTex = std::make_shared<TextureResource>();
-		std::shared_ptr<TextureResource> oakTex = std::make_shared<TextureResource>();
-		std::shared_ptr<TextureResource> discoTex = std::make_shared<TextureResource>();
 		std::shared_ptr<TextureResource> brownTex = std::make_shared<TextureResource>();
-		rubikTex->load("assets/Rubik2.png");
-		woodTex->load("assets/wood.jpg");
-		oakTex->load("assets/leaves.png");
-		discoTex->load("assets/disco2.jpg");
-		brownTex->load("assets/brown.png");
+		std::shared_ptr<TextureResource> discoTex = std::make_shared<TextureResource>();
 
-		//Creating a GraphicsNode to manage the cube
-		cubeNode = std::make_shared<GraphicsNode>();
-		lightNode = std::make_shared<GraphicsNode>();
+		woodTex->load("assets/wood.jpg");
+		rubikTex->load("assets/Rubik2.png");
+		brownTex->load("assets/brown.png");
+		discoTex->load("assets/disco2.jpg");
+
+		//Creating a GraphicsNodes to manage the meshes
 		bunnyNode = std::make_shared<GraphicsNode>();
+		cubeNode = std::make_shared<GraphicsNode>();
 		deerNode = std::make_shared<GraphicsNode>();
-		cubeNode->setMesh(cubeMesh);
-		cubeNode->setShader(shader);
-		cubeNode->setTexture(rubikTex);
-		lightNode->setMesh(lightMesh);
-		lightNode->setShader(shader);
-		lightNode->setTexture(discoTex);
+		lightNode = std::make_shared<GraphicsNode>();
+
 		bunnyNode->setMesh(bunnyMesh);
 		bunnyNode->setShader(shader);
 		bunnyNode->setTexture(woodTex);
+
+		cubeNode->setMesh(cubeMesh);
+		cubeNode->setShader(shader);
+		cubeNode->setTexture(rubikTex);
+
 		deerNode->setMesh(deerMesh);
 		deerNode->setShader(shader);
 		deerNode->setTexture(brownTex);
+
+		lightNode->setMesh(lightMesh);
+		lightNode->setShader(shader);
+		lightNode->setTexture(discoTex);
 
 		grid = new Render::Grid();
 		  
@@ -107,6 +105,7 @@ bool ExampleApp::Open()
 					std::cout << "Light movement restarted" << std::endl;
 				}
 			}
+
 			vec4 cubeMovement(0, 0, 0, 0);
 			vec4 meshMovement(0, 0, 0, 0);
 			vec3 camMovement(0, 0, 0);
@@ -204,7 +203,6 @@ bool ExampleApp::Open()
 			}
 		});
 
-
 		window->SetMousePressFunction([this](int button, int action, int mods) {
 			if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
 				mouseLeftHeld = true;
@@ -218,9 +216,7 @@ bool ExampleApp::Open()
 			else if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_RELEASE) {
 				mouseRightHeld = false;
 			}
-		});
-		
-
+			});
 		return true;
 	}
 	return false;
@@ -236,35 +232,39 @@ void ExampleApp::Close()
 }
 
 void ExampleApp::Run() {
+	glEnable(GL_DEPTH_TEST);
+
 	float speed = 0.0f;
 	float radius = 1.0f;
 	float elapsedTime = 0.0f;
 	float pauseTime = 0.0f;
 	float lastPauseStart = 0.0f;
 	bool isPaused = false;
-	glEnable(GL_DEPTH_TEST);
-	mat4 cubeRotationMatrix;
-	mat4 deerRotationMatrix; //= rotationaxis(vec3(0, 1, 0), -3.14/1.5);
+
 	mat4 bunnyRotationMatrix;
-	mat4 catRotationmatrix;
-	mat4 viewProjectionMatrix = cam.getProjectionMatrix() * cam.getViewMatrix();
-	bunnyNode->setScale(vec3(0.25, 0.25, 0.25));
-	deerNode->setScale(vec3(0.001, 0.001, 0.001));
-	lightNode->setScale(vec3(0.05, 0.05, 0.05));
+	mat4 cubeRotationMatrix;
+	mat4 deerRotationMatrix;
 	
+	mat4 viewProjectionMatrix = cam.getProjectionMatrix() * cam.getViewMatrix();
+
+	bunnyNode->setScale(vec3(0.25, 0.25, 0.25));
+	bunnyNode->setRotation(bunnyRotationMatrix);
+	bunnyNode->setPosition(vec4(0.5, -0.006, -0.5, 1.0));
+
 	cubeNode->setScale(vec3(0.5, 0.5, 0.5));
 	cubeNode->setRotation(cubeRotationMatrix);
 	cubeNode->setPosition(vec4(0.0, 0.125, 0.0, 1.0));
-	bunnyNode->setRotation(bunnyRotationMatrix);
-	bunnyNode->setPosition(vec4(0.5, -0.006, 0.5, 1.0));
+
+	deerNode->setScale(vec3(0.001, 0.001, 0.001));
 	deerNode->setRotation(deerRotationMatrix);
 	deerNode->setPosition(vec4(-0.5, 0.0, -0.5, 1.0));
 	
+	lightNode->setScale(vec3(0.05, 0.05, 0.05));
+
 	float initialTime = glfwGetTime();
 	while (this->window->IsOpen()) {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		this->window->Update();
-		// do stuff
 		
 		float currentTime = glfwGetTime();
 		
@@ -285,12 +285,16 @@ void ExampleApp::Run() {
 			light.setPosition(vec3(newLightPos.x, newLightPos.y, newLightPos.z));
 			lightNode->setPosition(newLightPos);
 		}
+
 		viewProjectionMatrix = cam.getProjectionMatrix() * cam.getViewMatrix();
-		cubeNode->draw(cam, light);
-		lightNode->draw(cam, light);
+
 		bunnyNode->draw(cam, light);
+		cubeNode->draw(cam, light);
 		deerNode->draw(cam, light);
+		lightNode->draw(cam, light);
+
 		grid->Draw((GLfloat*)&viewProjectionMatrix[0][0]);
+
 		this->window->SwapBuffers();
 
 #ifdef CI_TEST

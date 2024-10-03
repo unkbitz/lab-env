@@ -5,8 +5,7 @@
 #include <sstream>
 #include "meshResource.h"
 
-MeshResource::MeshResource() :vbo(0), ibo(0), vao(0) {
-}
+MeshResource::MeshResource() :vbo(0), ibo(0), vao(0) {}
 
 MeshResource::~MeshResource() {
 	cleanUp();
@@ -102,7 +101,6 @@ std::shared_ptr<MeshResource> MeshResource::createCube(float width, float height
 	};
 
 	std::cout << "Cube created" << std::endl;
-
 	mesh->setUpBuffers();
 	return mesh;
 }
@@ -150,7 +148,6 @@ void MeshResource::bindBuffers() const {
 	std::cout << "Buffer bound" << std::endl;
 }
 
-
 void MeshResource::drawMesh() {
 	glBindVertexArray(vao);
 	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
@@ -196,23 +193,19 @@ void MeshResource::setVertices(std::vector<Vertex> const vertices) {
 	this->vertices = vertices;
 }
 
-vec4 MeshResource::getPosition()
-{
+vec4 MeshResource::getPosition() {
 	return transform.getPosition();
 }
 
-mat4 MeshResource::getRotation()
-{
+mat4 MeshResource::getRotation() {
 	return transform.getRotation();
 }
 
-vec3 MeshResource::getScale()
-{
+vec3 MeshResource::getScale() {
 	return transform.getScale();
 }
 
-std::shared_ptr<MeshResource> MeshResource::loadFromOBJ(const std::string& filename)
-{
+std::shared_ptr<MeshResource> MeshResource::loadFromOBJ(const std::string& filename) {
 	std::shared_ptr<MeshResource> mesh = std::make_shared<MeshResource>();
 
 	std::vector<vec4> positions;
@@ -243,19 +236,16 @@ std::shared_ptr<MeshResource> MeshResource::loadFromOBJ(const std::string& filen
 			ss >> tempPos.x >> tempPos.y >> tempPos.z;
 			tempPos.w = 1.0f;
 			positions.push_back(tempPos);
-			//std::cout << "v " << tempPos.x << " " << tempPos.y << " " << tempPos.z << std::endl;
 		}
 		else if (prefix == "vt") {
 			vec2 tempTex;
 			ss >> tempTex.x >> tempTex.y;
 			texCoords.push_back(tempTex);
-			//std::cout << "vt " << tempTex.x << " " << tempTex.y << std::endl;
 		}
 		else if (prefix == "vn") {
 			vec3 tempNorm;
 			ss >> tempNorm.x >> tempNorm.y >> tempNorm.z;
 			normals.push_back(tempNorm);
-			//std::cout << "vn " << tempNorm.x << " " << tempNorm.y << " " << tempNorm.z << std::endl;
 		}
 		else if (prefix == "f") {
 			GLint posIdx, texIdx = -1, normIdx = -1;
@@ -263,34 +253,22 @@ std::shared_ptr<MeshResource> MeshResource::loadFromOBJ(const std::string& filen
 
 			while (ss >> posIdx) {
 				positionIndices.push_back(posIdx - 1);
-				//std::cout << "f " << posIdx << " ";
 				if (ss.peek() == '/') {
-					ss >> slash; // "remove" first slash
+					ss >> slash;
 					if (ss.peek() != '/') {
 						ss >> texIdx;
 						texCoordIndices.push_back(texIdx - 1);
-						//std::cout << texIdx << " ";
 					}
 
 					if (ss.peek() == '/') {
 						ss >> slash >> normIdx;
 						normalIndices.push_back(normIdx - 1);
-						//std::cout << normIdx << " ";
 					}
 				}
-				//std::cout << endl;
 			}
 		}
 	}
 	file.close();
-
-	// Check if data has been correctly loaded
-	//std::cout << "Positions loaded: " << positions.size() << std::endl;
-	//std::cout << "Normals loaded: " << normals.size() << std::endl;
-	//std::cout << "Texture coordinates loaded: " << texCoords.size() << std::endl;
-	//std::cout << "Position indices: " << positionIndices.size() << std::endl;
-	//std::cout << "Normal indices: " << normalIndices.size() << std::endl;
-	//std::cout << "Texture coordinate indices: " << texCoordIndices.size() << std::endl;
 
 	// Check if positions are available (must have positions)
 	if (positions.empty()) {
@@ -311,15 +289,9 @@ std::shared_ptr<MeshResource> MeshResource::loadFromOBJ(const std::string& filen
 				continue; // Skip this vertex if position index is out of bounds
 			}
 
-
 			int posIdx = positionIndices[i + j];
 			int texIdx = texCoordIndices.empty() ? -1 : texCoordIndices[i + j];
 			int normIdx = normalIndices.empty() ? -1 : normalIndices[i + j];
-
-			// Debugging the vertex
-			//std::cout << "Processing vertex: posIdx = " << posIdx
-			//	<< ", texIdx = " << texIdx
-			//	<< ", normIdx = " << normIdx << std::endl;
 
 			// Skip invalid indices (-1, or out-of-bounds indices)
 			if (posIdx < 0 || posIdx >= positions.size()) {
@@ -356,11 +328,6 @@ std::shared_ptr<MeshResource> MeshResource::loadFromOBJ(const std::string& filen
 				// Insert the new vertex into the map and print the inserted values
 				uniqueVertices[key] = static_cast<int>(vertices.size());
 				vertices.push_back(vertex);
-
-				//std::cout << "Inserting unique vertex: position = (" << vertex.position.x << ", "
-				//	<< vertex.position.y << ", " << vertex.position.z << "), texCoord = ("
-				//	<< vertex.texCoord.x << ", " << vertex.texCoord.y << "), normal = ("
-				//	<< vertex.normal.x << ", " << vertex.normal.y << ", " << vertex.normal.z << ")\n";
 			}
 
 			// Store the index of the unique vertex
