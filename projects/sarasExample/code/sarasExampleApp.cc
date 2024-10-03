@@ -32,11 +32,7 @@ bool ExampleApp::Open()
 			std::cerr << "Failed to load OBJ mesh" << std::endl;
 			return false;
 		}
-		std::shared_ptr<MeshResource> catMesh = MeshResource::loadFromOBJ("assets/cat.obj"); 
-		if (!catMesh) {
-			std::cerr << "Failed to load OBJ mesh" << std::endl;
-			return false;
-		}
+		
 		std::shared_ptr<MeshResource> bunnyMesh = MeshResource::loadFromOBJ("assets/bunny.obj");
 		if (!bunnyMesh) {
 			std::cerr << "Failed to load OBJ mesh" << std::endl;
@@ -63,34 +59,34 @@ bool ExampleApp::Open()
 		shader->load(shaderPath2);
 
 		//Loading texture
-		std::shared_ptr<TextureResource> texture = std::make_shared<TextureResource>();
+		std::shared_ptr<TextureResource> woodTex = std::make_shared<TextureResource>();
 		std::shared_ptr<TextureResource> rubikTex = std::make_shared<TextureResource>();
-		std::shared_ptr<TextureResource> catTex = std::make_shared<TextureResource>();
+		std::shared_ptr<TextureResource> oakTex = std::make_shared<TextureResource>();
+		std::shared_ptr<TextureResource> discoTex = std::make_shared<TextureResource>();
+		std::shared_ptr<TextureResource> brownTex = std::make_shared<TextureResource>();
 		rubikTex->load("assets/Rubik2.png");
-		texture->load("assets/Capture.JPG");
-		catTex->load("assets/Cat_bump.jpg");
+		woodTex->load("assets/wood.jpg");
+		oakTex->load("assets/leaves.png");
+		discoTex->load("assets/disco2.jpg");
+		brownTex->load("assets/brown.png");
 
 		//Creating a GraphicsNode to manage the cube
 		cubeNode = std::make_shared<GraphicsNode>();
-		lightMeshNode = std::make_shared<GraphicsNode>();
+		lightNode = std::make_shared<GraphicsNode>();
 		bunnyNode = std::make_shared<GraphicsNode>();
 		deerNode = std::make_shared<GraphicsNode>();
-		catNode = std::make_shared<GraphicsNode>();
 		cubeNode->setMesh(cubeMesh);
 		cubeNode->setShader(shader);
 		cubeNode->setTexture(rubikTex);
-		lightMeshNode->setMesh(lightMesh);
-		lightMeshNode->setShader(shader);
-		lightMeshNode->setTexture(texture);
+		lightNode->setMesh(lightMesh);
+		lightNode->setShader(shader);
+		lightNode->setTexture(discoTex);
 		bunnyNode->setMesh(bunnyMesh);
 		bunnyNode->setShader(shader);
-		bunnyNode->setTexture(texture);
+		bunnyNode->setTexture(woodTex);
 		deerNode->setMesh(deerMesh);
 		deerNode->setShader(shader);
-		deerNode->setTexture(texture);
-		catNode->setMesh(catMesh);
-		catNode->setShader(shader);
-		catNode->setTexture(catTex);
+		deerNode->setTexture(brownTex);
 
 		grid = new Render::Grid();
 		  
@@ -241,20 +237,21 @@ void ExampleApp::Close()
 
 void ExampleApp::Run() {
 	float speed = 0.0f;
-	float radius = 2.0f;
+	float radius = 1.0f;
 	float elapsedTime = 0.0f;
-	float pauseTime = 0.0f;    // Total time spent paused
-	float lastPauseStart = 0.0f;  // When the pause started
+	float pauseTime = 0.0f;
+	float lastPauseStart = 0.0f;
 	bool isPaused = false;
 	glEnable(GL_DEPTH_TEST);
 	mat4 cubeRotationMatrix;
-	mat4 deerRotationMatrix;
+	mat4 deerRotationMatrix; //= rotationaxis(vec3(0, 1, 0), -3.14/1.5);
 	mat4 bunnyRotationMatrix;
 	mat4 catRotationmatrix;
 	mat4 viewProjectionMatrix = cam.getProjectionMatrix() * cam.getViewMatrix();
 	bunnyNode->setScale(vec3(0.25, 0.25, 0.25));
 	deerNode->setScale(vec3(0.001, 0.001, 0.001));
-	lightMeshNode->setScale(vec3(0.05, 0.05, 0.05));
+	lightNode->setScale(vec3(0.05, 0.05, 0.05));
+	
 	cubeNode->setScale(vec3(0.5, 0.5, 0.5));
 	cubeNode->setRotation(cubeRotationMatrix);
 	cubeNode->setPosition(vec4(0.0, 0.125, 0.0, 1.0));
@@ -262,8 +259,7 @@ void ExampleApp::Run() {
 	bunnyNode->setPosition(vec4(0.5, -0.006, 0.5, 1.0));
 	deerNode->setRotation(deerRotationMatrix);
 	deerNode->setPosition(vec4(-0.5, 0.0, -0.5, 1.0));
-	catNode->setRotation(catRotationmatrix);
-	catNode->setPosition(vec4(0.5, 0.0, -0.5, 1.0));
+	
 	float initialTime = glfwGetTime();
 	while (this->window->IsOpen()) {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -278,22 +274,22 @@ void ExampleApp::Run() {
 			isPaused = true;
 		}
 		if (!lightPause && isPaused) {
+			// Caulculate time spent paused
 			pauseTime += currentTime - lastPauseStart;
 			isPaused = false;
 		}
 		if (!lightPause) {
 			elapsedTime = glfwGetTime() - initialTime - pauseTime;
 			speed = elapsedTime;
-			vec4 newLightPos(radius * cosf(speed), light.getPosition().y, radius * sinf(speed), 1.0f);
+			vec4 newLightPos(radius * cosf(speed), light.getPointLightPos().y, radius * sinf(speed), 1.0f);
 			light.setPosition(vec3(newLightPos.x, newLightPos.y, newLightPos.z));
-			lightMeshNode->setPosition(newLightPos);
+			lightNode->setPosition(newLightPos);
 		}
 		viewProjectionMatrix = cam.getProjectionMatrix() * cam.getViewMatrix();
 		cubeNode->draw(cam, light);
-		lightMeshNode->draw(cam, light);
+		lightNode->draw(cam, light);
 		bunnyNode->draw(cam, light);
 		deerNode->draw(cam, light);
-		catNode->draw(cam, light);
 		grid->Draw((GLfloat*)&viewProjectionMatrix[0][0]);
 		this->window->SwapBuffers();
 

@@ -4,7 +4,7 @@
 
 Camera::Camera():
 	cameraUp(0.0f, 1.0f, 0.0f),
-	cameraPosition(4.0f, 4.0f, 4.0f),
+	cameraPosition(3.0f, 3.0f, 3.0f),
 	cameraTarget(0.0f, 0.0f, 0.0f),
 	yaw(-90.0f),
 	pitch(0.0f),
