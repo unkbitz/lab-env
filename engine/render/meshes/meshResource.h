@@ -2,6 +2,7 @@
 #include "render/Grid.h"
 #include <unordered_map>
 #include "math/mat4.h"
+#include "render/material/material.h"
 #include "meshTransform.h"
 #include <tuple>
 #include <functional>
@@ -32,17 +33,21 @@ public:
 	void bindBuffers() const;
 	void setUpBuffers();
 	void drawMesh();
+	void cleanUp();
+
 	static std::shared_ptr<MeshResource>  createCube(float width, float height, float depth);
 	static std::shared_ptr<MeshResource> loadFromOBJ(const std::string& filename);
-	void cleanUp();
-	mat4 getTransform();
+	
+	void setMaterial(std::shared_ptr<Material> mat);
 	void setPosition(vec4 const position);
 	void setRotation(mat4 const rotation);
 	void setScale(vec3 const scale);
 	void setVertices(std::vector<Vertex> const vertices);
+	
 	vec4 getPosition();
 	mat4 getRotation();
 	vec3 getScale();
+	mat4 getTransform();
 private:
 	GLuint vbo;
 	GLuint ibo;
@@ -50,4 +55,5 @@ private:
 	std::vector<Vertex> vertices;
 	std::vector<int> indices;
 	MeshTransform transform;
+	std::shared_ptr<Material> material;
 };

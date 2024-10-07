@@ -119,9 +119,9 @@ void GraphicsNode::draw(Camera& camera, Lighting& light) {
 	m_shader->setUniform3f("u_ViewPos", camera.getPosition().x, camera.getPosition().y, camera.getPosition().z);
 	m_shader->setUniform3f("u_pointLightColor", light.getPointLightColor().x, light.getPointLightColor().y, light.getPointLightColor().z);
 	m_shader->setUniform1f("u_pointLightIntensity", light.getPointLightIntensity());
-	m_shader->setUniform3f("u_directionalLightDir", light.getDirektionalLightDir().x, light.getDirektionalLightDir().y, light.getDirektionalLightDir().z);
-	m_shader->setUniform3f("u_directionalLightColor", light.getDirektionalLightColor().x, light.getDirektionalLightColor().y, light.getDirektionalLightColor().z);
-	m_shader->setUniform1f("u_directionalLightIntensity", light.getDirektionalLightIntensity());
+	m_shader->setUniform3f("u_directionalLightDir", light.getDirectionalLightDir().x, light.getDirectionalLightDir().y, light.getDirectionalLightDir().z);
+	m_shader->setUniform3f("u_directionalLightColor", light.getDirectionalLightColor().x, light.getDirectionalLightColor().y, light.getDirectionalLightColor().z);
+	m_shader->setUniform1f("u_directionalLightIntensity", light.getDirectionalLightIntensity());
 	m_texture->bind(0);
 
 	//m_mesh->bindBuffers();

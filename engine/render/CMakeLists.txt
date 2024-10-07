@@ -19,6 +19,14 @@ SET(files_textures
 
 SOURCE_GROUP("texture" FILES ${files_textures})
 
+SET(files_material
+	material/blinnPhongMaterial.cpp
+	material/blinnPhongMaterial.h
+	material/material.h
+	)
+
+SOURCE_GROUP("material" FILES ${files_material})
+
 SET(files_shaders
 	shaders/shaderResource.h
 	shaders/shaderResource.cpp
@@ -64,6 +72,7 @@ SET(files_render
 	${files_lighting}
 	${files_meshes}
 	${files_graphics}
+	${files_material}
 	${files_render_pch})
 
 SET(files_pch ../config.h ../config.cc)

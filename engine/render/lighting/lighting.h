@@ -11,9 +11,9 @@ public:
 	vec3 getPointLightPos() const;
 	vec3 getPointLightColor() const;
 	float getPointLightIntensity() const;
-	vec3 getDirektionalLightDir() const;
-	vec3 getDirektionalLightColor() const;
-	float getDirektionalLightIntensity() const;
+	vec3 getDirectionalLightDir() const;
+	vec3 getDirectionalLightColor() const;
+	float getDirectionalLightIntensity() const;
 
 	void setPosition(const vec3& pos);
 	void setColor(const vec3& col);
@@ -26,7 +26,7 @@ private:
 	vec3 pointLightColor;
 	float pointLightIntensity;
 
-	vec3 direktionalLightDir;
-	vec3 direktionalLightColor;
-	float direktionalLightIntensity;
+	vec3 directionalLightDir;
+	vec3 directionalLightColor;
+	float directionalLightIntensity;
 };

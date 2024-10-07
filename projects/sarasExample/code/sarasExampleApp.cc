@@ -6,23 +6,15 @@
 using namespace Display;
 namespace Example
 {
-ExampleApp::ExampleApp()
-{
-	// empty
-}
-ExampleApp::~ExampleApp()
-{
-	// empty
-}
+ExampleApp::ExampleApp() {}
 
-bool ExampleApp::Open()
-{
+ExampleApp::~ExampleApp() {}
+
+bool ExampleApp::Open() {
 	App::Open();
 	this->window = new Display::Window;
 
-
-	if (this->window->Open())
-	{
+	if (this->window->Open()) {
 		std::shared_ptr<MeshResource> bunnyMesh = MeshResource::loadFromOBJ("assets/bunny.obj");
 		if (!bunnyMesh) {
 			std::cerr << "Failed to load OBJ mesh" << std::endl;
@@ -107,7 +99,7 @@ bool ExampleApp::Open()
 			}
 
 			vec4 cubeMovement(0, 0, 0, 0);
-			vec4 meshMovement(0, 0, 0, 0);
+			vec4 bunnyMovement(0, 0, 0, 0);
 			vec3 camMovement(0, 0, 0);
 			if (mouseRightHeld) {
 				if (action == GLFW_PRESS || action == GLFW_REPEAT) {
@@ -122,24 +114,24 @@ bool ExampleApp::Open()
 			else if (!mouseRightHeld) {
 				if (action == GLFW_PRESS || action == GLFW_REPEAT) {
 					switch (key) {
+					case GLFW_KEY_UP: bunnyMovement.z -= moveSpeed; break;
+					case GLFW_KEY_DOWN: bunnyMovement.z += moveSpeed; break;
+					case GLFW_KEY_LEFT: bunnyMovement.x -= moveSpeed; break;
+					case GLFW_KEY_RIGHT: bunnyMovement.x += moveSpeed; break;
+					}
+				}
+				if (action == GLFW_PRESS || action == GLFW_REPEAT) {
+					switch (key) {
 					case GLFW_KEY_W: cubeMovement.z -= moveSpeed; break;
 					case GLFW_KEY_S: cubeMovement.z += moveSpeed; break;
 					case GLFW_KEY_A: cubeMovement.x -= moveSpeed; break;
 					case GLFW_KEY_D: cubeMovement.x += moveSpeed; break;
 					}
 				}
-				if (action == GLFW_PRESS || action == GLFW_REPEAT) {
-					switch (key) {
-					case GLFW_KEY_UP: meshMovement.z -= moveSpeed; break;
-					case GLFW_KEY_DOWN: meshMovement.z += moveSpeed; break;
-					case GLFW_KEY_LEFT: meshMovement.x -= moveSpeed; break;
-					case GLFW_KEY_RIGHT: meshMovement.x += moveSpeed; break;
-					}
-				}
 			}
 			cam.setPosition(cam.getPosition() + camMovement);
 			cam.updateCameraVectors();
-			bunnyNode->setPosition(bunnyNode->getPosition() + meshMovement);
+			bunnyNode->setPosition(bunnyNode->getPosition() + bunnyMovement);
 			cubeNode->setPosition(cubeNode->getPosition() + cubeMovement);
 		});
 
@@ -216,14 +208,13 @@ bool ExampleApp::Open()
 			else if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_RELEASE) {
 				mouseRightHeld = false;
 			}
-			});
+		});
 		return true;
 	}
 	return false;
 }
  
-void ExampleApp::Close()
-{
+void ExampleApp::Close() {
 	if (this->window->IsOpen())
 		this->window->Close();
 	delete grid;
@@ -235,7 +226,7 @@ void ExampleApp::Run() {
 	glEnable(GL_DEPTH_TEST);
 
 	float speed = 0.0f;
-	float radius = 1.0f;
+	float radius = 2.0f;
 	float elapsedTime = 0.0f;
 	float pauseTime = 0.0f;
 	float lastPauseStart = 0.0f;
@@ -268,6 +259,7 @@ void ExampleApp::Run() {
 		
 		float currentTime = glfwGetTime();
 		
+		// Light-pause mekanism
 		if (lightPause && !isPaused) {
 			// If paused, track when the pause started
 			lastPauseStart = currentTime;

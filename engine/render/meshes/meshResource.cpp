@@ -5,7 +5,7 @@
 #include <sstream>
 #include "meshResource.h"
 
-MeshResource::MeshResource() :vbo(0), ibo(0), vao(0) {}
+MeshResource::MeshResource() :vbo(0), ibo(0), vao(0), material(nullptr) {}
 
 MeshResource::~MeshResource() {
 	cleanUp();
@@ -176,6 +176,10 @@ mat4 MeshResource::getTransform() {
 	return transform.getTransformMatrix();
 }
 
+void MeshResource::setMaterial(std::shared_ptr<Material> mat) {
+	material = mat;
+}
+
 void MeshResource::setPosition(vec4 const position) {
 	transform.setPosition(position);
 }
@@ -320,6 +324,7 @@ std::shared_ptr<MeshResource> MeshResource::loadFromOBJ(const std::string& filen
 				// Set normal, or default if out of bounds
 				if (normIdx >= 0 && normIdx < normals.size()) {
 					vertex.normal = normals[normIdx];
+					normalize(vertex.normal);
 				}
 				else {
 					vertex.normal = vec3(0.0f, 0.0f, 0.0f); // Default normal

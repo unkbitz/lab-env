@@ -5,11 +5,11 @@
 Lighting::Lighting() :
 	pointLightPos(0.0f, 2.0f, 0.0f),
 	pointLightColor(1.3f, 1.0f, 1.0f),
-	pointLightIntensity(25.0f), 
+	pointLightIntensity(20.0f), 
 	
-	direktionalLightDir(0.0f, -1.0f, 0.0f), 
-	direktionalLightColor(1.0f, 1.0f, 1.0f), 
-	direktionalLightIntensity(0.2f) {}
+	directionalLightDir(0.0f, -1.0f, 0.0f), 
+	directionalLightColor(1.0f, 1.0f, 1.0f), 
+	directionalLightIntensity(1.0f) {}
 
 Lighting::~Lighting() {}
 
@@ -25,16 +25,16 @@ float Lighting::getPointLightIntensity() const {
 	return pointLightIntensity;
 }
 
-vec3 Lighting::getDirektionalLightDir() const {
-	return direktionalLightDir;
+vec3 Lighting::getDirectionalLightDir() const {
+	return directionalLightDir;
 }
 
-vec3 Lighting::getDirektionalLightColor() const {
-	return direktionalLightColor;
+vec3 Lighting::getDirectionalLightColor() const {
+	return directionalLightColor;
 }
 
-float Lighting::getDirektionalLightIntensity() const {
-	return direktionalLightIntensity;
+float Lighting::getDirectionalLightIntensity() const {
+	return directionalLightIntensity;
 }
 
 void Lighting::setPosition(const vec3& pos) {
@@ -50,13 +50,13 @@ void Lighting::setIntensity(const float& intens) {
 }
 
 void Lighting::setDirektionalLightDir(const vec3& dir) {
-	direktionalLightDir = dir;
+	directionalLightDir = dir;
 }
 
 void Lighting::setDirektionalLightColor(const vec3& col) {
-	direktionalLightColor = col;
+	directionalLightColor = col;
 }
 
 void Lighting::setDirektionalLightIntensity(const float& intens) {
-	direktionalLightIntensity = intens;
+	directionalLightIntensity = intens;
 }
