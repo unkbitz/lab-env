@@ -3,12 +3,13 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
-# Ignore bin and obj directories except the assets folder
+[Bb]in/
+![Bb]in/assets
 
-bin/
-!bin/assets/*
+*.obj
+![Bb]in/assets/*.obj
+
 [Bb]uild/
-
 
 # User-specific files
 *.rsuser
