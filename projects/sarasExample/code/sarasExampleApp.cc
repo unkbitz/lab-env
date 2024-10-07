@@ -27,7 +27,7 @@ bool ExampleApp::Open() {
 			return false;
 		}
 
-		std::shared_ptr<MeshResource> deerMesh = MeshResource::loadFromOBJ("assets/lowpolydeer/deer.obj");
+		std::shared_ptr<MeshResource> deerMesh = MeshResource::loadFromOBJ("assets/deer.obj");
 		if (!deerMesh) { 
 			std::cerr << "Failed to load OBJ mesh" << std::endl;
 			return false;

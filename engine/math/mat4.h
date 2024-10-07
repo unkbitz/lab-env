@@ -267,6 +267,7 @@ inline mat4 lookat(vec3 eye, vec3 const& at, vec3 const& up) {
 		vec4(dot(r, -eye), dot(u, -eye), dot(v, -eye), 1));
 	return matlookat;
 }
+
 inline mat4 translation(float const posX, float const posY, float const posZ)
 {
 	const mat4 trans(
