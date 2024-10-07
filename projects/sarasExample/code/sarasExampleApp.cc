@@ -39,13 +39,13 @@ bool ExampleApp::Open() {
 			return false;
 		}
 		
-		//Loading shader
+		// Loading shader
 		std::shared_ptr<ShaderResource> shader = std::make_shared<ShaderResource>();
 		std::string shaderPath1 = "assets/shader.txt";
 		std::string shaderPath2 = "assets/blinn_phong.txt";
 		shader->load(shaderPath2);
 
-		//Loading texture
+		// Loading texture
 		std::shared_ptr<TextureResource> woodTex = std::make_shared<TextureResource>();
 		std::shared_ptr<TextureResource> rubikTex = std::make_shared<TextureResource>();
 		std::shared_ptr<TextureResource> brownTex = std::make_shared<TextureResource>();
@@ -56,7 +56,7 @@ bool ExampleApp::Open() {
 		brownTex->load("assets/brown.png");
 		discoTex->load("assets/disco2.jpg");
 
-		//Creating a GraphicsNodes to manage the meshes
+		// Creating a GraphicsNodes to manage the meshes
 		bunnyNode = std::make_shared<GraphicsNode>();
 		cubeNode = std::make_shared<GraphicsNode>();
 		deerNode = std::make_shared<GraphicsNode>();
@@ -189,8 +189,7 @@ bool ExampleApp::Open() {
 
 					mat4 cubeRotationMatrix = rotationaxis(vec3(1, 0, 0), cubeRotation.x) *
 						rotationaxis(vec3(0, 1, 0), cubeRotation.y);
-					cubeNode->setRotation(cubeRotationMatrix);
-					
+					cubeNode->setRotation(cubeRotationMatrix);					
 				}
 			}
 		});
