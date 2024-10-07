@@ -6,7 +6,7 @@
 # Ignore bin and obj directories except the assets folder
 [Bb]in/
 [Bb]in/*
-![Bb]in/assets/
+![Bb]in/assets/*
 ![Bb]in/assets/**
 
 [Bb]uild/
