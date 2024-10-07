@@ -9,8 +9,6 @@
 ![Bb]in/assets/
 ![Bb]in/assets/**
 
-# Ignore other common directories and files
-[Oo]bj/
 [Bb]uild/
 
 
