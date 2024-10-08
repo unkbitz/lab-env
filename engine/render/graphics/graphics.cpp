@@ -126,7 +126,6 @@ void GraphicsNode::draw(Camera& camera, Lighting& light) {
 
 	//m_mesh->bindBuffers();
 	m_mesh->drawMesh();
-
 	m_texture->unbind();
 	m_shader->unbind();
 }

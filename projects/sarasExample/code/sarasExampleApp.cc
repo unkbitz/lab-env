@@ -27,8 +27,8 @@ bool ExampleApp::Open() {
 			return false;
 		}
 
-		std::shared_ptr<MeshResource> deerMesh = MeshResource::loadFromOBJ("assets/deer.obj");
-		if (!deerMesh) { 
+		std::shared_ptr<MeshResource> horseMesh = MeshResource::loadFromOBJ("assets/horse_conv.obj");
+		if (!horseMesh) { 
 			std::cerr << "Failed to load OBJ mesh" << std::endl;
 			return false;
 		}
@@ -41,8 +41,8 @@ bool ExampleApp::Open() {
 		
 		// Loading shader
 		std::shared_ptr<ShaderResource> shader = std::make_shared<ShaderResource>();
-		std::string shaderPath1 = "assets/shader.txt";
-		std::string shaderPath2 = "assets/blinn_phong.txt";
+		//std::string shaderPath1 = "assets/shader.txt";
+		std::string shaderPath2 = "assets/blinn_phong.shader";
 		shader->load(shaderPath2);
 
 		// Loading texture
@@ -50,16 +50,18 @@ bool ExampleApp::Open() {
 		std::shared_ptr<TextureResource> rubikTex = std::make_shared<TextureResource>();
 		std::shared_ptr<TextureResource> brownTex = std::make_shared<TextureResource>();
 		std::shared_ptr<TextureResource> discoTex = std::make_shared<TextureResource>();
+		std::shared_ptr<TextureResource> horseTex = std::make_shared<TextureResource>();
 
 		woodTex->load("assets/wood.jpg");
 		rubikTex->load("assets/Rubik2.png");
 		brownTex->load("assets/brown.png");
 		discoTex->load("assets/disco2.jpg");
+		horseTex->load("assets/horse.jpg", 1);
 
 		// Creating a GraphicsNodes to manage the meshes
 		bunnyNode = std::make_shared<GraphicsNode>();
 		cubeNode = std::make_shared<GraphicsNode>();
-		deerNode = std::make_shared<GraphicsNode>();
+		horseNode = std::make_shared<GraphicsNode>();
 		lightNode = std::make_shared<GraphicsNode>();
 
 		bunnyNode->setMesh(bunnyMesh);
@@ -70,9 +72,9 @@ bool ExampleApp::Open() {
 		cubeNode->setShader(shader);
 		cubeNode->setTexture(rubikTex);
 
-		deerNode->setMesh(deerMesh);
-		deerNode->setShader(shader);
-		deerNode->setTexture(brownTex);
+		horseNode->setMesh(horseMesh);
+		horseNode->setShader(shader);
+		horseNode->setTexture(horseTex);
 
 		lightNode->setMesh(lightMesh);
 		lightNode->setShader(shader);
@@ -233,8 +235,7 @@ void ExampleApp::Run() {
 
 	mat4 bunnyRotationMatrix;
 	mat4 cubeRotationMatrix;
-	mat4 deerRotationMatrix;
-	
+	mat4 horseRotationMatrix = rotationaxis(vec3(1, 0, 0), -3.14/2);
 	mat4 viewProjectionMatrix = cam.getProjectionMatrix() * cam.getViewMatrix();
 
 	bunnyNode->setScale(vec3(0.25, 0.25, 0.25));
@@ -245,9 +246,9 @@ void ExampleApp::Run() {
 	cubeNode->setRotation(cubeRotationMatrix);
 	cubeNode->setPosition(vec4(0.0, 0.125, 0.0, 1.0));
 
-	deerNode->setScale(vec3(0.001, 0.001, 0.001));
-	deerNode->setRotation(deerRotationMatrix);
-	deerNode->setPosition(vec4(-0.5, 0.0, -0.5, 1.0));
+	horseNode->setScale(vec3(0.05, 0.05, 0.05));
+	horseNode->setRotation(horseRotationMatrix);
+	horseNode->setPosition(vec4(-0.5, 0.0, -0.5, 1.0));
 	
 	lightNode->setScale(vec3(0.05, 0.05, 0.05));
 
@@ -281,7 +282,7 @@ void ExampleApp::Run() {
 
 		bunnyNode->draw(cam, light);
 		cubeNode->draw(cam, light);
-		deerNode->draw(cam, light);
+		horseNode->draw(cam, light);
 		lightNode->draw(cam, light);
 
 		grid->Draw((GLfloat*)&viewProjectionMatrix[0][0]);

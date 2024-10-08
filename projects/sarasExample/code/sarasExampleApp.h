@@ -21,7 +21,7 @@ namespace Example {
 		std::shared_ptr<GraphicsNode> cubeNode; // update to vector
 		std::shared_ptr<GraphicsNode> bunnyNode;
 		std::shared_ptr<GraphicsNode> lightNode;
-		std::shared_ptr<GraphicsNode> deerNode;
+		std::shared_ptr<GraphicsNode> horseNode;
 		
 		Display::Window* window;
 		Render::Grid* grid;

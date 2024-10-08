@@ -22,7 +22,8 @@ void TextureResource::unbind()const {
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-void TextureResource::load(const std::string& path) {
+void TextureResource::load(const std::string& path, int flip) {
+	stbi_set_flip_vertically_on_load(flip);
 	localBuffer = stbi_load(path.c_str(), &width, &height, &bitsPerPixel, 4);
 	glGenTextures(1, &rendererID);
 	glActiveTexture(GL_TEXTURE0);

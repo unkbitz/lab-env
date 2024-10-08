@@ -9,7 +9,7 @@ public:
 
 	void bind(GLuint slot = 0) const;
 	void unbind()const;
-	void load(const std::string& path);
+	void load(const std::string& path, int flip = 0);
 private:
 	GLuint rendererID;
 	unsigned char* localBuffer;
