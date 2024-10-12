@@ -149,6 +149,10 @@ void MeshResource::bindBuffers() const {
 }
 
 void MeshResource::drawMesh() {
+	// Applying materials first
+	if (material) {
+		material->Apply();
+	}
 	glBindVertexArray(vao);
 	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);
@@ -177,7 +181,7 @@ mat4 MeshResource::getTransform() {
 }
 
 void MeshResource::setMaterial(std::shared_ptr<Material> mat) {
-	material = mat;
+	this->material = mat;
 }
 
 void MeshResource::setPosition(vec4 const position) {
@@ -339,7 +343,6 @@ std::shared_ptr<MeshResource> MeshResource::loadFromOBJ(const std::string& filen
 			vertexIndices.push_back(uniqueVertices[key]);
 		}
 	}
-
 
 	// Print final sizes of the vertices and indices
 	std::cout << "Final unique vertices size: " << vertices.size() << std::endl;

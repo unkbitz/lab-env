@@ -45,18 +45,46 @@ bool ExampleApp::Open() {
 		std::string shaderPath2 = "assets/blinn_phong.shader";
 		shader->load(shaderPath2);
 
+		std::shared_ptr<BlinnPhongMaterial> woodMaterial = std::make_shared<BlinnPhongMaterial>(shader);
+		std::shared_ptr<BlinnPhongMaterial> plasticMaterial = std::make_shared<BlinnPhongMaterial>(shader);
+		std::shared_ptr<BlinnPhongMaterial> HorseMaterial = std::make_shared<BlinnPhongMaterial>(shader);
+		std::shared_ptr<BlinnPhongMaterial> lampMaterial = std::make_shared<BlinnPhongMaterial>(shader);
+
 		// Loading texture
 		std::shared_ptr<TextureResource> woodTex = std::make_shared<TextureResource>();
+		std::shared_ptr<TextureResource> woodSpecTex = std::make_shared<TextureResource>();
 		std::shared_ptr<TextureResource> rubikTex = std::make_shared<TextureResource>();
-		std::shared_ptr<TextureResource> brownTex = std::make_shared<TextureResource>();
-		std::shared_ptr<TextureResource> discoTex = std::make_shared<TextureResource>();
+		std::shared_ptr<TextureResource> rubikSpecTex = std::make_shared<TextureResource>();
 		std::shared_ptr<TextureResource> horseTex = std::make_shared<TextureResource>();
+		std::shared_ptr<TextureResource> horseSpecTex = std::make_shared<TextureResource>();
+		std::shared_ptr<TextureResource> discoTex = std::make_shared<TextureResource>();
+		std::shared_ptr<TextureResource> discoSpecTex = std::make_shared<TextureResource>();
 
 		woodTex->load("assets/wood.jpg");
+		woodSpecTex->load("assets/wood_spec.jpg");
 		rubikTex->load("assets/Rubik2.png");
-		brownTex->load("assets/brown.png");
-		discoTex->load("assets/disco2.jpg");
+		rubikSpecTex->load("assets/Rubik2_spec.png");
 		horseTex->load("assets/horse.jpg", 1);
+		horseSpecTex->load("assets/horse_spec2.jpg", 1);
+		discoTex->load("assets/disco2.jpg");
+		discoSpecTex->load("assets/disco2_spec.jpg");
+
+		// Material properties
+		woodMaterial->setDiffuseTexture(woodTex);
+		woodMaterial->setSpecularTexture(woodSpecTex);
+		woodMaterial->setShininess(16.0f);
+
+		plasticMaterial->setDiffuseTexture(rubikTex);
+		plasticMaterial->setSpecularTexture(rubikSpecTex);
+		plasticMaterial->setShininess(32.0f);
+
+		HorseMaterial->setDiffuseTexture(horseTex);
+		HorseMaterial->setSpecularTexture(horseSpecTex);
+		HorseMaterial->setShininess(1.0f);
+
+		lampMaterial->setDiffuseTexture(discoTex);
+		lampMaterial->setSpecularTexture(discoSpecTex);
+		lampMaterial->setShininess(64.0f);
 
 		// Creating a GraphicsNodes to manage the meshes
 		bunnyNode = std::make_shared<GraphicsNode>();
@@ -79,6 +107,12 @@ bool ExampleApp::Open() {
 		lightNode->setMesh(lightMesh);
 		lightNode->setShader(shader);
 		lightNode->setTexture(discoTex);
+
+		// Assign the material to the mesh
+		bunnyNode->setMaterial(woodMaterial);
+		cubeNode->setMaterial(plasticMaterial);
+		horseNode->setMaterial(HorseMaterial);
+		lightNode->setMaterial(lampMaterial);
 
 		grid = new Render::Grid();
 		  

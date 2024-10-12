@@ -8,6 +8,7 @@
 #include "render/meshes/meshResource.h"
 #include "render/meshes/meshTransform.h"
 #include "render/lighting/lighting.h"
+#include "render/material/blinnPhongMaterial.h"
 
 class GraphicsNode {
 public:
@@ -17,6 +18,7 @@ public:
 	void setMesh(const std::shared_ptr<MeshResource>& newMesh);
 	void setTexture(const std::shared_ptr<TextureResource>& newTexture);
 	void setShader(const std::shared_ptr<ShaderResource>& newShader);
+	void setMaterial(std::shared_ptr<Material> mat);
 
 	std::shared_ptr<MeshResource> getMesh() const;
 	std::shared_ptr<TextureResource> getTexture() const;

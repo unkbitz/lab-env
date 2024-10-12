@@ -21,6 +21,14 @@ void GraphicsNode::setShader(const std::shared_ptr<ShaderResource>& newShader) {
 	m_shader = newShader;
 }
 
+void GraphicsNode::setMaterial(std::shared_ptr<Material> newMaterial) {
+	if (m_mesh == nullptr) {
+		std::cout << "Input MeshTransform is invalid" << std::endl;
+		assert(false);
+	}
+	m_mesh->setMaterial(newMaterial);
+}
+
 std::shared_ptr<MeshResource> GraphicsNode::getMesh() const {
 	if (m_mesh == nullptr) {
 		std::cout << "m_mesh is nullptr" << std::endl;
@@ -122,10 +130,8 @@ void GraphicsNode::draw(Camera& camera, Lighting& light) {
 	m_shader->setUniform3f("u_directionalLightDir", light.getDirectionalLightDir().x, light.getDirectionalLightDir().y, light.getDirectionalLightDir().z);
 	m_shader->setUniform3f("u_directionalLightColor", light.getDirectionalLightColor().x, light.getDirectionalLightColor().y, light.getDirectionalLightColor().z);
 	m_shader->setUniform1f("u_directionalLightIntensity", light.getDirectionalLightIntensity());
-	m_texture->bind(0);
 
 	//m_mesh->bindBuffers();
 	m_mesh->drawMesh();
-	m_texture->unbind();
 	m_shader->unbind();
 }
