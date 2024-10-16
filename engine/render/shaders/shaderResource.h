@@ -18,9 +18,9 @@ public:
 	void bind() const;
 	void unbind() const;
 	GLint GetUniformLocation(const std::string& name);
-	void setUniform4fv(char* name, vec4 const& vector, GLuint program);
+	void setUniform4fv(const char* name, vec4 const& vector, GLuint program);
 	void setUnifrom4f(const std::string& name, float v0, float v1, float v2, float v3);
-	void setUniformMat4(char* name, mat4 const& matrix, GLuint program);
+	void setUniformMat4(const char* name, mat4 const& matrix, GLuint program);
 	void setUniform3f(const std::string& name, float v0, float v1, float v2);
 	void setUniform1f(const std::string& name, float v0);
 	void setUniform1i(const std::string& name, int v0);

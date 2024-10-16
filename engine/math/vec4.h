@@ -154,7 +154,7 @@ inline float dot(vec4 const& a, vec4 const& b) {
 }
 
 inline float length(vec4 const& v) {
-	float magnitude = sqrt(pow(v.x, 2) + pow(v.y, 2) + pow(v.z, 2) + pow(v.w, 2));
+	float magnitude = sqrtf(powf(v.x, 2.0f) + powf(v.y, 2.0f) + powf(v.z, 2.0f) + powf(v.w, 2.0f));
 	return magnitude;
 }
 

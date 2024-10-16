@@ -156,7 +156,7 @@ inline float determinant(mat4 const m) {
 		det *= a[i][i]; // multiply by the diagonal element
 		// eliminate elements below the diagonal
 		for (int j = i + 1; j < 4; j++) {
-			double factor = a[j][i] / a[i][i];
+			float factor = a[j][i] / a[i][i];
 			for (int k = i + 1; k < 4; k++) {
 				a[j][k] -= factor * a[i][k];
 			}
@@ -211,47 +211,59 @@ inline mat4 inverse(mat4 const& m) {
 }
 
 inline mat4 rotationx(float const rad) {
-	const mat4 rotx(vec4(1.0f, 0.0f, 0.0f, 0.0f),
-					vec4(0.0f, cos(rad), sin(rad), 0.0f),
-					vec4(0.0f, -sin(rad), cos(rad), 0.0f),
-					vec4(0.0f, 0.0f, 0.0f, 1.0f));
+	const mat4 rotx(vec4(1.0f,	0.0f,		0.0f,		0.0f),
+					vec4(0.0f,	cos(rad),	sin(rad),	0.0f),
+					vec4(0.0f,	-sin(rad),	cos(rad),	0.0f),
+					vec4(0.0f,	0.0f,		0.0f,		1.0f));
 	return rotx;
 }
 
 inline mat4 rotationy(float const rad) {
-	const mat4 roty(vec4(cosf(rad), 0.0f, -sinf(rad), 0.0f),
-					vec4(0.0f, 1.0f, 0.0f, 0.0f),
-					vec4(sinf(rad), 0.0f, cosf(rad), 0.0f),
-					vec4(0.0f, 0.0f, 0.0f, 1.0f));
+	const mat4 roty(vec4(cosf(rad),		0.0f,	-sinf(rad),		0.0f),
+					vec4(0.0f,			1.0f,	0.0f,			0.0f),
+					vec4(sinf(rad),		0.0f,	cosf(rad),		0.0f),
+					vec4(0.0f,			0.0f,	0.0f,			1.0f));
 	return roty;
 }
 
 inline mat4 rotationz(float const rad) {
-	const mat4 rotz(vec4(cos(rad), sin(rad), 0.0f, 0.0f),
-					vec4(-sin(rad), cos(rad), 0.0f, 0.0f),
-					vec4(0.0f, 0.0f, 1.0f, 0.0f),
-					vec4(0.0f, 0.0f, 0.0f, 1.0f));
+	const mat4 rotz(vec4(cos(rad),	sin(rad),	0.0f,	0.0f),
+					vec4(-sin(rad),	cos(rad),	0.0f,	0.0f),
+					vec4(0.0f,		0.0f,		1.0f,	0.0f),
+					vec4(0.0f,		0.0f,		0.0f,	1.0f));
 	return rotz;
 }
 
 //rotationaxis(v : vec3 const&, rad : f32 const) : mat4
 inline mat4 rotationaxis(vec3 const& v, float const rad) {
 	mat4 result(
-		vec4(v.x * v.x * (1 - cosf(rad)) + cosf(rad), v.x * v.y * (1 - cosf(rad)) - v.z * sinf(rad), v.x * v.z * (1 - cosf(rad)) + v.y * sinf(rad), 0),
-		vec4(v.x * v.y * (1 - cosf(rad)) + v.z * sinf(rad), v.y * v.y * (1 - cosf(rad)) + cosf(rad), v.y * v.z * (1 - cosf(rad)) - v.x * sinf(rad), 0),
-		vec4(v.x * v.z * (1 - cosf(rad)) - v.y * sinf(rad), v.y * v.z * (1 - cosf(rad)) + v.x * sinf(rad), v.z * v.z * (1 - cosf(rad)) + cosf(rad), 0),
+		vec4(	
+			v.x * v.x * (1 - cosf(rad)) + cosf(rad),
+			v.x * v.y * (1 - cosf(rad)) - v.z * sinf(rad),
+			v.x * v.z * (1 - cosf(rad)) + v.y * sinf(rad), 
+			0),
+		vec4(
+			v.x * v.y * (1 - cosf(rad)) + v.z * sinf(rad), 
+			v.y * v.y * (1 - cosf(rad)) + cosf(rad), 
+			v.y * v.z * (1 - cosf(rad)) - v.x * sinf(rad), 
+			0),
+		vec4(
+			v.x * v.z * (1 - cosf(rad)) - v.y * sinf(rad), 
+			v.y * v.z * (1 - cosf(rad)) + v.x * sinf(rad), 
+			v.z * v.z * (1 - cosf(rad)) + cosf(rad), 
+			0),
 		vec4(0, 0, 0, 1));
 	result = transpose(result);
 	return result;
 }
 
 inline mat4 perspective(float const fovy, float const aspect, float const near, float const far) {
-	float c = 1.0/tanf(fovy/2);
+	float c = 1.0f/tanf(fovy/2.0f);
 	mat4 matperspective(
-		vec4(c / aspect,		0,		0,									0),
-		vec4(0,					c,		0,									0),
-		vec4(0,					0,		-(far + near) / (far - near),		-1),
-		vec4(0,					0,		-(2 * far * near) / (far - near),	0));
+		vec4(c / aspect,	0.0f,		0.0f,								0.0f),
+		vec4(0.0f,			c,			0.0f,								0.0f),
+		vec4(0.0f,			0.0f,		-(far + near) / (far - near),		-1.0f),
+		vec4(0.0f,			0.0f,		-(2 * far * near) / (far - near),	0.0f));
 	return matperspective;
 }
 
@@ -261,9 +273,9 @@ inline mat4 lookat(vec3 eye, vec3 const& at, vec3 const& up) {
 	vec3 u = cross(v, r);
 
 	mat4 matlookat(
-		vec4(r.x, u.x, v.x, 0),
-		vec4(r.y, u.y, v.y, 0),
-		vec4(r.z, u.z, v.z, 0),
+		vec4(r.x, u.x, v.x, 0.0f),
+		vec4(r.y, u.y, v.y, 0.0f),
+		vec4(r.z, u.z, v.z, 0.0f),
 		vec4(dot(r, -eye), dot(u, -eye), dot(v, -eye), 1));
 	return matlookat;
 }
@@ -280,9 +292,9 @@ inline mat4 translation(float const posX, float const posY, float const posZ)
 
 inline mat4 scaling(vec3 scale) {
 	const mat4 scaling(
-		vec4(scale.x, 0.0f, 0.0f, 0.0f),
-		vec4(0.0f, scale.y, 0.0f, 0.0f),
-		vec4(0.0f, 0.0f, scale.z, 0.0f),
-		vec4(0.0f, 0.0f, 0.0f, 1.0f));
+		vec4(scale.x,	0.0f,		0.0f,		0.0f),
+		vec4(0.0f,		scale.y,	0.0f,		0.0f),
+		vec4(0.0f,		0.0f,		scale.z,	0.0f),
+		vec4(0.0f,		0.0f,		0.0f,		1.0f));
 	return scaling;
 }

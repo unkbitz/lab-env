@@ -36,7 +36,7 @@ namespace Example {
 		bool firstMouse = true;
 		bool lightPause = false;
 
-		double lastMouseX = 0.0;
-		double lastMouseY = 0.0;
+		float lastMouseX = 0.0f;
+		float lastMouseY = 0.0f;
 	};
 } // namespace Example

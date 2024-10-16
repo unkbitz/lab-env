@@ -171,7 +171,7 @@ bool ExampleApp::Open() {
 			cubeNode->setPosition(cubeNode->getPosition() + cubeMovement);
 		});
 
-		vec3 cubeRotation(0, 0, 0);
+		vec3 cubeRotation(0.0f, 0.0f, 0.0f);
 		window->SetMouseMoveFunction([this, &cubeRotation](float xpos, float ypos) {
 			if (mouseRightHeld) {
 				if (mouseLeftHeld) {
@@ -266,32 +266,33 @@ void ExampleApp::Run() {
 	float pauseTime = 0.0f;
 	float lastPauseStart = 0.0f;
 	bool isPaused = false;
+	float radians = -3.14f / 2;
 
 	mat4 bunnyRotationMatrix;
 	mat4 cubeRotationMatrix;
-	mat4 horseRotationMatrix = rotationaxis(vec3(1, 0, 0), -3.14/2);
+	mat4 horseRotationMatrix = rotationaxis(vec3(1.0f, 0.0f, 0.0f), radians);
 	mat4 viewProjectionMatrix = cam.getProjectionMatrix() * cam.getViewMatrix();
 
-	bunnyNode->setScale(vec3(0.25, 0.25, 0.25));
+	bunnyNode->setScale(vec3(0.25f, 0.25f, 0.25f));
 	bunnyNode->setRotation(bunnyRotationMatrix);
-	bunnyNode->setPosition(vec4(0.5, -0.006, -0.5, 1.0));
+	bunnyNode->setPosition(vec4(0.5f, -0.006f, -0.5f, 1.0f));
 
-	cubeNode->setScale(vec3(0.5, 0.5, 0.5));
+	cubeNode->setScale(vec3(0.5f, 0.5f, 0.5f));
 	cubeNode->setRotation(cubeRotationMatrix);
-	cubeNode->setPosition(vec4(0.0, 0.125, 0.0, 1.0));
+	cubeNode->setPosition(vec4(0.0f, 0.125f, 0.0f, 1.0f));
 
-	horseNode->setScale(vec3(0.05, 0.05, 0.05));
+	horseNode->setScale(vec3(0.05f, 0.05f, 0.05f));
 	horseNode->setRotation(horseRotationMatrix);
-	horseNode->setPosition(vec4(-0.5, 0.0, -0.5, 1.0));
+	horseNode->setPosition(vec4(-0.5f, 0.0f, -0.5f, 1.0f));
 	
-	lightNode->setScale(vec3(0.05, 0.05, 0.05));
+	lightNode->setScale(vec3(0.05f, 0.05f, 0.05f));
 
-	float initialTime = glfwGetTime();
+	float initialTime = float(glfwGetTime());
 	while (this->window->IsOpen()) {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		this->window->Update();
 		
-		float currentTime = glfwGetTime();
+		float currentTime = float(glfwGetTime());
 		
 		// Light-pause mekanism
 		if (lightPause && !isPaused) {
@@ -305,7 +306,7 @@ void ExampleApp::Run() {
 			isPaused = false;
 		}
 		if (!lightPause) {
-			elapsedTime = glfwGetTime() - initialTime - pauseTime;
+			elapsedTime = float(glfwGetTime()) - initialTime - pauseTime;
 			speed = elapsedTime;
 			vec4 newLightPos(radius * cosf(speed), light.getPointLightPos().y, radius * sinf(speed), 1.0f);
 			light.setPosition(vec3(newLightPos.x, newLightPos.y, newLightPos.z));

@@ -27,7 +27,7 @@ unsigned int ShaderResource::compileShader(unsigned int type, const std::string&
 	glGetShaderiv(id, GL_COMPILE_STATUS, &result);
 	if (result == GL_FALSE) {
 		glGetShaderiv(id, GL_INFO_LOG_LENGTH, &length);
-		char* message = (char*)alloca(length * sizeof(char));
+		char* message = (char*)_malloca(length * sizeof(char));
 		glGetShaderInfoLog(id, length, &length, message);
 		std::cout << message << std::endl;
 		glDeleteShader(id);
@@ -94,7 +94,7 @@ void ShaderResource::unbind() const {
 	glUseProgram(0);
 }
 
-void ShaderResource::setUniform4fv(char* name, vec4 const& vector, GLuint program) {
+void ShaderResource::setUniform4fv(const char* name, vec4 const& vector, GLuint program) {
 	glUniform4fv(GetUniformLocation(name), 1, &vector[0]);
 }
 
@@ -103,7 +103,7 @@ void ShaderResource::setUnifrom4f(const std::string& name, float v0, float v1, f
 	
 }
 
-void ShaderResource::setUniformMat4(char* name, mat4 const& matrix, GLuint program) {
+void ShaderResource::setUniformMat4(const char* name, mat4 const& matrix, GLuint program) {
 	glUniformMatrix4fv(GetUniformLocation(name), 1, GL_FALSE, &matrix[0][0]);
 }
 

@@ -1,4 +1,4 @@
-#pragma once;
+#pragma once
 #include "config.h"
 #include "math/mat4.h"
 #include "math.h"

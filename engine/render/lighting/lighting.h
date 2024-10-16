@@ -1,4 +1,4 @@
-#pragma once;
+#pragma once
 #include "config.h"
 #include "math/vec3.h"
 #include "render/shaders/shaderResource.h"
