@@ -52,6 +52,8 @@ SET(files_meshes
 	meshes/meshResource.cpp
 	meshes/meshTransform.h
 	meshes/meshTransform.cpp
+	meshes/GLTFLoader.h
+	meshes/GLTFLoader.cpp
 	)
 SOURCE_GROUP("meshes" FILES ${files_meshes})
 

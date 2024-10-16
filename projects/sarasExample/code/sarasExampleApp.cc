@@ -180,7 +180,6 @@ bool ExampleApp::Open() {
 						lastMouseY = ypos;
 						firstMouse = false;
 					}
-
 					float xoffset = xpos - lastMouseX;
 					float yoffset = ypos - lastMouseY;
 					lastMouseX = xpos;
@@ -223,8 +222,8 @@ bool ExampleApp::Open() {
 					cubeRotation.y += xoffset;
 					cubeRotation.x += yoffset;
 
-					mat4 cubeRotationMatrix = rotationaxis(vec3(1, 0, 0), cubeRotation.x) *
-						rotationaxis(vec3(0, 1, 0), cubeRotation.y);
+					mat4 cubeRotationMatrix = rotationaxis(vec3(1.0f, 0.0f, 0.0f), cubeRotation.x) *
+						rotationaxis(vec3(0.0f, 1.0f, 0.0f), cubeRotation.y);
 					cubeNode->setRotation(cubeRotationMatrix);					
 				}
 			}
@@ -259,18 +258,17 @@ void ExampleApp::Close() {
 
 void ExampleApp::Run() {
 	glEnable(GL_DEPTH_TEST);
-
 	float speed = 0.0f;
 	float radius = 2.0f;
 	float elapsedTime = 0.0f;
 	float pauseTime = 0.0f;
 	float lastPauseStart = 0.0f;
 	bool isPaused = false;
-	float radians = -3.14f / 2;
+	float radians = 3.14f / 2.0f;
 
 	mat4 bunnyRotationMatrix;
 	mat4 cubeRotationMatrix;
-	mat4 horseRotationMatrix = rotationaxis(vec3(1.0f, 0.0f, 0.0f), radians);
+	mat4 horseRotationMatrix = rotationaxis(vec3(1.0f, 0.0f, 0.0f), -radians);
 	mat4 viewProjectionMatrix = cam.getProjectionMatrix() * cam.getViewMatrix();
 
 	bunnyNode->setScale(vec3(0.25f, 0.25f, 0.25f));
@@ -291,7 +289,6 @@ void ExampleApp::Run() {
 	while (this->window->IsOpen()) {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		this->window->Update();
-		
 		float currentTime = float(glfwGetTime());
 		
 		// Light-pause mekanism
@@ -319,7 +316,6 @@ void ExampleApp::Run() {
 		cubeNode->draw(cam, light);
 		horseNode->draw(cam, light);
 		lightNode->draw(cam, light);
-
 		grid->Draw((GLfloat*)&viewProjectionMatrix[0][0]);
 
 		this->window->SwapBuffers();
