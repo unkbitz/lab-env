@@ -355,3 +355,9 @@ std::shared_ptr<MeshResource> MeshResource::loadFromOBJ(const std::string& filen
 	mesh->setUpBuffers();
 	return mesh;
 }
+
+std::shared_ptr<MeshResource> MeshResource::loadGLTF(const std::string& uri) {
+	std::shared_ptr<MeshResource> mesh = std::make_shared<MeshResource>();
+	
+	return mesh;
+}

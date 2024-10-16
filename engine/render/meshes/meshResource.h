@@ -37,6 +37,7 @@ public:
 
 	static std::shared_ptr<MeshResource>  createCube(float width, float height, float depth);
 	static std::shared_ptr<MeshResource> loadFromOBJ(const std::string& filename);
+	static std::shared_ptr<MeshResource> loadGLTF(const std::string& uri);
 	
 	void setMaterial(std::shared_ptr<Material> mat);
 	void setPosition(vec4 const position);
