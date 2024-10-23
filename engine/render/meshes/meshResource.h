@@ -3,6 +3,7 @@
 #include <unordered_map>
 #include "math/mat4.h"
 #include "render/material/material.h"
+#include "render/gltf.h"
 #include "meshTransform.h"
 #include <tuple>
 #include <functional>

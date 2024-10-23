@@ -29,6 +29,12 @@ uniform struct Material {
     float shininess;
     sampler2D diffuse;
     sampler2D specular;
+    sampler2D metallic;
+    sampler2D emissive;
+    bool hasSpecular;
+    bool hasMetallic;
+    bool hasEmissive;
+
 };
 
 uniform Material material;
@@ -50,8 +56,20 @@ void main() {
     // Normalize the normal vector
     vec3 norm = normalize(Normal);
 
-    // Sample from the specular texture
-    vec4 specularTextureColor = texture(material.specular, TextureCoordinates);
+    // Sample from the specular texture, emissive texture and metallic texture
+    vec4 diffuseTextureColor = texture(material.diffuse, TextureCoordinates);
+    vec3 specularTextureColor = vec3(0.0f);
+    if (material.hasSpecular) {
+        vec4 specularTextureColor = texture(material.specular, TextureCoordinates);
+    }
+    vec3 emissiveColor = vec3(0.0f);  // Default to black
+    if (material.hasEmissive) {
+        emissiveColor = texture(material.emissive, TextureCoordinates).rgb;
+    }
+    vec3 metallicColor = vec3(0.0f);
+    if (material.hasMetallic) {
+        vec3 metallicColor = texture(material.metallic, TextureCoordinates).rgb;
+    }
 
     // ----- Point Light -----
     // Ambient lighting for point light
@@ -66,8 +84,8 @@ void main() {
     vec3 viewDir = normalize(u_ViewPos - FragPos);
     vec3 halfwayDirPoint = normalize(pointLightDir + viewDir);
     float specPoint = pow(max(dot(norm, halfwayDirPoint), 0.0), material.shininess);
-    // Use the specular texture color
-    vec3 specularPoint = specPoint * specularTextureColor.rgb * u_pointLightColor;
+    // Use the specular texture color and the metallic texture color
+    vec3 specularPoint = specPoint * specularTextureColor.rgb * u_pointLightColor * metallicColor;
 
     // Attenuation for point light
     float distancePoint = length(u_pointLightPos - FragPos);
@@ -97,8 +115,7 @@ void main() {
     vec3 lightingResult = pointLightResult + directionalLightResult;
 
     // Combine lighting with texture color
-    vec4 textureColor = texture(material.diffuse, TextureCoordinates);
-    vec4 finalColor = vec4(lightingResult, 1.0) * textureColor;
+    vec4 finalColor = vec4(lightingResult, 1.0) * diffuseTextureColor + vec4(emissiveColor, 1.0);
 
     FragColor = finalColor;
 }

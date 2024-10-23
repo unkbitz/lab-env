@@ -17,8 +17,11 @@ bool ExampleApp::Open() {
 	if (this->window->Open()) {
 		std::shared_ptr<MeshResource> bunnyMesh = MeshResource::loadFromOBJ("assets/bunny.obj");
 		if (!bunnyMesh) {
-			std::cerr << "Failed to load OBJ mesh" << std::endl;
+			std::cerr << "Failed to load bunny from OBJ" << std::endl;
 			return false;
+		}
+		else {
+			std::cout << "Bunny loaded from OBJ" << std::endl;
 		}
 
 		std::shared_ptr<MeshResource> cubeMesh = MeshResource::createCube(0.5f, 0.5f, 0.5f);
@@ -26,18 +29,60 @@ bool ExampleApp::Open() {
 			std::cerr << "Failed to create cube mesh" << std::endl;
 			return false;
 		}
+		else {
+			std::cout << "Cube created" << std::endl;
+		}
 
 		std::shared_ptr<MeshResource> horseMesh = MeshResource::loadFromOBJ("assets/horse_conv.obj");
 		if (!horseMesh) { 
-			std::cerr << "Failed to load OBJ mesh" << std::endl;
+			std::cerr << "Failed to load horse from OBJ" << std::endl;
 			return false;
+		}
+		else {
+			std::cout << "Horse loaded from OBJ" << std::endl;
 		}
 
 		std::shared_ptr<MeshResource> lightMesh = MeshResource::loadFromOBJ("assets/light.obj");
 		if (!lightMesh) {
-			std::cerr << "Failed to load OBJ mesh" << std::endl;
+			std::cerr << "Failed to load lightMesh from OBJ" << std::endl;
 			return false;
 		}
+		else {
+			std::cout << "Light Mesh loaded from OBJ" << std::endl;
+		}
+
+		std::shared_ptr<MeshResource> cubeGLTF = MeshResource::loadGLTF("assets/Cube/glTF/Cube.gltf");
+		if (!cubeGLTF) {
+			std::cerr << "Failed to load cude from GLTF" << std::endl;
+			return false;
+		}
+		else {
+			std::cout << "Cude loaded from GLTF" << std::endl;
+		}
+
+		std::shared_ptr<MeshResource> avocadoGLTF = MeshResource::loadGLTF("assets/Avocado/glTF/Avocado.gltf");
+		if (!avocadoGLTF) {
+			std::cerr << "Failed to load avocado from GLTF" << std::endl;
+			return false;
+		}
+		else {
+			std::cout << "Avocado loaded" << std::endl;
+		}
+
+		std::shared_ptr<MeshResource> damagedHelmet = MeshResource::loadGLTF("assets/DamagedHelmet/glTF-Embedded/DamagedHelmet.gltf");
+		if (!damagedHelmet) {
+			std::cerr << "Failed to load damagedHelmet" << std::endl;
+			return false;
+		}
+		else {
+			std::cout << "DamedHelmet loaded" << std::endl;
+		}
+
+		//std::shared_ptr<MeshResource> fightHelmet = MeshResource::loadGLTF("assets/FlightHelmet/glTF/FlightHelmet.gltf");
+		//if (!fightHelmet) {
+		//	std::cerr << "Failed to load fightHelmet" << std::endl;
+		//	return false;
+		//}
 		
 		// Loading shader
 		std::shared_ptr<ShaderResource> shader = std::make_shared<ShaderResource>();
@@ -49,6 +94,10 @@ bool ExampleApp::Open() {
 		std::shared_ptr<BlinnPhongMaterial> plasticMaterial = std::make_shared<BlinnPhongMaterial>(shader);
 		std::shared_ptr<BlinnPhongMaterial> HorseMaterial = std::make_shared<BlinnPhongMaterial>(shader);
 		std::shared_ptr<BlinnPhongMaterial> lampMaterial = std::make_shared<BlinnPhongMaterial>(shader);
+		std::shared_ptr<BlinnPhongMaterial> GLTFCubeMaterial = std::make_shared<BlinnPhongMaterial>(shader);
+		std::shared_ptr<BlinnPhongMaterial> AvocadoMaterial = std::make_shared<BlinnPhongMaterial>(shader);
+		std::shared_ptr<BlinnPhongMaterial> dHelmetMaterial = std::make_shared<BlinnPhongMaterial>(shader);
+		std::shared_ptr<BlinnPhongMaterial> fHelmetMaterial = std::make_shared<BlinnPhongMaterial>(shader);
 
 		// Loading texture
 		std::shared_ptr<TextureResource> woodTex = std::make_shared<TextureResource>();
@@ -60,6 +109,17 @@ bool ExampleApp::Open() {
 		std::shared_ptr<TextureResource> discoTex = std::make_shared<TextureResource>();
 		std::shared_ptr<TextureResource> discoSpecTex = std::make_shared<TextureResource>();
 
+		std::shared_ptr<TextureResource> GLTFCubeTex = std::make_shared<TextureResource>();
+		std::shared_ptr<TextureResource> cubeMetallicTex = std::make_shared<TextureResource>();
+		std::shared_ptr<TextureResource> avocadoTex = std::make_shared<TextureResource>();
+		std::shared_ptr<TextureResource> avocadoMetallicTex = std::make_shared<TextureResource>();
+		std::shared_ptr<TextureResource> dHelmetTex = std::make_shared<TextureResource>();
+		std::shared_ptr<TextureResource> dHelmetSpecTex = std::make_shared<TextureResource>();
+		std::shared_ptr<TextureResource> dHelmetMetallicTex = std::make_shared<TextureResource>();
+		std::shared_ptr<TextureResource> dHelmetEmissiveTex = std::make_shared<TextureResource>();
+		std::shared_ptr<TextureResource> fHelmetTex = std::make_shared<TextureResource>();
+		std::shared_ptr<TextureResource> fHelmetMetallicTex = std::make_shared<TextureResource>();
+
 		woodTex->load("assets/wood.jpg");
 		woodSpecTex->load("assets/wood_spec.jpg");
 		rubikTex->load("assets/Rubik2.png");
@@ -68,6 +128,17 @@ bool ExampleApp::Open() {
 		horseSpecTex->load("assets/horse_spec2.jpg", 1);
 		discoTex->load("assets/disco2.jpg");
 		discoSpecTex->load("assets/disco2_spec.jpg");
+
+		GLTFCubeTex->load("assets/Cube/glTF/Cube_BaseColor.png");
+		cubeMetallicTex->load("assets/Cube/glTF/Cube_MetallicRoughness.png");
+		avocadoTex->load("assets/Avocado/glTF/Avocado_baseColor.png");
+		avocadoMetallicTex->load("assets/Avocado/glTF/Avocado_roughnessMetallic.png");
+		dHelmetTex->load("assets/DamagedHelmet/glTF/Default_albedo.jpg", 1);
+		dHelmetSpecTex->load("assets/DamagedHelmet/glTF/Default_AO.jpg", 1);
+		dHelmetMetallicTex->load("assets/DamagedHelmet/glTF/Default_metalRoughness.jpg", 1);
+		dHelmetEmissiveTex->load("assets/DamagedHelmet/glTF/Default_emissive.jpg", 1);
+		fHelmetTex->load("assets/FlightHelmet/glTF/FlightHelmet_Materials_MetalPartsMat_BaseColor.png");
+		fHelmetMetallicTex->load("assets/FlightHelmet/glTF/FlightHelmet_Materials_MetalPartsMat_OcclusionRoughMetal.png");
 
 		// Material properties
 		woodMaterial->setDiffuseTexture(woodTex);
@@ -86,33 +157,65 @@ bool ExampleApp::Open() {
 		lampMaterial->setSpecularTexture(discoSpecTex);
 		lampMaterial->setShininess(64.0f);
 
+		GLTFCubeMaterial->setDiffuseTexture(GLTFCubeTex);
+		GLTFCubeMaterial->setSpecularTexture(cubeMetallicTex);
+		GLTFCubeMaterial->setShininess(32.0f);
+
+		AvocadoMaterial->setDiffuseTexture(avocadoTex);
+		AvocadoMaterial->setMetallicTexture(avocadoMetallicTex);
+		AvocadoMaterial->setShininess(32.0f);
+
+		dHelmetMaterial->setDiffuseTexture(dHelmetTex);
+		dHelmetMaterial->setSpecularTexture(dHelmetSpecTex);
+		dHelmetMaterial->setSpecularTexture(dHelmetMetallicTex);
+		dHelmetMaterial->setEmissiveTexture(dHelmetEmissiveTex);
+		dHelmetMaterial->setShininess(16.0f);
+
+		fHelmetMaterial->setDiffuseTexture(fHelmetTex);
+		fHelmetMaterial->setMetallicTexture(fHelmetMetallicTex);
+		fHelmetMaterial->setShininess(32.0f);
+
 		// Creating a GraphicsNodes to manage the meshes
 		bunnyNode = std::make_shared<GraphicsNode>();
 		cubeNode = std::make_shared<GraphicsNode>();
 		horseNode = std::make_shared<GraphicsNode>();
 		lightNode = std::make_shared<GraphicsNode>();
+		GLTFCubeNode = std::make_shared<GraphicsNode>();
+		avocadoNode = std::make_shared<GraphicsNode>();
+		damagedHelmetNode = std::make_shared<GraphicsNode>();
+		fightHelmetNode = std::make_shared<GraphicsNode>();
 
 		bunnyNode->setMesh(bunnyMesh);
 		bunnyNode->setShader(shader);
-		bunnyNode->setTexture(woodTex);
+		bunnyNode->setMaterial(woodMaterial);
 
 		cubeNode->setMesh(cubeMesh);
 		cubeNode->setShader(shader);
-		cubeNode->setTexture(rubikTex);
+		cubeNode->setMaterial(plasticMaterial);
 
 		horseNode->setMesh(horseMesh);
 		horseNode->setShader(shader);
-		horseNode->setTexture(horseTex);
+		horseNode->setMaterial(HorseMaterial);
 
 		lightNode->setMesh(lightMesh);
 		lightNode->setShader(shader);
-		lightNode->setTexture(discoTex);
-
-		// Assign the material to the mesh
-		bunnyNode->setMaterial(woodMaterial);
-		cubeNode->setMaterial(plasticMaterial);
-		horseNode->setMaterial(HorseMaterial);
 		lightNode->setMaterial(lampMaterial);
+
+		GLTFCubeNode->setMesh(cubeGLTF);
+		GLTFCubeNode->setShader(shader);
+		GLTFCubeNode->setMaterial(GLTFCubeMaterial);
+
+		avocadoNode->setMesh(avocadoGLTF);
+		avocadoNode->setShader(shader);
+		avocadoNode->setMaterial(AvocadoMaterial);
+
+		damagedHelmetNode->setMesh(damagedHelmet);
+		damagedHelmetNode->setShader(shader);
+		damagedHelmetNode->setMaterial(dHelmetMaterial);
+
+		//fightHelmetNode->setMesh(fightHelmet);
+		//fightHelmetNode->setShader(shader);
+		//fightHelmetNode->setMaterial(fHelmetMaterial);
 
 		grid = new Render::Grid();
 		  
@@ -264,11 +367,18 @@ void ExampleApp::Run() {
 	float pauseTime = 0.0f;
 	float lastPauseStart = 0.0f;
 	bool isPaused = false;
-	float radians = 3.14f / 2.0f;
+	float degrees360 = 3.14f * 2.0f;
 
 	mat4 bunnyRotationMatrix;
 	mat4 cubeRotationMatrix;
-	mat4 horseRotationMatrix = rotationaxis(vec3(1.0f, 0.0f, 0.0f), -radians);
+	mat4 horseRotationMatrix = rotationaxis(vec3(1.0f, 0.0f, 0.0f), -degrees360 * 0.25f);
+	mat4 GLTFCubeRotationMatrix;
+	mat4 avocadoRotationMatrix = 
+		rotationaxis(vec3(0.0f, 1.0f, 0.0f), degrees360 * 0.4f) * 
+		rotationaxis(vec3(1.0f, 0.0f, 0.0f), degrees360 * 0.25f);
+	mat4 dhemletRotationMatrix =
+		rotationaxis(vec3(1.0f, 0.0f, 0.0f), degrees360 * 0.245);
+	mat4 fhemletRotationMatrix;
 	mat4 viewProjectionMatrix = cam.getProjectionMatrix() * cam.getViewMatrix();
 
 	bunnyNode->setScale(vec3(0.25f, 0.25f, 0.25f));
@@ -284,6 +394,22 @@ void ExampleApp::Run() {
 	horseNode->setPosition(vec4(-0.5f, 0.0f, -0.5f, 1.0f));
 	
 	lightNode->setScale(vec3(0.05f, 0.05f, 0.05f));
+
+	GLTFCubeNode->setScale(vec3(0.125f, 0.125f, 0.125f));
+	GLTFCubeNode->setRotation(GLTFCubeRotationMatrix);
+	GLTFCubeNode->setPosition(vec4(-0.5f, 0.1245, 0.5f, 1.0f));
+
+	avocadoNode->setScale(vec3(5.0f, 5.0f, 5.0f));
+	avocadoNode->setRotation(avocadoRotationMatrix);
+	avocadoNode->setPosition(vec4(0.0f, 0.07, 0.5f, 1.0f));
+
+	damagedHelmetNode->setScale(vec3(0.2, 0.2, 0.2));
+	damagedHelmetNode->setRotation(dhemletRotationMatrix);
+	damagedHelmetNode->setPosition(vec4(0.5f, 0.17f, 0.5f, 1.0f));
+
+	//fightHelmetNode->setScale(vec3(1.0, 1.0, 1.0));
+	//fightHelmetNode->setRotation(fhemletRotationMatrix);
+	//fightHelmetNode->setPosition(vec4(1.0f, 0.0, 0.5f, 1.0f));
 
 	float initialTime = float(glfwGetTime());
 	while (this->window->IsOpen()) {
@@ -316,6 +442,10 @@ void ExampleApp::Run() {
 		cubeNode->draw(cam, light);
 		horseNode->draw(cam, light);
 		lightNode->draw(cam, light);
+		GLTFCubeNode->draw(cam, light);
+		avocadoNode->draw(cam, light);
+		damagedHelmetNode->draw(cam, light);/*
+		fightHelmetNode->draw(cam, light);*/
 		grid->Draw((GLfloat*)&viewProjectionMatrix[0][0]);
 
 		this->window->SwapBuffers();

@@ -13,11 +13,15 @@ public:
 	void Apply() const override;
 	void setDiffuseTexture(std::shared_ptr<TextureResource> diffuse);
 	void setSpecularTexture(std::shared_ptr<TextureResource> specular);
+	void setMetallicTexture(std::shared_ptr<TextureResource> metallic);
+	void setEmissiveTexture(std::shared_ptr<TextureResource> emissive);
 	void setShininess(float shininess);
 private:
 	std::shared_ptr<ShaderResource> blinnPhongShader;
 	std::shared_ptr<TextureResource> diffuseTexture;
 	std::shared_ptr<TextureResource> specularTexture;
+	std::shared_ptr<TextureResource> metallicTexture;
+	std::shared_ptr<TextureResource> emissiveTexture;
 	float shininess;
 };
 

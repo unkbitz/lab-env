@@ -290,7 +290,7 @@ std::shared_ptr<MeshResource> MeshResource::loadFromOBJ(const std::string& filen
 	std::vector<int> vertexIndices;
 
 	for (size_t i = 0; i < positionIndices.size(); i += 3) {
-		for (int j = 0; j < 3; ++j) { // Process each vertex of the face (triangles assumed)
+		for (int j = 0; j < 3; ++j) { // Process each vertex of the face
 
 			if (i + j >= positionIndices.size()) {
 				std::cerr << "Error: posIdx out of bounds. i + j = " << i + j << " (positionIndices size: " << positionIndices.size() << ")" << std::endl;
@@ -357,7 +357,59 @@ std::shared_ptr<MeshResource> MeshResource::loadFromOBJ(const std::string& filen
 }
 
 std::shared_ptr<MeshResource> MeshResource::loadGLTF(const std::string& uri) {
-	std::shared_ptr<MeshResource> mesh = std::make_shared<MeshResource>();
-	
-	return mesh;
+	fx::gltf::Document document = fx::gltf::LoadFromText(uri);
+
+	auto meshResource = std::make_shared<MeshResource>();
+
+	// Iterate through meshes in the document
+	for (const auto& mesh : document.meshes) {
+		// Iterate through primitives of each mesh
+		for (const auto& primitive : mesh.primitives) {
+			// Creating accessors for positions, normals, and texture coordinates
+			const auto& positionAccessor = document.accessors.at(primitive.attributes.at("POSITION"));
+			const auto& normalAccessor = document.accessors.at(primitive.attributes.at("NORMAL"));
+			const auto& texCoordAccessor = document.accessors.at(primitive.attributes.at("TEXCOORD_0"));
+
+			// Loading position data
+			const auto& positionBufferView = document.bufferViews.at(positionAccessor.bufferView);
+			const auto& positionBuffer = document.buffers.at(positionBufferView.buffer);
+			const float* positions = reinterpret_cast<const float*>(&positionBuffer.data.at(positionBufferView.byteOffset));
+
+			// Loading normal data
+			const auto& normalBufferView = document.bufferViews.at(normalAccessor.bufferView);
+			const auto& normalBuffer = document.buffers.at(normalBufferView.buffer);
+			const float* normals = reinterpret_cast<const float*>(&normalBuffer.data.at(normalBufferView.byteOffset));
+
+			// Loading texture coordinates
+			const auto& texCoordBufferView = document.bufferViews.at(texCoordAccessor.bufferView);
+			const auto& texCoordBuffer = document.buffers.at(texCoordBufferView.buffer);
+			const float* texCoords = reinterpret_cast<const float*>(&texCoordBuffer.data.at(texCoordBufferView.byteOffset));
+
+			// Creating vertices
+			std::vector<Vertex> vertices;
+			for (size_t i = 0; i < positionAccessor.count; ++i) {
+				Vertex vertex;
+				vertex.position = vec4(positions[i * 3], positions[i * 3 + 1], positions[i * 3 + 2], 1.0f);
+				vertex.normal = vec3(normals[i * 3], normals[i * 3 + 1], normals[i * 3 + 2]);
+				vertex.texCoord = vec2(texCoords[i * 2], texCoords[i * 2 + 1]);
+				vertices.push_back(vertex);
+			}
+
+			// Set vertices in mesh resource
+			meshResource->setVertices(vertices);
+
+			// Handle indices
+			if (primitive.indices >= 0) {
+				const auto& indexAccessor = document.accessors.at(primitive.indices);
+				const auto& indexBufferView = document.bufferViews.at(indexAccessor.bufferView);
+				const auto& indexBuffer = document.buffers.at(indexBufferView.buffer);
+				const uint16_t* indices = reinterpret_cast<const uint16_t*>(&indexBuffer.data.at(indexBufferView.byteOffset));
+
+				std::vector<int> elementIndices(indices, indices + indexAccessor.count);
+				meshResource->indices = elementIndices;
+			}
+		}
+	}
+	meshResource->setUpBuffers();
+	return meshResource;
 }

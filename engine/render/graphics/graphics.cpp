@@ -1,7 +1,6 @@
 #pragma once
 #include "config.h"
 #include "graphics.h"
-#include "render/gltf.h"
 
 GraphicsNode::GraphicsNode() 
 	: m_mesh(nullptr),
