@@ -19,6 +19,7 @@ public:
 	void setTexture(const std::shared_ptr<TextureResource>& newTexture);
 	void setShader(const std::shared_ptr<ShaderResource>& newShader);
 	void setMaterial(std::shared_ptr<Material> mat);
+	void addChild(std::shared_ptr<GraphicsNode> child);
 
 	std::shared_ptr<MeshResource> getMesh() const;
 	std::shared_ptr<TextureResource> getTexture() const;
@@ -36,4 +37,5 @@ private:
 	std::shared_ptr<MeshResource> m_mesh;
 	std::shared_ptr<TextureResource> m_texture;
 	std::shared_ptr<ShaderResource> m_shader;
+	std::vector<std::shared_ptr<GraphicsNode>> m_childNodes;
 };

@@ -5,7 +5,7 @@
 GraphicsNode::GraphicsNode() 
 	: m_mesh(nullptr),
 	m_texture(nullptr), 
-	m_shader(nullptr) {}
+	m_shader(nullptr){}
 
 GraphicsNode::~GraphicsNode() {}
 
@@ -27,6 +27,10 @@ void GraphicsNode::setMaterial(std::shared_ptr<Material> newMaterial) {
 		assert(false);
 	}
 	m_mesh->setMaterial(newMaterial);
+}
+
+void GraphicsNode::addChild(std::shared_ptr<GraphicsNode> child) {
+	m_childNodes.push_back(child);
 }
 
 std::shared_ptr<MeshResource> GraphicsNode::getMesh() const {
@@ -131,7 +135,10 @@ void GraphicsNode::draw(Camera& camera, Lighting& light) {
 	m_shader->setUniform3f("u_directionalLightColor", light.getDirectionalLightColor().x, light.getDirectionalLightColor().y, light.getDirectionalLightColor().z);
 	m_shader->setUniform1f("u_directionalLightIntensity", light.getDirectionalLightIntensity());
 
-	//m_mesh->bindBuffers();
 	m_mesh->drawMesh();
 	m_shader->unbind();
+
+	for (auto& child : m_childNodes) {
+		child->draw(camera, light);
+	}
 }

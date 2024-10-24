@@ -78,11 +78,14 @@ bool ExampleApp::Open() {
 			std::cout << "DamedHelmet loaded" << std::endl;
 		}
 
-		//std::shared_ptr<MeshResource> fightHelmet = MeshResource::loadGLTF("assets/FlightHelmet/glTF/FlightHelmet.gltf");
-		//if (!fightHelmet) {
-		//	std::cerr << "Failed to load fightHelmet" << std::endl;
-		//	return false;
-		//}
+		std::shared_ptr<MeshResource> fightHelmet = MeshResource::loadGLTF("assets/FlightHelmet/glTF/FlightHelmet.gltf");
+		if (!fightHelmet) {
+			std::cerr << "Failed to load fightHelmet" << std::endl;
+			return false;
+		}
+		else {
+			std::cout << "FightHelmet loaded" << std::endl;
+		}
 		
 		// Loading shader
 		std::shared_ptr<ShaderResource> shader = std::make_shared<ShaderResource>();
@@ -137,8 +140,8 @@ bool ExampleApp::Open() {
 		dHelmetSpecTex->load("assets/DamagedHelmet/glTF/Default_AO.jpg", 1);
 		dHelmetMetallicTex->load("assets/DamagedHelmet/glTF/Default_metalRoughness.jpg", 1);
 		dHelmetEmissiveTex->load("assets/DamagedHelmet/glTF/Default_emissive.jpg", 1);
-		fHelmetTex->load("assets/FlightHelmet/glTF/FlightHelmet_Materials_MetalPartsMat_BaseColor.png");
-		fHelmetMetallicTex->load("assets/FlightHelmet/glTF/FlightHelmet_Materials_MetalPartsMat_OcclusionRoughMetal.png");
+		fHelmetTex->load("assets/FlightHelmet/glTF/FlightHelmet_Materials_MetalPartsMat_BaseColor.png", 1);
+		fHelmetMetallicTex->load("assets/FlightHelmet/glTF/FlightHelmet_Materials_MetalPartsMat_OcclusionRoughMetal.png", 1);
 
 		// Material properties
 		woodMaterial->setDiffuseTexture(woodTex);
@@ -213,9 +216,9 @@ bool ExampleApp::Open() {
 		damagedHelmetNode->setShader(shader);
 		damagedHelmetNode->setMaterial(dHelmetMaterial);
 
-		//fightHelmetNode->setMesh(fightHelmet);
-		//fightHelmetNode->setShader(shader);
-		//fightHelmetNode->setMaterial(fHelmetMaterial);
+		fightHelmetNode->setMesh(fightHelmet);
+		fightHelmetNode->setShader(shader);
+		fightHelmetNode->setMaterial(fHelmetMaterial);
 
 		grid = new Render::Grid();
 		  
@@ -377,7 +380,7 @@ void ExampleApp::Run() {
 		rotationaxis(vec3(0.0f, 1.0f, 0.0f), degrees360 * 0.4f) * 
 		rotationaxis(vec3(1.0f, 0.0f, 0.0f), degrees360 * 0.25f);
 	mat4 dhemletRotationMatrix =
-		rotationaxis(vec3(1.0f, 0.0f, 0.0f), degrees360 * 0.245);
+		rotationaxis(vec3(1.0f, 0.0f, 0.0f), degrees360 * 0.245f);
 	mat4 fhemletRotationMatrix;
 	mat4 viewProjectionMatrix = cam.getProjectionMatrix() * cam.getViewMatrix();
 
@@ -397,19 +400,19 @@ void ExampleApp::Run() {
 
 	GLTFCubeNode->setScale(vec3(0.125f, 0.125f, 0.125f));
 	GLTFCubeNode->setRotation(GLTFCubeRotationMatrix);
-	GLTFCubeNode->setPosition(vec4(-0.5f, 0.1245, 0.5f, 1.0f));
+	GLTFCubeNode->setPosition(vec4(-0.5f, 0.1245f, 0.5f, 1.0f));
 
 	avocadoNode->setScale(vec3(5.0f, 5.0f, 5.0f));
 	avocadoNode->setRotation(avocadoRotationMatrix);
-	avocadoNode->setPosition(vec4(0.0f, 0.07, 0.5f, 1.0f));
+	avocadoNode->setPosition(vec4(0.0f, 0.07f, 0.5f, 1.0f));
 
-	damagedHelmetNode->setScale(vec3(0.2, 0.2, 0.2));
+	damagedHelmetNode->setScale(vec3(0.2f, 0.2f, 0.2f));
 	damagedHelmetNode->setRotation(dhemletRotationMatrix);
 	damagedHelmetNode->setPosition(vec4(0.5f, 0.17f, 0.5f, 1.0f));
 
-	//fightHelmetNode->setScale(vec3(1.0, 1.0, 1.0));
-	//fightHelmetNode->setRotation(fhemletRotationMatrix);
-	//fightHelmetNode->setPosition(vec4(1.0f, 0.0, 0.5f, 1.0f));
+	fightHelmetNode->setScale(vec3(1.0f, 1.0f, 1.0f));
+	fightHelmetNode->setRotation(fhemletRotationMatrix);
+	fightHelmetNode->setPosition(vec4(1.0f, 0.0f, 0.5f, 1.0f));
 
 	float initialTime = float(glfwGetTime());
 	while (this->window->IsOpen()) {
@@ -444,8 +447,8 @@ void ExampleApp::Run() {
 		lightNode->draw(cam, light);
 		GLTFCubeNode->draw(cam, light);
 		avocadoNode->draw(cam, light);
-		damagedHelmetNode->draw(cam, light);/*
-		fightHelmetNode->draw(cam, light);*/
+		damagedHelmetNode->draw(cam, light);
+		fightHelmetNode->draw(cam, light);
 		grid->Draw((GLfloat*)&viewProjectionMatrix[0][0]);
 
 		this->window->SwapBuffers();

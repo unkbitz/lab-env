@@ -3,6 +3,7 @@
 #include <unordered_map>
 #include "math/mat4.h"
 #include "render/material/material.h"
+#include "render/graphics/graphics.h"
 #include "render/gltf.h"
 #include "meshTransform.h"
 #include <tuple>
@@ -39,6 +40,7 @@ public:
 	static std::shared_ptr<MeshResource>  createCube(float width, float height, float depth);
 	static std::shared_ptr<MeshResource> loadFromOBJ(const std::string& filename);
 	static std::shared_ptr<MeshResource> loadGLTF(const std::string& uri);
+	//std::shared_ptr<GraphicsNode> loadGLTFRootNode(const std::string& uri);
 	
 	void setMaterial(std::shared_ptr<Material> mat);
 	void setPosition(vec4 const position);
@@ -50,6 +52,8 @@ public:
 	mat4 getRotation();
 	vec3 getScale();
 	mat4 getTransform();
+	std::vector<int> getIndices();
+
 private:
 	GLuint vbo;
 	GLuint ibo;
