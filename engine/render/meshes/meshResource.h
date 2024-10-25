@@ -3,7 +3,6 @@
 #include <unordered_map>
 #include "math/mat4.h"
 #include "render/material/material.h"
-#include "render/graphics/graphics.h"
 #include "render/gltf.h"
 #include "meshTransform.h"
 #include <tuple>
@@ -32,34 +31,35 @@ public:
 	MeshResource();
 	~MeshResource();
 
-	void bindBuffers() const;
 	void setUpBuffers();
+	void bindBuffers() const;
 	void drawMesh();
 	void cleanUp();
 
-	static std::shared_ptr<MeshResource>  createCube(float width, float height, float depth);
-	static std::shared_ptr<MeshResource> loadFromOBJ(const std::string& filename);
-	static std::shared_ptr<MeshResource> loadGLTF(const std::string& uri);
-	//std::shared_ptr<GraphicsNode> loadGLTFRootNode(const std::string& uri);
-	
+	vec4 getPosition();
+	mat4 getRotation();
+	vec3 getScale();
+	mat4 getTransform();
+	std::vector<Vertex> getVertices();
+	std::vector<int> getIndices();
+
 	void setMaterial(std::shared_ptr<Material> mat);
 	void setPosition(vec4 const position);
 	void setRotation(mat4 const rotation);
 	void setScale(vec3 const scale);
 	void setVertices(std::vector<Vertex> const vertices);
-	
-	vec4 getPosition();
-	mat4 getRotation();
-	vec3 getScale();
-	mat4 getTransform();
-	std::vector<int> getIndices();
+	void setIndices(std::vector<int> const indices);
+
+	static std::shared_ptr<MeshResource>  createCube(float width, float height, float depth);
+	static std::shared_ptr<MeshResource> loadFromOBJ(const std::string& filename);
+	static std::shared_ptr<MeshResource> loadGLTF(const std::string& uri);
 
 private:
 	GLuint vbo;
 	GLuint ibo;
 	GLuint vao;
+	std::shared_ptr<Material> material;
+	MeshTransform transform;
 	std::vector<Vertex> vertices;
 	std::vector<int> indices;
-	MeshTransform transform;
-	std::shared_ptr<Material> material;
 };

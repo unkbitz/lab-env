@@ -19,6 +19,9 @@ void GraphicsNode::setTexture(const std::shared_ptr<TextureResource>& newTexture
 
 void GraphicsNode::setShader(const std::shared_ptr<ShaderResource>& newShader) {
 	m_shader = newShader;
+	for (auto& child : m_childNodes) {
+		child->setShader(newShader);
+	}
 }
 
 void GraphicsNode::setMaterial(std::shared_ptr<Material> newMaterial) {
@@ -27,6 +30,9 @@ void GraphicsNode::setMaterial(std::shared_ptr<Material> newMaterial) {
 		assert(false);
 	}
 	m_mesh->setMaterial(newMaterial);
+	for (auto& child : m_childNodes) {
+		child->setMaterial(newMaterial);
+	}
 }
 
 void GraphicsNode::addChild(std::shared_ptr<GraphicsNode> child) {
@@ -142,3 +148,28 @@ void GraphicsNode::draw(Camera& camera, Lighting& light) {
 		child->draw(camera, light);
 	}
 }
+
+void GraphicsNode::drawWithCount(Camera& camera, Lighting& light, int nodeIndex) {
+	m_shader->bind();
+	m_shader->setUniformMat4("u_ViewProjection", camera.getViewProjectionMatrix(), m_shader->getProgram());
+	m_shader->setUniformMat4("u_Model", m_mesh->getTransform(), m_shader->getProgram());
+	// Set the lighting-related uniforms for the Blinn-Phong shader
+	m_shader->setUniform3f("u_pointLightPos", light.getPointLightPos().x, light.getPointLightPos().y, light.getPointLightPos().z);
+	m_shader->setUniform3f("u_ViewPos", camera.getPosition().x, camera.getPosition().y, camera.getPosition().z);
+	m_shader->setUniform3f("u_pointLightColor", light.getPointLightColor().x, light.getPointLightColor().y, light.getPointLightColor().z);
+	m_shader->setUniform1f("u_pointLightIntensity", light.getPointLightIntensity());
+	m_shader->setUniform3f("u_directionalLightDir", light.getDirectionalLightDir().x, light.getDirectionalLightDir().y, light.getDirectionalLightDir().z);
+	m_shader->setUniform3f("u_directionalLightColor", light.getDirectionalLightColor().x, light.getDirectionalLightColor().y, light.getDirectionalLightColor().z);
+	m_shader->setUniform1f("u_directionalLightIntensity", light.getDirectionalLightIntensity());
+
+	m_mesh->drawMesh();
+	m_shader->unbind();
+	
+	std::cout << "nodeIndex count: " << nodeIndex << std::endl;
+
+	for (auto& child : m_childNodes) {
+		nodeIndex++;
+		child->drawWithCount(camera, light, nodeIndex);
+	}
+}
+

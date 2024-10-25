@@ -78,14 +78,14 @@ bool ExampleApp::Open() {
 			std::cout << "DamedHelmet loaded" << std::endl;
 		}
 
-		std::shared_ptr<MeshResource> fightHelmet = MeshResource::loadGLTF("assets/FlightHelmet/glTF/FlightHelmet.gltf");
-		if (!fightHelmet) {
-			std::cerr << "Failed to load fightHelmet" << std::endl;
-			return false;
-		}
-		else {
-			std::cout << "FightHelmet loaded" << std::endl;
-		}
+		//std::shared_ptr<MeshResource> fightHelmet = MeshResource::loadGLTF("assets/FlightHelmet/glTF/FlightHelmet.gltf");
+		//if (!fightHelmet) {
+		//	std::cerr << "Failed to load fightHelmet" << std::endl;
+		//	return false;
+		//}
+		//else {
+		//	std::cout << "FightHelmet loaded" << std::endl;
+		//}
 		
 		// Loading shader
 		std::shared_ptr<ShaderResource> shader = std::make_shared<ShaderResource>();
@@ -186,7 +186,7 @@ bool ExampleApp::Open() {
 		GLTFCubeNode = std::make_shared<GraphicsNode>();
 		avocadoNode = std::make_shared<GraphicsNode>();
 		damagedHelmetNode = std::make_shared<GraphicsNode>();
-		fightHelmetNode = std::make_shared<GraphicsNode>();
+		fightHelmetNode = GLTFLoader::loadGLTFRootNode("assets/FlightHelmet/glTF/FlightHelmet.gltf");
 
 		bunnyNode->setMesh(bunnyMesh);
 		bunnyNode->setShader(shader);
@@ -216,7 +216,6 @@ bool ExampleApp::Open() {
 		damagedHelmetNode->setShader(shader);
 		damagedHelmetNode->setMaterial(dHelmetMaterial);
 
-		fightHelmetNode->setMesh(fightHelmet);
 		fightHelmetNode->setShader(shader);
 		fightHelmetNode->setMaterial(fHelmetMaterial);
 
@@ -410,7 +409,7 @@ void ExampleApp::Run() {
 	damagedHelmetNode->setRotation(dhemletRotationMatrix);
 	damagedHelmetNode->setPosition(vec4(0.5f, 0.17f, 0.5f, 1.0f));
 
-	fightHelmetNode->setScale(vec3(1.0f, 1.0f, 1.0f));
+	//fightHelmetNode->setScale(vec3(1.0f, 1.0f, 1.0f));
 	fightHelmetNode->setRotation(fhemletRotationMatrix);
 	fightHelmetNode->setPosition(vec4(1.0f, 0.0f, 0.5f, 1.0f));
 
@@ -448,7 +447,7 @@ void ExampleApp::Run() {
 		GLTFCubeNode->draw(cam, light);
 		avocadoNode->draw(cam, light);
 		damagedHelmetNode->draw(cam, light);
-		fightHelmetNode->draw(cam, light);
+		fightHelmetNode->drawWithCount(cam, light, 0);
 		grid->Draw((GLfloat*)&viewProjectionMatrix[0][0]);
 
 		this->window->SwapBuffers();

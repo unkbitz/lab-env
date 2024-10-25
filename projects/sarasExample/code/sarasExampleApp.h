@@ -1,7 +1,7 @@
 #pragma once
 #include "core/app.h"
 #include "render/window.h"
-#include "render/graphics/graphics.h"
+#include "render/meshes/GLTFLoader.h"
 #include "Render/Grid.h"
 
 namespace Example {

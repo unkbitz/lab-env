@@ -33,6 +33,7 @@ public:
 	void setScale(vec3 const newScale);
 	vec3 getScale();
 	void draw(Camera& camera, Lighting& light);
+	void drawWithCount(Camera& camera, Lighting& light, int nodeIndex);
 private:
 	std::shared_ptr<MeshResource> m_mesh;
 	std::shared_ptr<TextureResource> m_texture;

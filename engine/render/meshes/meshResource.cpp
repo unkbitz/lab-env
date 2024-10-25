@@ -11,6 +11,125 @@ MeshResource::~MeshResource() {
 	cleanUp();
 }
 
+void MeshResource::setUpBuffers() {
+    if (vertices.empty() || indices.empty()) {
+        std::cerr << "Error: No vertex or index data available to set up buffers." << std::endl;
+        return;
+    }
+    std::cout << "Vertices size: " << vertices.size() << ", Indices size: " << indices.size() << std::endl;
+
+    glGenVertexArrays(1, &vao);
+    glBindVertexArray(vao);
+
+    glGenBuffers(1, &vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+
+    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), vertices.data(), GL_STATIC_DRAW);
+
+    glGenBuffers(1, &ibo);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(int), indices.data(), GL_STATIC_DRAW);
+
+    bindBuffers();
+    
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+    std::cout << "Buffer set up" << std::endl;
+}
+
+void MeshResource::bindBuffers() const {
+	glEnableVertexAttribArray(0); // Position
+	glEnableVertexAttribArray(1); // Normal
+	glEnableVertexAttribArray(2); // Texture coordinates
+
+	// Position (vec4)
+	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, position));
+	// Normal (vec3)
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, normal));
+	// Texture coordinates (vec2)
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, texCoord));
+
+	std::cout << "Buffer bound" << std::endl;
+}
+
+void MeshResource::drawMesh() {
+	// Applying materials first
+	if (material) {
+		material->Apply();
+	}
+	glBindVertexArray(vao);
+	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+	glBindVertexArray(0);
+}
+
+void MeshResource::cleanUp() {
+	if (vbo != 0) {
+		glDeleteBuffers(1, &vbo);
+		vbo = 0;
+		std::cout << "vbo deleted" << endl;
+	}
+	if (ibo != 0) {
+		glDeleteBuffers(1, &ibo);
+		ibo = 0;
+		std::cout << "ibo deleted" << endl;
+	}
+	if (vao != 0) {
+		glDeleteVertexArrays(1, &vao);
+		vao = 0;
+		std::cout << "vao deleted" << endl;
+	}
+}
+
+vec4 MeshResource::getPosition() {
+	return transform.getPosition();
+}
+
+mat4 MeshResource::getRotation() {
+	return transform.getRotation();
+}
+
+vec3 MeshResource::getScale() {
+	return transform.getScale();
+}
+
+mat4 MeshResource::getTransform() {
+	return transform.getTransformMatrix();
+}
+
+std::vector<Vertex> MeshResource::getVertices() {
+	return vertices;
+}
+
+std::vector<int> MeshResource::getIndices() {
+	return indices;
+}
+
+void MeshResource::setMaterial(std::shared_ptr<Material> mat) {
+	this->material = mat;
+}
+
+void MeshResource::setPosition(vec4 const position) {
+	transform.setPosition(position);
+}
+
+void MeshResource::setRotation(mat4 const rotation) {
+	transform.setRotation(rotation);
+}
+
+void MeshResource::setScale(vec3 const scale) {
+	transform.setScale(scale);
+}
+
+void MeshResource::setVertices(std::vector<Vertex> const vertices) {
+	this->vertices = vertices;
+}
+
+void MeshResource::setIndices(std::vector<int> const indices) {
+	this->indices = indices;
+}
+
 std::shared_ptr<MeshResource> MeshResource::createCube(float width, float height, float depth) {
 	std::shared_ptr<MeshResource> mesh = std::make_shared<MeshResource>();
 
@@ -103,118 +222,6 @@ std::shared_ptr<MeshResource> MeshResource::createCube(float width, float height
 	std::cout << "Cube created" << std::endl;
 	mesh->setUpBuffers();
 	return mesh;
-}
-
-void MeshResource::setUpBuffers() {
-    if (vertices.empty() || indices.empty()) {
-        std::cerr << "Error: No vertex or index data available to set up buffers." << std::endl;
-        return;
-    }
-    std::cout << "Vertices size: " << vertices.size() << ", Indices size: " << indices.size() << std::endl;
-
-    glGenVertexArrays(1, &vao);
-    glBindVertexArray(vao);
-
-    glGenBuffers(1, &vbo);
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
-
-    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), vertices.data(), GL_STATIC_DRAW);
-
-    glGenBuffers(1, &ibo);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(int), indices.data(), GL_STATIC_DRAW);
-
-    bindBuffers();
-    
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-    std::cout << "Buffer set up" << std::endl;
-}
-
-void MeshResource::bindBuffers() const {
-	glEnableVertexAttribArray(0); // Position
-	glEnableVertexAttribArray(1); // Normal
-	glEnableVertexAttribArray(2); // Texture coordinates
-
-	// Position (vec4)
-	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, position));
-	// Normal (vec3)
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, normal));
-	// Texture coordinates (vec2)
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, texCoord));
-
-	std::cout << "Buffer bound" << std::endl;
-}
-
-void MeshResource::drawMesh() {
-	// Applying materials first
-	if (material) {
-		material->Apply();
-	}
-	glBindVertexArray(vao);
-	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
-}
-
-void MeshResource::cleanUp() {
-	if (vbo != 0) {
-		glDeleteBuffers(1, &vbo);
-		vbo = 0;
-		std::cout << "vbo deleted" << endl;
-	}
-	if (ibo != 0) {
-		glDeleteBuffers(1, &ibo);
-		ibo = 0;
-		std::cout << "ibo deleted" << endl;
-	}
-	if (vao != 0) {
-		glDeleteVertexArrays(1, &vao);
-		vao = 0;
-		std::cout << "vao deleted" << endl;
-	}
-}
-
-mat4 MeshResource::getTransform() {
-	return transform.getTransformMatrix();
-}
-
-void MeshResource::setMaterial(std::shared_ptr<Material> mat) {
-	this->material = mat;
-}
-
-void MeshResource::setPosition(vec4 const position) {
-	transform.setPosition(position);
-}
-
-void MeshResource::setRotation(mat4 const rotation) {
-	transform.setRotation(rotation);
-}
-
-void MeshResource::setScale(vec3 const scale) {
-	transform.setScale(scale);
-}
-
-void MeshResource::setVertices(std::vector<Vertex> const vertices) {
-	// Assign the input vertices to the internal vector
-	this->vertices = vertices;
-}
-
-vec4 MeshResource::getPosition() {
-	return transform.getPosition();
-}
-
-mat4 MeshResource::getRotation() {
-	return transform.getRotation();
-}
-
-vec3 MeshResource::getScale() {
-	return transform.getScale();
-}
-
-std::vector<int> MeshResource::getIndices() {
-	return indices;
 }
 
 std::shared_ptr<MeshResource> MeshResource::loadFromOBJ(const std::string& filename) {
@@ -360,77 +367,61 @@ std::shared_ptr<MeshResource> MeshResource::loadFromOBJ(const std::string& filen
 	return mesh;
 }
 
-//std::shared_ptr<GraphicsNode> MeshResource::loadGLTFRootNode(const std::string& uri) {
-//	fx::gltf::Document document = fx::gltf::LoadFromText(uri);
-//
-//	// Create a root node for the entire model
-//	auto rootNode = std::make_shared<GraphicsNode>();
-//
-//	// Iterate through top-level nodes in the document
-//	for (size_t i = 0; i < document.nodes.size(); ++i) {
-//		if (document.scenes.at(0).nodes[i]) {
-//			auto childNode = loadGLTFNode(document, i);
-//			rootNode->addChild(childNode);
-//		}
-//	}
-//	return rootNode;
-//}
-
 std::shared_ptr<MeshResource> MeshResource::loadGLTF(const std::string& uri) {
 	fx::gltf::Document document = fx::gltf::LoadFromText(uri);
-
 	auto meshResource = std::make_shared<MeshResource>();
 
-	// Iterate through meshes in the document
 	for (const auto& node : document.nodes) {
-		for (const auto& node : document.nodes) {
-			if (node.mesh >= 0) {
-				const auto& mesh = document.meshes.at(node.mesh);
-				// Iterate through primitives of each mesh
-				for (const auto& primitive : mesh.primitives) {
-					// Creating accessors for positions, normals, and texture coordinates
-					const auto& positionAccessor = document.accessors.at(primitive.attributes.at("POSITION"));
-					const auto& normalAccessor = document.accessors.at(primitive.attributes.at("NORMAL"));
-					const auto& texCoordAccessor = document.accessors.at(primitive.attributes.at("TEXCOORD_0"));
+		if (node.mesh >= 0) {
+			const auto& mesh = document.meshes.at(node.mesh);
 
-					// Loading position data
-					const auto& positionBufferView = document.bufferViews.at(positionAccessor.bufferView);
-					const auto& positionBuffer = document.buffers.at(positionBufferView.buffer);
-					const float* positions = reinterpret_cast<const float*>(&positionBuffer.data.at(positionBufferView.byteOffset));
+			for (const auto& primitive : mesh.primitives) {
+				std::vector<Vertex> vertices;
 
-					// Loading normal data
-					const auto& normalBufferView = document.bufferViews.at(normalAccessor.bufferView);
-					const auto& normalBuffer = document.buffers.at(normalBufferView.buffer);
-					const float* normals = reinterpret_cast<const float*>(&normalBuffer.data.at(normalBufferView.byteOffset));
+				// Loading position data
+				const auto& positionAccessor = document.accessors.at(primitive.attributes.at("POSITION"));
+				const auto& positionBufferView = document.bufferViews.at(positionAccessor.bufferView);
+				const auto& positionBuffer = document.buffers.at(positionBufferView.buffer);
+				const float* positions = reinterpret_cast<const float*>(&positionBuffer.data.at(positionBufferView.byteOffset + positionAccessor.byteOffset));
 
-					// Loading texture coordinates
-					const auto& texCoordBufferView = document.bufferViews.at(texCoordAccessor.bufferView);
-					const auto& texCoordBuffer = document.buffers.at(texCoordBufferView.buffer);
-					const float* texCoords = reinterpret_cast<const float*>(&texCoordBuffer.data.at(texCoordBufferView.byteOffset));
+				// Loading normal data
+				const auto& normalAccessor = document.accessors.at(primitive.attributes.at("NORMAL"));
+				const auto& normalBufferView = document.bufferViews.at(normalAccessor.bufferView);
+				const auto& normalBuffer = document.buffers.at(normalBufferView.buffer);
+				const float* normals = reinterpret_cast<const float*>(&normalBuffer.data.at(normalBufferView.byteOffset + normalAccessor.byteOffset));
 
-					// Creating vertices
-					std::vector<Vertex> vertices;
-					for (size_t i = 0; i < positionAccessor.count; ++i) {
-						Vertex vertex;
-						vertex.position = vec4(positions[i * 3], positions[i * 3 + 1], positions[i * 3 + 2], 1.0f);
-						vertex.normal = vec3(normals[i * 3], normals[i * 3 + 1], normals[i * 3 + 2]);
-						vertex.texCoord = vec2(texCoords[i * 2], texCoords[i * 2 + 1]);
-						vertices.push_back(vertex);
+				// Loading texture coordinates
+				const auto& texCoordAccessor = document.accessors.at(primitive.attributes.at("TEXCOORD_0"));
+				const auto& texCoordBufferView = document.bufferViews.at(texCoordAccessor.bufferView);
+				const auto& texCoordBuffer = document.buffers.at(texCoordBufferView.buffer);
+				const float* texCoords = reinterpret_cast<const float*>(&texCoordBuffer.data.at(texCoordBufferView.byteOffset + texCoordAccessor.byteOffset));
+
+				for (size_t i = 0; i < positionAccessor.count; ++i) {
+					Vertex vertex;
+					vertex.position = vec4(positions[i * 3], positions[i * 3 + 1], positions[i * 3 + 2], 1.0f);
+					vertex.normal = vec3(normals[i * 3], normals[i * 3 + 1], normals[i * 3 + 2]);
+					vertex.texCoord = vec2(texCoords[i * 2], texCoords[i * 2 + 1]);
+					vertices.push_back(vertex);
+				}
+
+				meshResource->setVertices(vertices);
+
+				// Handle indices
+				if (primitive.indices >= 0) {
+					const auto& indexAccessor = document.accessors.at(primitive.indices);
+					const auto& indexBufferView = document.bufferViews.at(indexAccessor.bufferView);
+					const auto& indexBuffer = document.buffers.at(indexBufferView.buffer);
+
+					std::vector<int> elementIndices(indexAccessor.count);
+					if (indexAccessor.componentType == fx::gltf::Accessor::ComponentType::UnsignedShort) {
+						const uint16_t* indices = reinterpret_cast<const uint16_t*>(&indexBuffer.data.at(indexBufferView.byteOffset + indexAccessor.byteOffset));
+						elementIndices.assign(indices, indices + indexAccessor.count);
 					}
-
-					// Set vertices in mesh resource
-					meshResource->setVertices(vertices);
-
-					// Handle indices
-					if (primitive.indices >= 0) {
-						const auto& indexAccessor = document.accessors.at(primitive.indices);
-						const auto& indexBufferView = document.bufferViews.at(indexAccessor.bufferView);
-						const auto& indexBuffer = document.buffers.at(indexBufferView.buffer);
-						const uint16_t* indices = reinterpret_cast<const uint16_t*>(&indexBuffer.data.at(indexBufferView.byteOffset));
-
-						std::vector<int> elementIndices(indices, indices + indexAccessor.count);
-						meshResource->indices = elementIndices;
+					else if (indexAccessor.componentType == fx::gltf::Accessor::ComponentType::UnsignedInt) {
+						const uint32_t* indices = reinterpret_cast<const uint32_t*>(&indexBuffer.data.at(indexBufferView.byteOffset + indexAccessor.byteOffset));
+						elementIndices.assign(indices, indices + indexAccessor.count);
 					}
+					meshResource->indices = elementIndices;
 				}
 			}
 		}
@@ -438,73 +429,3 @@ std::shared_ptr<MeshResource> MeshResource::loadGLTF(const std::string& uri) {
 	meshResource->setUpBuffers();
 	return meshResource;
 }
-
-
-//std::shared_ptr<GraphicsNode> loadGLTFNode(const fx::gltf::Document& document, int nodeIndex) {
-//	const auto& gltfNode = document.nodes.at(nodeIndex);
-//	auto graphicsNode = std::make_shared<GraphicsNode>();
-//
-//	// If the node has a mesh, load it
-//	if (gltfNode.mesh >= 0) {
-//		const auto& mesh = document.meshes.at(gltfNode.mesh);
-//		auto meshResource = std::make_shared<MeshResource>();
-//
-//		// Iterate through the primitives of the mesh
-//		for (const auto& primitive : mesh.primitives) {
-//			// Creating accessors for positions, normals, and texture coordinates
-//			const auto& positionAccessor = document.accessors.at(primitive.attributes.at("POSITION"));
-//			const auto& normalAccessor = document.accessors.at(primitive.attributes.at("NORMAL"));
-//			const auto& texCoordAccessor = document.accessors.at(primitive.attributes.at("TEXCOORD_0"));
-//
-//			// Loading position data
-//			const auto& positionBufferView = document.bufferViews.at(positionAccessor.bufferView);
-//			const auto& positionBuffer = document.buffers.at(positionBufferView.buffer);
-//			const float* positions = reinterpret_cast<const float*>(&positionBuffer.data.at(positionBufferView.byteOffset));
-//
-//			// Loading normal data
-//			const auto& normalBufferView = document.bufferViews.at(normalAccessor.bufferView);
-//			const auto& normalBuffer = document.buffers.at(normalBufferView.buffer);
-//			const float* normals = reinterpret_cast<const float*>(&normalBuffer.data.at(normalBufferView.byteOffset));
-//
-//			// Loading texture coordinates
-//			const auto& texCoordBufferView = document.bufferViews.at(texCoordAccessor.bufferView);
-//			const auto& texCoordBuffer = document.buffers.at(texCoordBufferView.buffer);
-//			const float* texCoords = reinterpret_cast<const float*>(&texCoordBuffer.data.at(texCoordBufferView.byteOffset));
-//
-//			// Creating vertices
-//			std::vector<Vertex> vertices;
-//			for (size_t i = 0; i < positionAccessor.count; ++i) {
-//				Vertex vertex;
-//				vertex.position = vec4(positions[i * 3], positions[i * 3 + 1], positions[i * 3 + 2], 1.0f);
-//				vertex.normal = vec3(normals[i * 3], normals[i * 3 + 1], normals[i * 3 + 2]);
-//				vertex.texCoord = vec2(texCoords[i * 2], texCoords[i * 2 + 1]);
-//				vertices.push_back(vertex);
-//			}
-//
-//			// Set vertices in mesh resource
-//			meshResource->setVertices(vertices);
-//
-//			// Handle indices
-//			if (primitive.indices >= 0) {
-//				const auto& indexAccessor = document.accessors.at(primitive.indices);
-//				const auto& indexBufferView = document.bufferViews.at(indexAccessor.bufferView);
-//				const auto& indexBuffer = document.buffers.at(indexBufferView.buffer);
-//				const uint16_t* indices = reinterpret_cast<const uint16_t*>(&indexBuffer.data.at(indexBufferView.byteOffset));
-//
-//				std::vector<int> elementIndices(indices, indices + indexAccessor.count);
-//				meshResource->getIndices() = elementIndices;
-//			}
-//		}
-//
-//		// Assign the mesh resource to the graphics node
-//		graphicsNode->setMesh(meshResource);
-//	}
-//
-//	// Recursively add child nodes
-//	for (const auto& childIndex : gltfNode.children) {
-//		auto childNode = loadGLTFNode(document, childIndex);
-//		graphicsNode->addChild(childNode);
-//	}
-//
-//	return graphicsNode;
-//}
