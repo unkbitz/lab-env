@@ -30,9 +30,6 @@ void GraphicsNode::setMaterial(std::shared_ptr<Material> newMaterial) {
 		assert(false);
 	}
 	m_mesh->setMaterial(newMaterial);
-	for (auto& child : m_childNodes) {
-		child->setMaterial(newMaterial);
-	}
 }
 
 void GraphicsNode::addChild(std::shared_ptr<GraphicsNode> child) {
@@ -87,6 +84,10 @@ void GraphicsNode::setPosition(vec4 const newPos) {
 		assert(false);
 	}
 	m_mesh->setPosition(newPos);
+
+	for (auto& child : m_childNodes) {
+		child->setPosition(newPos);
+	}
 }
 
 vec4 GraphicsNode::getPosition() {
@@ -103,6 +104,10 @@ void GraphicsNode::setRotation(mat4 const newRot) {
 		assert(false);
 	}
 	m_mesh->setRotation(newRot);
+
+	for (auto& child : m_childNodes) {
+		child->setRotation(newRot);
+	}
 }
 mat4 GraphicsNode::getRotation() {
 	if (m_mesh == nullptr) {
@@ -117,7 +122,12 @@ void GraphicsNode::setScale(vec3 const newScale) {
 		std::cout << "Input MeshTransform is invalid" << std::endl;
 		assert(false);
 	}
+
 	m_mesh->setScale(newScale);
+
+	for (auto& child : m_childNodes) {
+		child->setScale(newScale);
+	}
 }
 
 vec3 GraphicsNode::getScale() {

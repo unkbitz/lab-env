@@ -52,7 +52,6 @@ public:
 
 	static std::shared_ptr<MeshResource>  createCube(float width, float height, float depth);
 	static std::shared_ptr<MeshResource> loadFromOBJ(const std::string& filename);
-	static std::shared_ptr<MeshResource> loadGLTF(const std::string& uri);
 
 private:
 	GLuint vbo;

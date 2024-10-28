@@ -3,7 +3,8 @@
 #include "render/material/blinnPhongMaterial.h"
 
 BlinnPhongMaterial::BlinnPhongMaterial(std::shared_ptr<ShaderResource> shader) : 
-	blinnPhongShader(shader) {}
+	blinnPhongShader(shader),
+	shininess(32){}
 
 BlinnPhongMaterial::~BlinnPhongMaterial() {}
 
