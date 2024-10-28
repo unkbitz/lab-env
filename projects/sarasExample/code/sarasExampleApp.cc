@@ -105,10 +105,11 @@ bool ExampleApp::Open() {
 		horseNode = std::make_shared<GraphicsNode>();
 		lightNode = std::make_shared<GraphicsNode>();
 
-		GLTFCubeNode = GLTFLoader::loadGLTFRootNode("assets/Cube/glTF/Cube.gltf", 1, "assets/Cube/glTF/");
-		avocadoNode = GLTFLoader::loadGLTFRootNode("assets/Avocado/glTF/Avocado.gltf", 0, "assets/Avocado/glTF/");
-		damagedHelmetNode = GLTFLoader::loadGLTFRootNode("assets/DamagedHelmet/glTF/DamagedHelmet.gltf", 1, "assets/DamagedHelmet/glTF/");
-		flightHelmetNode = GLTFLoader::loadGLTFRootNode("assets/FlightHelmet/glTF/FlightHelmet.gltf", 0, "assets/FlightHelmet/glTF/");
+		GLTFCubeNode = GLTFLoader::loadGLTFRootNode("assets/Cube/glTF/Cube.gltf", 1, "assets/Cube/glTF/", "assets/blinn_phong_normal_mapping.shader");
+		avocadoNode = GLTFLoader::loadGLTFRootNode("assets/Avocado/glTF/Avocado.gltf", 0, "assets/Avocado/glTF/", "assets/blinn_phong_normal_mapping.shader");
+		damagedHelmetNode = GLTFLoader::loadGLTFRootNode("assets/DamagedHelmet/glTF/DamagedHelmet.gltf", 1, "assets/DamagedHelmet/glTF/", "assets/blinn_phong_normal_mapping.shader");
+		flightHelmetNode = GLTFLoader::loadGLTFRootNode("assets/FlightHelmet/glTF/FlightHelmet.gltf", 0, "assets/FlightHelmet/glTF/", "assets/blinn_phong_normal_mapping.shader");
+		normalTangentMirrorNode = GLTFLoader::loadGLTFRootNode("assets/NormalTangentMirrorTest/glTF/NormalTangentMirrorTest.gltf", 0, "assets/NormalTangentMirrorTest/glTF/", "assets/blinn_phong_normal_mapping.shader");
 		//sponzaNode = GLTFLoader::loadGLTFRootNode("assets/Sponza/glTF/Sponza.gltf", 0, "assets/Sponza/glTF/");
 
 		bunnyNode->setMesh(bunnyMesh);
@@ -322,6 +323,8 @@ void ExampleApp::Run() {
 	flightHelmetNode->setRotation(fhemletRotationMatrix);
 	flightHelmetNode->setPosition(vec4(1.0f, 0.0f, 0.5f, 1.0f));
 
+	normalTangentMirrorNode->setPosition(vec4(0.0f, 1.0f, -1.0f, 1.0f));
+
 	float initialTime = float(glfwGetTime());
 	while (this->window->IsOpen()) {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -358,6 +361,7 @@ void ExampleApp::Run() {
 		damagedHelmetNode->draw(cam, light);
 		flightHelmetNode->draw(cam, light);
 		//sponzaNode->draw(cam, light);
+		normalTangentMirrorNode->draw(cam, light);
 		grid->Draw((GLfloat*)&viewProjectionMatrix[0][0]);
 
 		this->window->SwapBuffers();

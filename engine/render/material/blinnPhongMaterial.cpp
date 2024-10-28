@@ -4,7 +4,7 @@
 
 BlinnPhongMaterial::BlinnPhongMaterial(std::shared_ptr<ShaderResource> shader) : 
 	blinnPhongShader(shader),
-	shininess(32){}
+	shininess(32) {}
 
 BlinnPhongMaterial::~BlinnPhongMaterial() {}
 
@@ -43,7 +43,25 @@ void BlinnPhongMaterial::Apply() const {
 	else {
 		blinnPhongShader->setUniform1i("material.hasEmissive", 0);
 	}
-}
+
+	if (normalMapTexture) {
+		normalMapTexture->bind(4);
+		blinnPhongShader->setUniform1i("material.normalMap", 4);
+		blinnPhongShader->setUniform1i("material.hasNormalMap", 1);
+	}
+	else {
+		blinnPhongShader->setUniform1i("material.hasNormalMap", 0);
+	}
+
+	if (occlusionTexture) {
+		occlusionTexture->bind(5);
+		blinnPhongShader->setUniform1i("material.occlusion", 5);
+		blinnPhongShader->setUniform1i("material.hasOcclusion", 1);
+	}
+	else {
+		blinnPhongShader->setUniform1i("material.hasOcclusion", 0);
+	}
+} 
 
 void BlinnPhongMaterial::setDiffuseTexture(std::shared_ptr<TextureResource> diffuse) {
 	this->diffuseTexture = diffuse;
@@ -59,6 +77,14 @@ void BlinnPhongMaterial::setMetallicTexture(std::shared_ptr<TextureResource> met
 
 void BlinnPhongMaterial::setEmissiveTexture(std::shared_ptr<TextureResource> emissive) {
 	this->emissiveTexture = emissive;
+}
+
+void BlinnPhongMaterial::setNormalMapTexture(std::shared_ptr<TextureResource> normalMap) {
+	this->normalMapTexture = normalMap;
+}
+
+void BlinnPhongMaterial::setOcclusionTexture(std::shared_ptr<TextureResource> occlusion) {
+	this->occlusionTexture = occlusion;
 }
 
 void BlinnPhongMaterial::setShininess(float shininess) {

@@ -6,14 +6,14 @@ GLTFLoader::GLTFLoader() {}
 
 GLTFLoader::~GLTFLoader() {}
 
-std::shared_ptr<GraphicsNode> GLTFLoader::loadGLTFRootNode(const std::string& uri, int imageFlip, string folderPath) {
+std::shared_ptr<GraphicsNode> GLTFLoader::loadGLTFRootNode(const std::string& uri, int imageFlip, string folderPath, string shaderPath) {
 	fx::gltf::Document document = fx::gltf::LoadFromText(uri);
 
 	// Create a root node for the entire model
 	auto rootNode = std::make_shared<GraphicsNode>();
 	// Iterate through top-level nodes in the document
 	for (size_t i = 0; i < document.scenes.at(0).nodes.size(); ++i) {
-		auto nextNode = loadGLTFNode(document, document.scenes.at(0).nodes[i], imageFlip, folderPath);
+		auto nextNode = loadGLTFNode(document, document.scenes.at(0).nodes[i], imageFlip, folderPath, shaderPath);
 		if (i == 0) {
 			rootNode = nextNode;
 		}
@@ -24,7 +24,7 @@ std::shared_ptr<GraphicsNode> GLTFLoader::loadGLTFRootNode(const std::string& ur
 	return rootNode;
 }
 
-std::shared_ptr<GraphicsNode> GLTFLoader::loadGLTFNode(const fx::gltf::Document& document, int nodeIndex, int imageFlip, string folderPath) {
+std::shared_ptr<GraphicsNode> GLTFLoader::loadGLTFNode(const fx::gltf::Document& document, int nodeIndex, int imageFlip, string folderPath, string shaderPath) {
 	const auto& gltfNode = document.nodes.at(nodeIndex);
 	auto graphicsNode = std::make_shared<GraphicsNode>();
 	// If the node has a mesh, load it
@@ -38,6 +38,15 @@ std::shared_ptr<GraphicsNode> GLTFLoader::loadGLTFNode(const fx::gltf::Document&
 			const auto& positionAccessor = document.accessors.at(primitive.attributes.at("POSITION"));
 			const auto& normalAccessor = document.accessors.at(primitive.attributes.at("NORMAL"));
 			const auto& texCoordAccessor = document.accessors.at(primitive.attributes.at("TEXCOORD_0"));
+			const auto tangentIt = primitive.attributes.find("TANGENT");
+
+			const float* tangents = nullptr;
+			if (tangentIt != primitive.attributes.end()) {
+				const auto& tangentAccessor = document.accessors.at(tangentIt->second);
+				const auto& tangentBufferView = document.bufferViews.at(tangentAccessor.bufferView);
+				const auto& tangentBuffer = document.buffers.at(tangentBufferView.buffer);
+				tangents = reinterpret_cast<const float*>(&tangentBuffer.data.at(tangentBufferView.byteOffset + tangentAccessor.byteOffset));
+			}
 
 			// Loading position data
 			const auto& positionBufferView = document.bufferViews.at(positionAccessor.bufferView);
@@ -61,6 +70,14 @@ std::shared_ptr<GraphicsNode> GLTFLoader::loadGLTFNode(const fx::gltf::Document&
 				vertex.position = vec4(positions[i * 3], positions[i * 3 + 1], positions[i * 3 + 2], 1.0f);
 				vertex.normal = vec3(normals[i * 3], normals[i * 3 + 1], normals[i * 3 + 2]);
 				vertex.texCoord = vec2(texCoords[i * 2], texCoords[i * 2 + 1]);
+				if (tangents) {
+					vertex.tangent = vec3(tangents[i * 3], tangents[i * 3 + 1], tangents[i * 3 + 2]);
+					
+				}
+				else {
+					vertex.tangent = vec3(0.0f, 0.0f, 0.0f);
+				}
+				vertex.biTangent = normalize(cross(vertex.normal, vertex.tangent));
 				vertices.push_back(vertex);
 			}
 
@@ -80,7 +97,6 @@ std::shared_ptr<GraphicsNode> GLTFLoader::loadGLTFNode(const fx::gltf::Document&
 
 			// Setting shader
 			std::shared_ptr<ShaderResource>shader = std::make_shared<ShaderResource>();
-			std::string shaderPath = "assets/blinn_phong.shader";
 			shader->load(shaderPath);
 			graphicsNode->setShader(shader);
 
@@ -105,6 +121,17 @@ std::shared_ptr<GraphicsNode> GLTFLoader::loadGLTFNode(const fx::gltf::Document&
 				if (materialInfo.emissiveTexture.index >= 0) {
 					auto emissiveTexture = loadTexture(document, materialInfo.emissiveTexture.index, imageFlip, folderPath);
 					material->setEmissiveTexture(emissiveTexture);
+				}
+
+				if (materialInfo.occlusionTexture.index >= 0) {
+					auto occlusionTexture = loadTexture(document, materialInfo.occlusionTexture.index, imageFlip, folderPath);
+					material->setOcclusionTexture(occlusionTexture);
+				}
+				
+				// Load normalMap texture if available
+				if (materialInfo.normalTexture.index != -1) {
+					auto normalTexture = loadTexture(document, materialInfo.normalTexture.index, imageFlip, folderPath);
+					material->setNormalMapTexture(normalTexture);
 				}
 			}
 
