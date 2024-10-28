@@ -26,7 +26,7 @@ namespace Example {
 		std::shared_ptr<GraphicsNode> GLTFCubeNode;
 		std::shared_ptr<GraphicsNode> avocadoNode;
 		std::shared_ptr<GraphicsNode> damagedHelmetNode;
-		std::shared_ptr<GraphicsNode> fightHelmetNode;
+		std::shared_ptr<GraphicsNode> flightHelmetNode;
 
 		Display::Window* window;
 		Render::Grid* grid;

@@ -175,7 +175,7 @@ bool ExampleApp::Open() {
 		GLTFCubeNode = GLTFLoader::loadGLTFRootNode("assets/Cube/glTF/Cube.gltf", 1, "assets/Cube/glTF/");
 		avocadoNode = GLTFLoader::loadGLTFRootNode("assets/Avocado/glTF/Avocado.gltf", 0, "assets/Avocado/glTF/");
 		damagedHelmetNode = GLTFLoader::loadGLTFRootNode("assets/DamagedHelmet/glTF/DamagedHelmet.gltf", 1, "assets/DamagedHelmet/glTF/");
-		fightHelmetNode = GLTFLoader::loadGLTFRootNode("assets/FlightHelmet/glTF/FlightHelmet.gltf", 1, "assets/FlightHelmet/glTF/");
+		flightHelmetNode = GLTFLoader::loadGLTFRootNode("assets/FlightHelmet/glTF/FlightHelmet.gltf", 0, "assets/FlightHelmet/glTF/");
 
 		bunnyNode->setMesh(bunnyMesh);
 		bunnyNode->setShader(shader);
@@ -397,9 +397,9 @@ void ExampleApp::Run() {
 	damagedHelmetNode->setRotation(dhemletRotationMatrix);
 	damagedHelmetNode->setPosition(vec4(0.5f, 0.17f, 0.5f, 1.0f));
 
-	fightHelmetNode->setScale(vec3(1.0f, 1.0f, 1.0f));
-	fightHelmetNode->setRotation(fhemletRotationMatrix);
-	fightHelmetNode->setPosition(vec4(1.0f, 0.0f, 0.5f, 1.0f));
+	flightHelmetNode->setScale(vec3(1.0f, 1.0f, 1.0f));
+	flightHelmetNode->setRotation(fhemletRotationMatrix);
+	flightHelmetNode->setPosition(vec4(1.0f, 0.0f, 0.5f, 1.0f));
 
 	float initialTime = float(glfwGetTime());
 	while (this->window->IsOpen()) {
@@ -435,7 +435,7 @@ void ExampleApp::Run() {
 		GLTFCubeNode->draw(cam, light);
 		avocadoNode->draw(cam, light);
 		damagedHelmetNode->draw(cam, light);
-		fightHelmetNode->drawWithCount(cam, light, 0);
+		flightHelmetNode->drawWithCount(cam, light, 0);
 		grid->Draw((GLfloat*)&viewProjectionMatrix[0][0]);
 
 		this->window->SwapBuffers();

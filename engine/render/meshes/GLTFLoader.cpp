@@ -42,17 +42,17 @@ std::shared_ptr<GraphicsNode> GLTFLoader::loadGLTFNode(const fx::gltf::Document&
 			// Loading position data
 			const auto& positionBufferView = document.bufferViews.at(positionAccessor.bufferView);
 			const auto& positionBuffer = document.buffers.at(positionBufferView.buffer);
-			const float* positions = reinterpret_cast<const float*>(&positionBuffer.data.at(positionBufferView.byteOffset));
+			const float* positions = reinterpret_cast<const float*>(&positionBuffer.data.at(positionBufferView.byteOffset + positionAccessor.byteOffset));
 
 			// Loading normal data
 			const auto& normalBufferView = document.bufferViews.at(normalAccessor.bufferView);
 			const auto& normalBuffer = document.buffers.at(normalBufferView.buffer);
-			const float* normals = reinterpret_cast<const float*>(&normalBuffer.data.at(normalBufferView.byteOffset));
+			const float* normals = reinterpret_cast<const float*>(&normalBuffer.data.at(normalBufferView.byteOffset + normalAccessor.byteOffset));
 
 			// Loading texture coordinates
 			const auto& texCoordBufferView = document.bufferViews.at(texCoordAccessor.bufferView);
 			const auto& texCoordBuffer = document.buffers.at(texCoordBufferView.buffer);
-			const float* texCoords = reinterpret_cast<const float*>(&texCoordBuffer.data.at(texCoordBufferView.byteOffset));
+			const float* texCoords = reinterpret_cast<const float*>(&texCoordBuffer.data.at(texCoordBufferView.byteOffset + texCoordAccessor.byteOffset));
 
 			// Creating vertices
 			std::vector<Vertex> vertices;
@@ -72,7 +72,7 @@ std::shared_ptr<GraphicsNode> GLTFLoader::loadGLTFNode(const fx::gltf::Document&
 				const auto& indexAccessor = document.accessors.at(primitive.indices);
 				const auto& indexBufferView = document.bufferViews.at(indexAccessor.bufferView);
 				const auto& indexBuffer = document.buffers.at(indexBufferView.buffer);
-				const uint16_t* indices = reinterpret_cast<const uint16_t*>(&indexBuffer.data.at(indexBufferView.byteOffset));
+				const uint16_t* indices = reinterpret_cast<const uint16_t*>(&indexBuffer.data.at(indexBufferView.byteOffset + indexAccessor.byteOffset));
 
 				std::vector<int> elementIndices(indices, indices + indexAccessor.count);
 				meshResource->setIndices(elementIndices);
