@@ -2,8 +2,7 @@
 #include "config.h"
 #include "GLTFLoader.h"
 
-GLTFLoader::GLTFLoader() {
-}
+GLTFLoader::GLTFLoader() {}
 
 GLTFLoader::~GLTFLoader() {}
 
@@ -28,7 +27,6 @@ std::shared_ptr<GraphicsNode> GLTFLoader::loadGLTFRootNode(const std::string& ur
 std::shared_ptr<GraphicsNode> GLTFLoader::loadGLTFNode(const fx::gltf::Document& document, int nodeIndex) {
 	const auto& gltfNode = document.nodes.at(nodeIndex);
 	auto graphicsNode = std::make_shared<GraphicsNode>();
-
 	// If the node has a mesh, load it
 	if (gltfNode.mesh >= 0) {
 		const auto& mesh = document.meshes.at(gltfNode.mesh);
@@ -79,10 +77,62 @@ std::shared_ptr<GraphicsNode> GLTFLoader::loadGLTFNode(const fx::gltf::Document&
 				std::vector<int> elementIndices(indices, indices + indexAccessor.count);
 				meshResource->setIndices(elementIndices);
 			}
+
+			// Setting shader
+			std::shared_ptr<ShaderResource>shader = std::make_shared<ShaderResource>();
+			std::string shaderPath = "assets/blinn_phong.shader";
+			shader->load(shaderPath);
+			graphicsNode->setShader(shader);
+
+			// Handle material loading
+			std::shared_ptr<BlinnPhongMaterial> material = std::make_shared<BlinnPhongMaterial>(shader);
+			if (primitive.material >= 0) {
+				const auto& materialInfo = document.materials.at(primitive.material);
+
+				material->setShininess(32.0f);
+
+				// Load diffuse texture
+				if (materialInfo.pbrMetallicRoughness.baseColorTexture.index >= 0) {
+					auto diffuseTexture = loadTexture(document, materialInfo.pbrMetallicRoughness.baseColorTexture.index);
+					material->setDiffuseTexture(diffuseTexture);
+				}
+
+				// Load specular texture if available
+				if (materialInfo.pbrMetallicRoughness.metallicRoughnessTexture.index >= 0) {
+					auto specularTexture = loadTexture(document, materialInfo.pbrMetallicRoughness.metallicRoughnessTexture.index);
+					material->setSpecularTexture(specularTexture);
+				}
+
+				// Load emissive texture if available
+				if (materialInfo.emissiveTexture.index >= 0) {
+					auto emissiveTexture = loadTexture(document, materialInfo.emissiveTexture.index);
+					material->setEmissiveTexture(emissiveTexture);
+				}
+			}
+
 			// Assign the mesh resource to the graphics node
 			graphicsNode->setMesh(meshResource);
+			graphicsNode->setMaterial(material);
 			meshResource->setUpBuffers();
 		}
 	}
 	return graphicsNode;
+}
+
+std::shared_ptr<TextureResource> GLTFLoader::loadTexture(const fx::gltf::Document& document, int textureIndex) {
+	if (textureIndex < 0 || textureIndex >= document.textures.size()) {
+		return nullptr; // Invalid texture index
+	}
+	const auto& texture = document.textures[textureIndex];
+	const auto& image = document.images[texture.source];
+
+	std::shared_ptr<TextureResource> textureResource = std::make_shared<TextureResource>();
+	textureResource->loadTextureURI("assets/" + image.uri, 1);
+	// Load texture data (URI handling and stb_image loading)
+	if (!textureResource) {
+		std::cout << "failed to load texture" << std::endl;
+		return nullptr;
+	}
+
+	return textureResource;
 }

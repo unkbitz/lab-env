@@ -78,15 +78,6 @@ bool ExampleApp::Open() {
 			std::cout << "DamedHelmet loaded" << std::endl;
 		}
 
-		//std::shared_ptr<MeshResource> fightHelmet = MeshResource::loadGLTF("assets/FlightHelmet/glTF/FlightHelmet.gltf");
-		//if (!fightHelmet) {
-		//	std::cerr << "Failed to load fightHelmet" << std::endl;
-		//	return false;
-		//}
-		//else {
-		//	std::cout << "FightHelmet loaded" << std::endl;
-		//}
-		
 		// Loading shader
 		std::shared_ptr<ShaderResource> shader = std::make_shared<ShaderResource>();
 		//std::string shaderPath1 = "assets/shader.txt";
@@ -99,8 +90,8 @@ bool ExampleApp::Open() {
 		std::shared_ptr<BlinnPhongMaterial> lampMaterial = std::make_shared<BlinnPhongMaterial>(shader);
 		std::shared_ptr<BlinnPhongMaterial> GLTFCubeMaterial = std::make_shared<BlinnPhongMaterial>(shader);
 		std::shared_ptr<BlinnPhongMaterial> AvocadoMaterial = std::make_shared<BlinnPhongMaterial>(shader);
-		std::shared_ptr<BlinnPhongMaterial> dHelmetMaterial = std::make_shared<BlinnPhongMaterial>(shader);
-		std::shared_ptr<BlinnPhongMaterial> fHelmetMaterial = std::make_shared<BlinnPhongMaterial>(shader);
+		//std::shared_ptr<BlinnPhongMaterial> dHelmetMaterial = std::make_shared<BlinnPhongMaterial>(shader);
+		//std::shared_ptr<BlinnPhongMaterial> fHelmetMaterial = std::make_shared<BlinnPhongMaterial>(shader);
 
 		// Loading texture
 		std::shared_ptr<TextureResource> woodTex = std::make_shared<TextureResource>();
@@ -116,32 +107,32 @@ bool ExampleApp::Open() {
 		std::shared_ptr<TextureResource> cubeMetallicTex = std::make_shared<TextureResource>();
 		std::shared_ptr<TextureResource> avocadoTex = std::make_shared<TextureResource>();
 		std::shared_ptr<TextureResource> avocadoMetallicTex = std::make_shared<TextureResource>();
-		std::shared_ptr<TextureResource> dHelmetTex = std::make_shared<TextureResource>();
-		std::shared_ptr<TextureResource> dHelmetSpecTex = std::make_shared<TextureResource>();
-		std::shared_ptr<TextureResource> dHelmetMetallicTex = std::make_shared<TextureResource>();
-		std::shared_ptr<TextureResource> dHelmetEmissiveTex = std::make_shared<TextureResource>();
-		std::shared_ptr<TextureResource> fHelmetTex = std::make_shared<TextureResource>();
-		std::shared_ptr<TextureResource> fHelmetMetallicTex = std::make_shared<TextureResource>();
+		//std::shared_ptr<TextureResource> dHelmetTex = std::make_shared<TextureResource>();
+		//std::shared_ptr<TextureResource> dHelmetSpecTex = std::make_shared<TextureResource>();
+		//std::shared_ptr<TextureResource> dHelmetMetallicTex = std::make_shared<TextureResource>();
+		//std::shared_ptr<TextureResource> dHelmetEmissiveTex = std::make_shared<TextureResource>();
+		//std::shared_ptr<TextureResource> fHelmetTex = std::make_shared<TextureResource>();
+		//std::shared_ptr<TextureResource> fHelmetMetallicTex = std::make_shared<TextureResource>();
 
-		woodTex->load("assets/wood.jpg");
-		woodSpecTex->load("assets/wood_spec.jpg");
-		rubikTex->load("assets/Rubik2.png");
-		rubikSpecTex->load("assets/Rubik2_spec.png");
-		horseTex->load("assets/horse.jpg", 1);
-		horseSpecTex->load("assets/horse_spec2.jpg", 1);
-		discoTex->load("assets/disco2.jpg");
-		discoSpecTex->load("assets/disco2_spec.jpg");
+		woodTex->loadTextureURI("assets/wood.jpg");
+		woodSpecTex->loadTextureURI("assets/wood_spec.jpg");
+		rubikTex->loadTextureURI("assets/Rubik2.png");
+		rubikSpecTex->loadTextureURI("assets/Rubik2_spec.png");
+		horseTex->loadTextureURI("assets/horse.jpg", 1);
+		horseSpecTex->loadTextureURI("assets/horse_spec2.jpg", 1);
+		discoTex->loadTextureURI("assets/disco2.jpg");
+		discoSpecTex->loadTextureURI("assets/disco2_spec.jpg");
 
-		GLTFCubeTex->load("assets/Cube/glTF/Cube_BaseColor.png");
-		cubeMetallicTex->load("assets/Cube/glTF/Cube_MetallicRoughness.png");
-		avocadoTex->load("assets/Avocado/glTF/Avocado_baseColor.png");
-		avocadoMetallicTex->load("assets/Avocado/glTF/Avocado_roughnessMetallic.png");
-		dHelmetTex->load("assets/DamagedHelmet/glTF/Default_albedo.jpg", 1);
-		dHelmetSpecTex->load("assets/DamagedHelmet/glTF/Default_AO.jpg", 1);
-		dHelmetMetallicTex->load("assets/DamagedHelmet/glTF/Default_metalRoughness.jpg", 1);
-		dHelmetEmissiveTex->load("assets/DamagedHelmet/glTF/Default_emissive.jpg", 1);
-		fHelmetTex->load("assets/FlightHelmet/glTF/FlightHelmet_Materials_MetalPartsMat_BaseColor.png", 1);
-		fHelmetMetallicTex->load("assets/FlightHelmet/glTF/FlightHelmet_Materials_MetalPartsMat_OcclusionRoughMetal.png", 1);
+		GLTFCubeTex->loadTextureURI("assets/Cube/glTF/Cube_BaseColor.png");
+		cubeMetallicTex->loadTextureURI("assets/Cube/glTF/Cube_MetallicRoughness.png");
+		avocadoTex->loadTextureURI("assets/Avocado/glTF/Avocado_baseColor.png");
+		avocadoMetallicTex->loadTextureURI("assets/Avocado/glTF/Avocado_roughnessMetallic.png");
+		//dHelmetTex->loadTextureURI("assets/DamagedHelmet/glTF/Default_albedo.jpg", 1);
+		//dHelmetSpecTex->loadTextureURI("assets/DamagedHelmet/glTF/Default_AO.jpg", 1);
+		//dHelmetMetallicTex->loadTextureURI("assets/DamagedHelmet/glTF/Default_metalRoughness.jpg", 1);
+		//dHelmetEmissiveTex->loadTextureURI("assets/DamagedHelmet/glTF/Default_emissive.jpg", 1);
+		/*fHelmetTex->load("assets/FlightHelmet/glTF/FlightHelmet_Materials_MetalPartsMat_BaseColor.png", 1);
+		fHelmetMetallicTex->load("assets/FlightHelmet/glTF/FlightHelmet_Materials_MetalPartsMat_OcclusionRoughMetal.png", 1);*/
 
 		// Material properties
 		woodMaterial->setDiffuseTexture(woodTex);
@@ -168,15 +159,11 @@ bool ExampleApp::Open() {
 		AvocadoMaterial->setMetallicTexture(avocadoMetallicTex);
 		AvocadoMaterial->setShininess(32.0f);
 
-		dHelmetMaterial->setDiffuseTexture(dHelmetTex);
-		dHelmetMaterial->setSpecularTexture(dHelmetSpecTex);
-		dHelmetMaterial->setSpecularTexture(dHelmetMetallicTex);
-		dHelmetMaterial->setEmissiveTexture(dHelmetEmissiveTex);
-		dHelmetMaterial->setShininess(16.0f);
-
-		fHelmetMaterial->setDiffuseTexture(fHelmetTex);
-		fHelmetMaterial->setMetallicTexture(fHelmetMetallicTex);
-		fHelmetMaterial->setShininess(32.0f);
+		//dHelmetMaterial->setDiffuseTexture(dHelmetTex);
+		//dHelmetMaterial->setSpecularTexture(dHelmetSpecTex);
+		//dHelmetMaterial->setSpecularTexture(dHelmetMetallicTex);
+		//dHelmetMaterial->setEmissiveTexture(dHelmetEmissiveTex);
+		//dHelmetMaterial->setShininess(16.0f);
 
 		// Creating a GraphicsNodes to manage the meshes
 		bunnyNode = std::make_shared<GraphicsNode>();
@@ -185,7 +172,7 @@ bool ExampleApp::Open() {
 		lightNode = std::make_shared<GraphicsNode>();
 		GLTFCubeNode = std::make_shared<GraphicsNode>();
 		avocadoNode = std::make_shared<GraphicsNode>();
-		damagedHelmetNode = std::make_shared<GraphicsNode>();
+		damagedHelmetNode = GLTFLoader::loadGLTFRootNode("assets/DamagedHelmet/glTF/DamagedHelmet.gltf");
 		fightHelmetNode = GLTFLoader::loadGLTFRootNode("assets/FlightHelmet/glTF/FlightHelmet.gltf");
 
 		bunnyNode->setMesh(bunnyMesh);
@@ -212,12 +199,11 @@ bool ExampleApp::Open() {
 		avocadoNode->setShader(shader);
 		avocadoNode->setMaterial(AvocadoMaterial);
 
-		damagedHelmetNode->setMesh(damagedHelmet);
-		damagedHelmetNode->setShader(shader);
-		damagedHelmetNode->setMaterial(dHelmetMaterial);
+		//damagedHelmetNode->setMesh(damagedHelmet);
+		//damagedHelmetNode->setShader(shader);
+		//damagedHelmetNode->setMaterial(dHelmetMaterial);
 
-		fightHelmetNode->setShader(shader);
-		fightHelmetNode->setMaterial(fHelmetMaterial);
+		//fightHelmetNode->setMaterial(fHelmetMaterial);
 
 		grid = new Render::Grid();
 		  
@@ -409,7 +395,7 @@ void ExampleApp::Run() {
 	damagedHelmetNode->setRotation(dhemletRotationMatrix);
 	damagedHelmetNode->setPosition(vec4(0.5f, 0.17f, 0.5f, 1.0f));
 
-	//fightHelmetNode->setScale(vec3(1.0f, 1.0f, 1.0f));
+	fightHelmetNode->setScale(vec3(1.0f, 1.0f, 1.0f));
 	fightHelmetNode->setRotation(fhemletRotationMatrix);
 	fightHelmetNode->setPosition(vec4(1.0f, 0.0f, 0.5f, 1.0f));
 

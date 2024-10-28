@@ -22,9 +22,15 @@ void TextureResource::unbind()const {
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-void TextureResource::load(const std::string& path, int flip) {
+void TextureResource::loadTextureURI(const std::string& path, int flip) {
 	stbi_set_flip_vertically_on_load(flip);
 	localBuffer = stbi_load(path.c_str(), &width, &height, &bitsPerPixel, 4);
+
+	if (!localBuffer) {
+		std::cerr << "Failed to load texture: " << path << std::endl;
+		return;
+	}
+
 	glGenTextures(1, &rendererID);
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, rendererID);
@@ -36,9 +42,8 @@ void TextureResource::load(const std::string& path, int flip) {
 
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, localBuffer);
 
-	if (localBuffer) {
-		stbi_image_free(localBuffer);
-	}
+	stbi_image_free(localBuffer);
+	localBuffer = nullptr;
 
 	glBindTexture(GL_TEXTURE_2D, 0);
 }

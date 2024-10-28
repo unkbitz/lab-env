@@ -7,8 +7,7 @@
 
 class BlinnPhongMaterial : public Material {
 public:
-	BlinnPhongMaterial(
-		std::shared_ptr<ShaderResource> shader);
+	BlinnPhongMaterial(	std::shared_ptr<ShaderResource> shader);
 	~BlinnPhongMaterial();
 	void Apply() const override;
 	void setDiffuseTexture(std::shared_ptr<TextureResource> diffuse);

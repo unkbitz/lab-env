@@ -2,8 +2,7 @@
 #include "config.h"
 #include "render/material/blinnPhongMaterial.h"
 
-BlinnPhongMaterial::BlinnPhongMaterial(
-	std::shared_ptr<ShaderResource> shader) : 
+BlinnPhongMaterial::BlinnPhongMaterial(std::shared_ptr<ShaderResource> shader) : 
 	blinnPhongShader(shader) {}
 
 BlinnPhongMaterial::~BlinnPhongMaterial() {}
