@@ -89,8 +89,6 @@ std::shared_ptr<GraphicsNode> GLTFLoader::loadGLTFNode(const fx::gltf::Document&
 			if (primitive.material >= 0) {
 				const auto& materialInfo = document.materials.at(primitive.material);
 
-				material->setShininess(32.0f);
-
 				// Load diffuse texture
 				if (materialInfo.pbrMetallicRoughness.baseColorTexture.index >= 0) {
 					auto diffuseTexture = loadTexture(document, materialInfo.pbrMetallicRoughness.baseColorTexture.index, imageFlip, folderPath);
