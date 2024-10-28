@@ -129,7 +129,7 @@ std::shared_ptr<GraphicsNode> GLTFLoader::loadGLTFNode(const fx::gltf::Document&
 				}
 				
 				// Load normalMap texture if available
-				if (materialInfo.normalTexture.index != -1) {
+				if (materialInfo.normalTexture.index >= 0) {
 					auto normalTexture = loadTexture(document, materialInfo.normalTexture.index, imageFlip, folderPath);
 					material->setNormalMapTexture(normalTexture);
 				}

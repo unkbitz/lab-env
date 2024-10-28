@@ -71,7 +71,7 @@ void main() {
     vec3 norm = normalize(Normal);
     if (material.hasNormalMap) {
         vec3 normalMapSample = texture(material.normalMap, TextureCoordinates).rgb;
-        norm = normalize(TBN * (normalMapSample * 2.0f - 1.0f));
+        norm = normalize(normalMapSample * 2.0f - 1.0f);
     }
 
     // Sample from the diffuse texture
@@ -103,12 +103,12 @@ void main() {
     vec3 ambientPoint = 0.1f * u_pointLightColor;
 
     // Diffuse lighting for point light
-    vec3 pointLightDir = normalize(u_pointLightPos - FragPos);
+    vec3 pointLightDir = TBN * normalize(u_pointLightPos - FragPos);
     float diffPoint = max(dot(norm, pointLightDir), 0.0f);
     vec3 diffusePoint = diffPoint * u_pointLightColor;
 
     // Specular lighting (Blinn-Phong) for point light
-    vec3 viewDir = normalize(u_ViewPos - FragPos);
+    vec3 viewDir = TBN * normalize(u_ViewPos - FragPos);
     vec3 halfwayDirPoint = normalize(pointLightDir + viewDir);
     float specPoint = pow(max(dot(norm, halfwayDirPoint), 0.0f), material.shininess);
     vec3 specularPoint = specPoint * specularTextureColor * u_pointLightColor * metallicColor;
@@ -142,6 +142,14 @@ void main() {
 
     // Combine lighting with texture color and emissive color
     vec4 finalColor = vec4(lightingResult, 1.0f) * diffuseTextureColor + vec4(emissiveColor, 1.0f); // * vec4(occlusionColor, 1.0f)
+    
+    if (material.hasNormalMap) {
+        vec3 normalMapSample = texture(material.normalMap, TextureCoordinates).rgb;
+        FragColor = vec4(normalMapSample, 1.0);
+    }
+    else {
+        FragColor = vec4(norm, 1.0);
+    }
+
     FragColor = finalColor;
-    //FragColor = vec4(norm, 1.0);
 }
