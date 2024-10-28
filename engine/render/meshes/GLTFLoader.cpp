@@ -6,14 +6,14 @@ GLTFLoader::GLTFLoader() {}
 
 GLTFLoader::~GLTFLoader() {}
 
-std::shared_ptr<GraphicsNode> GLTFLoader::loadGLTFRootNode(const std::string& uri) {
+std::shared_ptr<GraphicsNode> GLTFLoader::loadGLTFRootNode(const std::string& uri, int imageFlip, string folderPath) {
 	fx::gltf::Document document = fx::gltf::LoadFromText(uri);
 
 	// Create a root node for the entire model
 	auto rootNode = std::make_shared<GraphicsNode>();
 	// Iterate through top-level nodes in the document
 	for (size_t i = 0; i < document.scenes.at(0).nodes.size(); ++i) {
-		auto nextNode = loadGLTFNode(document, document.scenes.at(0).nodes[i]);
+		auto nextNode = loadGLTFNode(document, document.scenes.at(0).nodes[i], imageFlip, folderPath);
 		if (i == 0) {
 			rootNode = nextNode;
 		}
@@ -24,7 +24,7 @@ std::shared_ptr<GraphicsNode> GLTFLoader::loadGLTFRootNode(const std::string& ur
 	return rootNode;
 }
 
-std::shared_ptr<GraphicsNode> GLTFLoader::loadGLTFNode(const fx::gltf::Document& document, int nodeIndex) {
+std::shared_ptr<GraphicsNode> GLTFLoader::loadGLTFNode(const fx::gltf::Document& document, int nodeIndex, int imageFlip, string folderPath) {
 	const auto& gltfNode = document.nodes.at(nodeIndex);
 	auto graphicsNode = std::make_shared<GraphicsNode>();
 	// If the node has a mesh, load it
@@ -93,19 +93,19 @@ std::shared_ptr<GraphicsNode> GLTFLoader::loadGLTFNode(const fx::gltf::Document&
 
 				// Load diffuse texture
 				if (materialInfo.pbrMetallicRoughness.baseColorTexture.index >= 0) {
-					auto diffuseTexture = loadTexture(document, materialInfo.pbrMetallicRoughness.baseColorTexture.index);
+					auto diffuseTexture = loadTexture(document, materialInfo.pbrMetallicRoughness.baseColorTexture.index, imageFlip, folderPath);
 					material->setDiffuseTexture(diffuseTexture);
 				}
 
 				// Load specular texture if available
 				if (materialInfo.pbrMetallicRoughness.metallicRoughnessTexture.index >= 0) {
-					auto specularTexture = loadTexture(document, materialInfo.pbrMetallicRoughness.metallicRoughnessTexture.index);
+					auto specularTexture = loadTexture(document, materialInfo.pbrMetallicRoughness.metallicRoughnessTexture.index, imageFlip, folderPath);
 					material->setSpecularTexture(specularTexture);
 				}
 
 				// Load emissive texture if available
 				if (materialInfo.emissiveTexture.index >= 0) {
-					auto emissiveTexture = loadTexture(document, materialInfo.emissiveTexture.index);
+					auto emissiveTexture = loadTexture(document, materialInfo.emissiveTexture.index, imageFlip, folderPath);
 					material->setEmissiveTexture(emissiveTexture);
 				}
 			}
@@ -119,7 +119,7 @@ std::shared_ptr<GraphicsNode> GLTFLoader::loadGLTFNode(const fx::gltf::Document&
 	return graphicsNode;
 }
 
-std::shared_ptr<TextureResource> GLTFLoader::loadTexture(const fx::gltf::Document& document, int textureIndex) {
+std::shared_ptr<TextureResource> GLTFLoader::loadTexture(const fx::gltf::Document& document, int textureIndex, int imageFlip, string folderPath) {
 	if (textureIndex < 0 || textureIndex >= document.textures.size()) {
 		return nullptr; // Invalid texture index
 	}
@@ -127,7 +127,7 @@ std::shared_ptr<TextureResource> GLTFLoader::loadTexture(const fx::gltf::Documen
 	const auto& image = document.images[texture.source];
 
 	std::shared_ptr<TextureResource> textureResource = std::make_shared<TextureResource>();
-	textureResource->loadTextureURI("assets/" + image.uri, 1);
+	textureResource->loadTextureURI(folderPath + image.uri, imageFlip);
 	// Load texture data (URI handling and stb_image loading)
 	if (!textureResource) {
 		std::cout << "failed to load texture" << std::endl;

@@ -51,32 +51,32 @@ bool ExampleApp::Open() {
 			std::cout << "Light Mesh loaded from OBJ" << std::endl;
 		}
 
-		std::shared_ptr<MeshResource> cubeGLTF = MeshResource::loadGLTF("assets/Cube/glTF/Cube.gltf");
-		if (!cubeGLTF) {
-			std::cerr << "Failed to load cude from GLTF" << std::endl;
-			return false;
-		}
-		else {
-			std::cout << "Cude loaded from GLTF" << std::endl;
-		}
+		//std::shared_ptr<MeshResource> cubeGLTF = MeshResource::loadGLTF("assets/Cube/glTF/Cube.gltf");
+		//if (!cubeGLTF) {
+		//	std::cerr << "Failed to load cude from GLTF" << std::endl;
+		//	return false;
+		//}
+		//else {
+		//	std::cout << "Cude loaded from GLTF" << std::endl;
+		//}
 
-		std::shared_ptr<MeshResource> avocadoGLTF = MeshResource::loadGLTF("assets/Avocado/glTF/Avocado.gltf");
-		if (!avocadoGLTF) {
-			std::cerr << "Failed to load avocado from GLTF" << std::endl;
-			return false;
-		}
-		else {
-			std::cout << "Avocado loaded" << std::endl;
-		}
+		//std::shared_ptr<MeshResource> avocadoGLTF = MeshResource::loadGLTF("assets/Avocado/glTF/Avocado.gltf");
+		//if (!avocadoGLTF) {
+		//	std::cerr << "Failed to load avocado from GLTF" << std::endl;
+		//	return false;
+		//}
+		//else {
+		//	std::cout << "Avocado loaded" << std::endl;
+		//}
 
-		std::shared_ptr<MeshResource> damagedHelmet = MeshResource::loadGLTF("assets/DamagedHelmet/glTF-Embedded/DamagedHelmet.gltf");
-		if (!damagedHelmet) {
-			std::cerr << "Failed to load damagedHelmet" << std::endl;
-			return false;
-		}
-		else {
-			std::cout << "DamedHelmet loaded" << std::endl;
-		}
+		//std::shared_ptr<MeshResource> damagedHelmet = MeshResource::loadGLTF("assets/DamagedHelmet/glTF-Embedded/DamagedHelmet.gltf");
+		//if (!damagedHelmet) {
+		//	std::cerr << "Failed to load damagedHelmet" << std::endl;
+		//	return false;
+		//}
+		//else {
+		//	std::cout << "DamedHelmet loaded" << std::endl;
+		//}
 
 		// Loading shader
 		std::shared_ptr<ShaderResource> shader = std::make_shared<ShaderResource>();
@@ -88,8 +88,8 @@ bool ExampleApp::Open() {
 		std::shared_ptr<BlinnPhongMaterial> plasticMaterial = std::make_shared<BlinnPhongMaterial>(shader);
 		std::shared_ptr<BlinnPhongMaterial> HorseMaterial = std::make_shared<BlinnPhongMaterial>(shader);
 		std::shared_ptr<BlinnPhongMaterial> lampMaterial = std::make_shared<BlinnPhongMaterial>(shader);
-		std::shared_ptr<BlinnPhongMaterial> GLTFCubeMaterial = std::make_shared<BlinnPhongMaterial>(shader);
-		std::shared_ptr<BlinnPhongMaterial> AvocadoMaterial = std::make_shared<BlinnPhongMaterial>(shader);
+		//std::shared_ptr<BlinnPhongMaterial> GLTFCubeMaterial = std::make_shared<BlinnPhongMaterial>(shader);
+		//std::shared_ptr<BlinnPhongMaterial> AvocadoMaterial = std::make_shared<BlinnPhongMaterial>(shader);
 		//std::shared_ptr<BlinnPhongMaterial> dHelmetMaterial = std::make_shared<BlinnPhongMaterial>(shader);
 		//std::shared_ptr<BlinnPhongMaterial> fHelmetMaterial = std::make_shared<BlinnPhongMaterial>(shader);
 
@@ -103,10 +103,10 @@ bool ExampleApp::Open() {
 		std::shared_ptr<TextureResource> discoTex = std::make_shared<TextureResource>();
 		std::shared_ptr<TextureResource> discoSpecTex = std::make_shared<TextureResource>();
 
-		std::shared_ptr<TextureResource> GLTFCubeTex = std::make_shared<TextureResource>();
-		std::shared_ptr<TextureResource> cubeMetallicTex = std::make_shared<TextureResource>();
-		std::shared_ptr<TextureResource> avocadoTex = std::make_shared<TextureResource>();
-		std::shared_ptr<TextureResource> avocadoMetallicTex = std::make_shared<TextureResource>();
+		//std::shared_ptr<TextureResource> GLTFCubeTex = std::make_shared<TextureResource>();
+		//std::shared_ptr<TextureResource> cubeMetallicTex = std::make_shared<TextureResource>();
+		//std::shared_ptr<TextureResource> avocadoTex = std::make_shared<TextureResource>();
+		//std::shared_ptr<TextureResource> avocadoMetallicTex = std::make_shared<TextureResource>();
 		//std::shared_ptr<TextureResource> dHelmetTex = std::make_shared<TextureResource>();
 		//std::shared_ptr<TextureResource> dHelmetSpecTex = std::make_shared<TextureResource>();
 		//std::shared_ptr<TextureResource> dHelmetMetallicTex = std::make_shared<TextureResource>();
@@ -123,10 +123,10 @@ bool ExampleApp::Open() {
 		discoTex->loadTextureURI("assets/disco2.jpg");
 		discoSpecTex->loadTextureURI("assets/disco2_spec.jpg");
 
-		GLTFCubeTex->loadTextureURI("assets/Cube/glTF/Cube_BaseColor.png");
-		cubeMetallicTex->loadTextureURI("assets/Cube/glTF/Cube_MetallicRoughness.png");
-		avocadoTex->loadTextureURI("assets/Avocado/glTF/Avocado_baseColor.png");
-		avocadoMetallicTex->loadTextureURI("assets/Avocado/glTF/Avocado_roughnessMetallic.png");
+		//GLTFCubeTex->loadTextureURI("assets/Cube/glTF/Cube_BaseColor.png");
+		//cubeMetallicTex->loadTextureURI("assets/Cube/glTF/Cube_MetallicRoughness.png");
+		//avocadoTex->loadTextureURI("assets/Avocado/glTF/Avocado_baseColor.png");
+		//avocadoMetallicTex->loadTextureURI("assets/Avocado/glTF/Avocado_roughnessMetallic.png");
 		//dHelmetTex->loadTextureURI("assets/DamagedHelmet/glTF/Default_albedo.jpg", 1);
 		//dHelmetSpecTex->loadTextureURI("assets/DamagedHelmet/glTF/Default_AO.jpg", 1);
 		//dHelmetMetallicTex->loadTextureURI("assets/DamagedHelmet/glTF/Default_metalRoughness.jpg", 1);
@@ -151,13 +151,13 @@ bool ExampleApp::Open() {
 		lampMaterial->setSpecularTexture(discoSpecTex);
 		lampMaterial->setShininess(64.0f);
 
-		GLTFCubeMaterial->setDiffuseTexture(GLTFCubeTex);
-		GLTFCubeMaterial->setSpecularTexture(cubeMetallicTex);
-		GLTFCubeMaterial->setShininess(32.0f);
+		//GLTFCubeMaterial->setDiffuseTexture(GLTFCubeTex);
+		//GLTFCubeMaterial->setSpecularTexture(cubeMetallicTex);
+		//GLTFCubeMaterial->setShininess(32.0f);
 
-		AvocadoMaterial->setDiffuseTexture(avocadoTex);
-		AvocadoMaterial->setMetallicTexture(avocadoMetallicTex);
-		AvocadoMaterial->setShininess(32.0f);
+		//AvocadoMaterial->setDiffuseTexture(avocadoTex);
+		//AvocadoMaterial->setMetallicTexture(avocadoMetallicTex);
+		//AvocadoMaterial->setShininess(32.0f);
 
 		//dHelmetMaterial->setDiffuseTexture(dHelmetTex);
 		//dHelmetMaterial->setSpecularTexture(dHelmetSpecTex);
@@ -170,10 +170,12 @@ bool ExampleApp::Open() {
 		cubeNode = std::make_shared<GraphicsNode>();
 		horseNode = std::make_shared<GraphicsNode>();
 		lightNode = std::make_shared<GraphicsNode>();
-		GLTFCubeNode = std::make_shared<GraphicsNode>();
-		avocadoNode = std::make_shared<GraphicsNode>();
-		damagedHelmetNode = GLTFLoader::loadGLTFRootNode("assets/DamagedHelmet/glTF/DamagedHelmet.gltf");
-		fightHelmetNode = GLTFLoader::loadGLTFRootNode("assets/FlightHelmet/glTF/FlightHelmet.gltf");
+		//GLTFCubeNode = std::make_shared<GraphicsNode>();
+		//avocadoNode = std::make_shared<GraphicsNode>();
+		GLTFCubeNode = GLTFLoader::loadGLTFRootNode("assets/Cube/glTF/Cube.gltf", 1, "assets/Cube/glTF/");
+		avocadoNode = GLTFLoader::loadGLTFRootNode("assets/Avocado/glTF/Avocado.gltf", 0, "assets/Avocado/glTF/");
+		damagedHelmetNode = GLTFLoader::loadGLTFRootNode("assets/DamagedHelmet/glTF/DamagedHelmet.gltf", 1, "assets/DamagedHelmet/glTF/");
+		fightHelmetNode = GLTFLoader::loadGLTFRootNode("assets/FlightHelmet/glTF/FlightHelmet.gltf", 1, "assets/FlightHelmet/glTF/");
 
 		bunnyNode->setMesh(bunnyMesh);
 		bunnyNode->setShader(shader);
@@ -191,13 +193,13 @@ bool ExampleApp::Open() {
 		lightNode->setShader(shader);
 		lightNode->setMaterial(lampMaterial);
 
-		GLTFCubeNode->setMesh(cubeGLTF);
-		GLTFCubeNode->setShader(shader);
-		GLTFCubeNode->setMaterial(GLTFCubeMaterial);
+		//GLTFCubeNode->setMesh(cubeGLTF);
+		//GLTFCubeNode->setShader(shader);
+		//GLTFCubeNode->setMaterial(GLTFCubeMaterial);
 
-		avocadoNode->setMesh(avocadoGLTF);
-		avocadoNode->setShader(shader);
-		avocadoNode->setMaterial(AvocadoMaterial);
+		//avocadoNode->setMesh(avocadoGLTF);
+		//avocadoNode->setShader(shader);
+		//avocadoNode->setMaterial(AvocadoMaterial);
 
 		//damagedHelmetNode->setMesh(damagedHelmet);
 		//damagedHelmetNode->setShader(shader);
