@@ -57,10 +57,10 @@ bool ExampleApp::Open() {
 		std::string shaderPath2 = "assets/blinn_phong.shader";
 		shader->load(shaderPath2);
 
-		std::shared_ptr<BlinnPhongMaterial> woodMaterial = std::make_shared<BlinnPhongMaterial>(shader);
-		std::shared_ptr<BlinnPhongMaterial> plasticMaterial = std::make_shared<BlinnPhongMaterial>(shader);
-		std::shared_ptr<BlinnPhongMaterial> HorseMaterial = std::make_shared<BlinnPhongMaterial>(shader);
-		std::shared_ptr<BlinnPhongMaterial> lampMaterial = std::make_shared<BlinnPhongMaterial>(shader);
+		std::shared_ptr<BlinnPhongMaterial> woodMaterial = std::make_shared<BlinnPhongMaterial>(shader, 16.0f);
+		std::shared_ptr<BlinnPhongMaterial> plasticMaterial = std::make_shared<BlinnPhongMaterial>(shader, 32.0f);
+		std::shared_ptr<BlinnPhongMaterial> HorseMaterial = std::make_shared<BlinnPhongMaterial>(shader, 1.0f);
+		std::shared_ptr<BlinnPhongMaterial> lampMaterial = std::make_shared<BlinnPhongMaterial>(shader, 64.0f);
 
 		// Loading texture
 		std::shared_ptr<TextureResource> woodTex = std::make_shared<TextureResource>();
@@ -72,14 +72,14 @@ bool ExampleApp::Open() {
 		std::shared_ptr<TextureResource> discoTex = std::make_shared<TextureResource>();
 		std::shared_ptr<TextureResource> discoSpecTex = std::make_shared<TextureResource>();
 
-		woodTex->loadTextureURI("assets/wood.jpg");
-		woodSpecTex->loadTextureURI("assets/wood_spec.jpg");
-		rubikTex->loadTextureURI("assets/Rubik2.png");
-		rubikSpecTex->loadTextureURI("assets/Rubik2_spec.png");
+		woodTex->loadTextureURI("assets/wood.jpg", 0);
+		woodSpecTex->loadTextureURI("assets/wood_spec.jpg", 0);
+		rubikTex->loadTextureURI("assets/Rubik2.png", 0);
+		rubikSpecTex->loadTextureURI("assets/Rubik2_spec.png", 0);
 		horseTex->loadTextureURI("assets/horse.jpg", 1);
 		horseSpecTex->loadTextureURI("assets/horse_spec2.jpg", 1);
-		discoTex->loadTextureURI("assets/disco2.jpg");
-		discoSpecTex->loadTextureURI("assets/disco2_spec.jpg");
+		discoTex->loadTextureURI("assets/disco2.jpg", 0);
+		discoSpecTex->loadTextureURI("assets/disco2_spec.jpg", 0);
 
 		// Material properties
 		woodMaterial->setDiffuseTexture(woodTex);
@@ -105,12 +105,36 @@ bool ExampleApp::Open() {
 		horseNode = std::make_shared<GraphicsNode>();
 		lightNode = std::make_shared<GraphicsNode>();
 
-		GLTFCubeNode = GLTFLoader::loadGLTFRootNode("assets/Cube/glTF/Cube.gltf", 1, "assets/Cube/glTF/", "assets/blinn_phong_normal_mapping.shader");
-		avocadoNode = GLTFLoader::loadGLTFRootNode("assets/Avocado/glTF/Avocado.gltf", 0, "assets/Avocado/glTF/", "assets/blinn_phong_normal_mapping.shader");
-		damagedHelmetNode = GLTFLoader::loadGLTFRootNode("assets/DamagedHelmet/glTF/DamagedHelmet.gltf", 1, "assets/DamagedHelmet/glTF/", "assets/blinn_phong_normal_mapping.shader");
-		flightHelmetNode = GLTFLoader::loadGLTFRootNode("assets/FlightHelmet/glTF/FlightHelmet.gltf", 0, "assets/FlightHelmet/glTF/", "assets/blinn_phong_normal_mapping.shader");
-		normalTangentMirrorNode = GLTFLoader::loadGLTFRootNode("assets/NormalTangentMirrorTest/glTF/NormalTangentMirrorTest.gltf", 0, "assets/NormalTangentMirrorTest/glTF/", "assets/blinn_phong_normal_mapping.shader");
-		//sponzaNode = GLTFLoader::loadGLTFRootNode("assets/Sponza/glTF/Sponza.gltf", 0, "assets/Sponza/glTF/");
+		GLTFCubeNode = GLTFLoader::loadGLTFRootNode(
+			"assets/Cube/glTF/Cube.gltf", 
+			"assets/Cube/glTF/", 
+			"assets/blinn_phong_normal_mapping.shader", 
+			8.0f, 1);
+		avocadoNode = GLTFLoader::loadGLTFRootNode(
+			"assets/Avocado/glTF/Avocado.gltf", 
+			"assets/Avocado/glTF/", 
+			"assets/blinn_phong_normal_mapping.shader", 
+			16.0f,
+			0);
+		damagedHelmetNode = GLTFLoader::loadGLTFRootNode(
+			"assets/DamagedHelmet/glTF/DamagedHelmet.gltf", 
+			"assets/DamagedHelmet/glTF/", 
+			"assets/blinn_phong_normal_mapping.shader", 
+			32.0f,
+			1);
+		flightHelmetNode = GLTFLoader::loadGLTFRootNode(
+			"assets/FlightHelmet/glTF/FlightHelmet.gltf", 
+			"assets/FlightHelmet/glTF/", 
+			"assets/blinn_phong_normal_mapping.shader", 
+			32.0f,
+			0);
+		normalTangentMirrorNode = GLTFLoader::loadGLTFRootNode(
+			"assets/NormalTangentMirrorTest/glTF/NormalTangentMirrorTest.gltf", 
+			"assets/NormalTangentMirrorTest/glTF/", 
+			"assets/blinn_phong_normal_mapping.shader", 
+			64.0f,
+			0);
+		//sponzaNode = GLTFLoader::loadGLTFRootNode("assets/Sponza/glTF/Sponza.gltf", "assets/Sponza/glTF/", 32.0f, 0);
 
 		bunnyNode->setMesh(bunnyMesh);
 		bunnyNode->setShader(shader);

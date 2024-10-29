@@ -22,7 +22,7 @@ void main() {
     vec3 T = normalize(mat3(u_Model) * tangent);
     vec3 B = normalize(mat3(u_Model) * bitangent);
     vec3 N = normalize(mat3(u_Model) * normals);
-    TBN = mat3(T, B, N);
+    TBN = transpose(mat3(T, B, N));
 
     TextureCoordinates = textureCoordinates;
     gl_Position = u_ViewProjection * u_Model * vec4(pos, 1.0f);
@@ -70,8 +70,8 @@ void main() {
     // Normalize the normal vector
     vec3 norm = normalize(Normal);
     if (material.hasNormalMap) {
-        vec3 normalMapSample = texture(material.normalMap, TextureCoordinates).rgb;
-        norm = normalize(normalMapSample * 2.0f - 1.0f);
+        norm = texture(material.normalMap, TextureCoordinates).rgb;
+        norm = normalize(norm  * 2.0f - 1.0f);
     }
 
     // Sample from the diffuse texture
