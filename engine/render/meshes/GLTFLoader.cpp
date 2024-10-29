@@ -135,14 +135,14 @@ std::shared_ptr<GraphicsNode> GLTFLoader::loadGLTFNode(
 					auto emissiveTexture = loadTexture(document, materialInfo.emissiveTexture.index, folderPath, imageFlip);
 					material->setEmissiveTexture(emissiveTexture);
 				}
-
+				
 				if (materialInfo.occlusionTexture.index >= 0) {
 					auto occlusionTexture = loadTexture(document, materialInfo.occlusionTexture.index, folderPath, imageFlip);
 					material->setOcclusionTexture(occlusionTexture);
 				}
 				
 				// Load normalMap texture if available
-				if (materialInfo.normalTexture.index >= 0) {
+				if (!materialInfo.normalTexture.empty() && materialInfo.normalTexture.index >= 0) {
 					auto normalTexture = loadTexture(document, materialInfo.normalTexture.index, folderPath, imageFlip);
 					material->setNormalMapTexture(normalTexture);
 				}
