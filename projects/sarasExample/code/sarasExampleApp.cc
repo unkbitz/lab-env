@@ -346,7 +346,6 @@ void ExampleApp::Run() {
 	flightHelmetNode->setScale(vec3(1.0f, 1.0f, 1.0f));
 	flightHelmetNode->setRotation(fhemletRotationMatrix);
 	flightHelmetNode->setPosition(vec4(1.0f, 0.0f, 0.5f, 1.0f));
-
 	normalTangentMirrorNode->setPosition(vec4(0.0f, 1.0f, -1.0f, 1.0f));
 
 	float initialTime = float(glfwGetTime());
