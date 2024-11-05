@@ -84,13 +84,12 @@ std::shared_ptr<GraphicsNode> GLTFLoader::loadGLTFNode(
 				vertex.normal = vec3(normals[i * 3], normals[i * 3 + 1], normals[i * 3 + 2]);
 				vertex.texCoord = vec2(texCoords[i * 2], texCoords[i * 2 + 1]);
 				if (tangents) {
-					vertex.tangent = vec3(tangents[i * 3], tangents[i * 3 + 1], tangents[i * 3 + 2]);
+					vertex.tangent = vec4(tangents[i * 4], tangents[i * 4 + 1], tangents[i * 4 + 2], tangents[i * 4 + 3]);
 					
 				}
 				else {
-					vertex.tangent = vec3(0.0f, 0.0f, 0.0f);
+					vertex.tangent = vec4(0.0f, 0.0f, 0.0f, 0.0f);
 				}
-				vertex.biTangent = normalize(cross(vertex.normal, vertex.tangent));
 				vertices.push_back(vertex);
 			}
 

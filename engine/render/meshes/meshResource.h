@@ -24,8 +24,7 @@ struct Vertex {
 	vec4 position;
 	vec3 normal;
 	vec2 texCoord;
-	vec3 tangent;
-	vec3 biTangent;
+	vec4 tangent;
 };
 
 class MeshResource {

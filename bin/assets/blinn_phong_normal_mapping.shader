@@ -4,8 +4,7 @@
 layout(location = 0) in vec3 pos;
 layout(location = 1) in vec3 normals;
 layout(location = 2) in vec2 textureCoordinates;
-layout(location = 3) in vec3 tangent;
-layout(location = 4) in vec3 bitangent;
+layout(location = 3) in vec4 tangent;
 
 out vec3 FragPos;
 out vec2 TextureCoordinates;
@@ -19,10 +18,10 @@ void main() {
     FragPos = vec3(u_Model * vec4(pos, 1.0f));
     Normal = mat3(transpose(inverse(u_Model))) * normals;
     
-    vec3 T = normalize(mat3(u_Model) * tangent);
-    vec3 B = normalize(mat3(u_Model) * bitangent);
-    vec3 N = normalize(mat3(u_Model) * normals);
-    TBN = transpose(mat3(T, B, N));
+    vec3 T = normalize(vec3(u_Model * vec4(tangent.xyz, 0.0)));
+    vec3 N = normalize(vec3(u_Model * vec4(normals, 0.0)));
+    vec3 B = cross(N, T) * tangent.w;
+    TBN = mat3(T, B, N);
 
     TextureCoordinates = textureCoordinates;
     gl_Position = u_ViewProjection * u_Model * vec4(pos, 1.0f);
@@ -72,6 +71,8 @@ void main() {
     if (material.hasNormalMap) {
         norm = texture(material.normalMap, TextureCoordinates).rgb;
         norm = normalize(norm  * 2.0f - 1.0f);
+        norm = TBN * norm;
+        norm = vec3(norm.x, -norm.y, norm.z);
     }
 
     // Sample from the diffuse texture
@@ -88,6 +89,7 @@ void main() {
         emissiveColor = texture(material.emissive, TextureCoordinates).rgb;
     }
 
+    // fix sampling 
     vec3 metallicColor = vec3(0.0f);
     if (material.hasMetallic) {
         metallicColor = texture(material.metallic, TextureCoordinates).rgb;
@@ -103,15 +105,15 @@ void main() {
     vec3 ambientPoint = 0.1f * u_pointLightColor;
 
     // Diffuse lighting for point light
-    vec3 pointLightDir = TBN * normalize(u_pointLightPos - FragPos);
+    vec3 pointLightDir = normalize(u_pointLightPos - FragPos);
     float diffPoint = max(dot(norm, pointLightDir), 0.0f);
     vec3 diffusePoint = diffPoint * u_pointLightColor;
 
     // Specular lighting (Blinn-Phong) for point light
-    vec3 viewDir = TBN * normalize(u_ViewPos - FragPos);
+    vec3 viewDir = normalize(u_ViewPos - FragPos);
     vec3 halfwayDirPoint = normalize(pointLightDir + viewDir);
-    float specPoint = pow(max(dot(norm, halfwayDirPoint), 0.0f), material.shininess);
-    vec3 specularPoint = specPoint * specularTextureColor * u_pointLightColor * metallicColor * occlusionColor;
+    float specPoint = pow(max(dot(norm, -halfwayDirPoint), diffPoint), (1 - specularTextureColor.g) * material.shininess);
+    vec3 specularPoint = specPoint * u_pointLightColor;
 
     // Attenuation for point light
     float distancePoint = length(u_pointLightPos - FragPos);
@@ -131,8 +133,8 @@ void main() {
 
     // Specular lighting (Blinn-Phong) for directional light
     vec3 halfwayDirDir = normalize(dirLightDir + viewDir);
-    float specDir = pow(max(dot(norm, halfwayDirDir), 0.0f), material.shininess);
-    vec3 specularDir = specDir * specularTextureColor * u_directionalLightColor * metallicColor * occlusionColor;
+    float specDir = pow(max(dot(norm, -halfwayDirPoint), diffPoint), (1 - specularTextureColor.g) * material.shininess);
+    vec3 specularDir = specDir * specularTextureColor * u_directionalLightColor;
 
     // ----- Combine directional light components -----
     vec3 directionalLightResult = (ambientDir + diffuseDir + specularDir) * u_directionalLightIntensity;
