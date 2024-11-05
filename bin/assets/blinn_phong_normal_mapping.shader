@@ -72,7 +72,6 @@ void main() {
         norm = texture(material.normalMap, TextureCoordinates).rgb;
         norm = normalize(norm  * 2.0f - 1.0f);
         norm = TBN * norm;
-        norm = vec3(norm.x, -norm.y, norm.z);
     }
 
     // Sample from the diffuse texture
