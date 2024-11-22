@@ -59,6 +59,8 @@ std::shared_ptr<GraphicsNode> GLTFLoader::loadGLTFNode(
 				const auto& tangentBufferView = document.bufferViews.at(tangentAccessor.bufferView);
 				const auto& tangentBuffer = document.buffers.at(tangentBufferView.buffer);
 				tangents = reinterpret_cast<const float*>(&tangentBuffer.data.at(tangentBufferView.byteOffset + tangentAccessor.byteOffset));
+
+				std::cout << "tangents: " << tangents << std::endl;
 			}
 
 			// Loading position data
@@ -85,7 +87,6 @@ std::shared_ptr<GraphicsNode> GLTFLoader::loadGLTFNode(
 				vertex.texCoord = vec2(texCoords[i * 2], texCoords[i * 2 + 1]);
 				if (tangents) {
 					vertex.tangent = vec4(tangents[i * 4], tangents[i * 4 + 1], tangents[i * 4 + 2], tangents[i * 4 + 3]);
-					
 				}
 				else {
 					vertex.tangent = vec4(0.0f, 0.0f, 0.0f, 0.0f);

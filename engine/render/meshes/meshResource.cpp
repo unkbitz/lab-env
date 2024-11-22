@@ -43,6 +43,7 @@ void MeshResource::bindBuffers() const {
 	glEnableVertexAttribArray(0); // Position
 	glEnableVertexAttribArray(1); // Normal
 	glEnableVertexAttribArray(2); // Texture coordinates
+	glEnableVertexAttribArray(3); // Tangents
 
 	// Position (vec4)
 	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, position));
@@ -50,6 +51,8 @@ void MeshResource::bindBuffers() const {
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, normal));
 	// Texture coordinates (vec2)
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, texCoord));
+	// Tangents (vec4)
+	glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, tangent));
 
 	std::cout << "Buffer bound" << std::endl;
 }

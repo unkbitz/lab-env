@@ -70,8 +70,8 @@ void main() {
     vec3 norm = normalize(Normal);
     if (material.hasNormalMap) {
         norm = texture(material.normalMap, TextureCoordinates).rgb;
-        norm = normalize(norm  * 2.0f - 1.0f);
-        norm = TBN * norm;
+        norm = norm  * 2.0f - 1.0f;
+        norm = normalize(TBN * norm);
     }
 
     // Sample from the diffuse texture
