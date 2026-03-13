@@ -32,9 +32,9 @@ void MeshResource::setUpBuffers() {
 
     bindBuffers();
     
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0); // Unbind
+    glBindVertexArray(0); // Unbind
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); // Unbind
 
     std::cout << "Buffer set up" << std::endl;
 }
@@ -58,10 +58,10 @@ void MeshResource::bindBuffers() const {
 }
 
 void MeshResource::drawMesh() {
-	// Applying materials first
-	if (material) {
-		material->Apply();
-	}
+	//// Applying materials first
+	//if (material) {
+	//	material->Apply();
+	//}
 	glBindVertexArray(vao);
 	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);
@@ -227,7 +227,9 @@ std::shared_ptr<MeshResource> MeshResource::createCube(float width, float height
 	return mesh;
 }
 
-std::shared_ptr<MeshResource> MeshResource::loadFromOBJ(const std::string& filename) {
+
+std::shared_ptr<MeshResource> MeshResource::loadFromOBJ(const std::string& filename)
+{
 	std::shared_ptr<MeshResource> mesh = std::make_shared<MeshResource>();
 
 	std::vector<vec4> positions;
@@ -235,56 +237,134 @@ std::shared_ptr<MeshResource> MeshResource::loadFromOBJ(const std::string& filen
 	std::vector<vec3> normals;
 
 	// Face vectors
-	std::vector<GLint> positionIndices;
-	std::vector<GLint> texCoordIndices;
-	std::vector<GLint> normalIndices;
+	std::vector<Vertex> vertices;
+	std::vector<int> indices;
+	std::unordered_map<std::tuple<int, int, int>, int, TupleHash> uniqueVertices;
 
 	std::ifstream file(filename);
 	std::string line;
-	std::string prefix;
 
-	if (!file.is_open()) {
+	if (!file.is_open())
+	{
 		std::cerr << "Error opening OBJ file: " << filename << std::endl;
 		return nullptr;
 	}
 
 	// Read the OBJ file line by line
-	while (std::getline(file, line)) {
+	while (std::getline(file, line))
+	{
+
+		if (line.empty() || line[0] == '#')
+		{
+			continue;
+		}
+
 		std::stringstream ss(line);
+		std::string prefix;
 		ss >> prefix;
 
-		if (prefix == "v") {
+		if (prefix == "v")
+		{
 			vec4 tempPos;
 			ss >> tempPos.x >> tempPos.y >> tempPos.z;
 			tempPos.w = 1.0f;
 			positions.push_back(tempPos);
 		}
-		else if (prefix == "vt") {
+		else if (prefix == "vt")
+		{
 			vec2 tempTex;
 			ss >> tempTex.x >> tempTex.y;
 			texCoords.push_back(tempTex);
 		}
-		else if (prefix == "vn") {
+		else if (prefix == "vn")
+		{
 			vec3 tempNorm;
 			ss >> tempNorm.x >> tempNorm.y >> tempNorm.z;
 			normals.push_back(tempNorm);
 		}
-		else if (prefix == "f") {
-			GLint posIdx, texIdx = -1, normIdx = -1;
-			char slash; // to "remove" the slashes
+		else if (prefix == "f")
+		{
+			std::vector<ObjIndex> face;
+			std::string token;
 
-			while (ss >> posIdx) {
-				positionIndices.push_back(posIdx - 1);
-				if (ss.peek() == '/') {
-					ss >> slash;
-					if (ss.peek() != '/') {
-						ss >> texIdx;
-						texCoordIndices.push_back(texIdx - 1);
+			while (ss >> token)
+			{
+				ObjIndex idx;
+				if (!parseFaceToken(token, idx))
+				{
+					std::cerr << "Failed to parse face token: " << token << std::endl;
+					continue;
+				}
+
+				idx.v = fixIndex(idx.v, static_cast<int>(positions.size()));
+				idx.vt = fixIndex(idx.vt, static_cast<int>(texCoords.size()));
+				idx.vn = fixIndex(idx.vn, static_cast<int>(normals.size()));
+
+				if (idx.v < 0 || idx.v >= static_cast<int>(positions.size()))
+				{
+					std::cerr << "Invalid position index in face: " << token << std::endl;
+					continue;
+				}
+
+				face.push_back(idx);
+			}
+			if (face.size() < 3)
+			{
+				continue;
+			}
+
+			// make triangles of the sides
+			// example: [0,1,2,3] -> (0,1,2), (0,2,3)
+			for (size_t i = 1; i + 1 < face.size(); ++i)
+			{
+				ObjIndex tri[3] = { face[0], face[i], face[i + 1] };
+
+				for (int j = 0; j < 3; ++j)
+				{
+					// create a unique key for the triangle
+					const ObjIndex& idx = tri[j];
+					std::tuple<int, int, int> key = std::make_tuple(idx.v, idx.vt, idx.vn);
+
+					// check if the vertex already exists
+					auto it = uniqueVertices.find(key);
+					//if not:
+					if (it == uniqueVertices.end())
+					{
+						// build vertex
+						Vertex vertex{};
+						vertex.position = positions[idx.v];
+
+						//create texture corrdinates
+						if (idx.vt >= 0 && idx.vt < static_cast<int>(texCoords.size()))
+						{
+							vertex.texCoord = texCoords[idx.vt];
+						}
+
+						else
+						{
+							vertex.texCoord = vec2(0.0f, 0.0f);
+						}
+
+						// create normals
+						if (idx.vn >= 0 && idx.vn < static_cast<int>(normals.size()))
+						{
+							vertex.normal = normals[idx.vn];
+							vertex.normal = normalize(vertex.normal);
+						}
+						else
+						{
+							vertex.normal = vec3(0.0f, 0.0f, 0.0f);
+						}
+
+						// store new vertex
+						int newIndex = static_cast<int>(vertices.size());
+						vertices.push_back(vertex);
+						uniqueVertices[key] = newIndex;
+						indices.push_back(newIndex);
 					}
-
-					if (ss.peek() == '/') {
-						ss >> slash >> normIdx;
-						normalIndices.push_back(normIdx - 1);
+					else
+					{
+						indices.push_back(it->second);
 					}
 				}
 			}
@@ -293,79 +373,84 @@ std::shared_ptr<MeshResource> MeshResource::loadFromOBJ(const std::string& filen
 	file.close();
 
 	// Check if positions are available (must have positions)
-	if (positions.empty()) {
+	if (positions.empty())
+	{
 		std::cerr << "Error: No position data in OBJ file." << std::endl;
 		return nullptr;
 	}
 
-	// Construct the vertices from the loaded data
-	std::vector<Vertex> vertices;
-	std::unordered_map<std::tuple<int, int, int>, int, TupleHash> uniqueVertices;
-	std::vector<int> vertexIndices;
-
-	for (size_t i = 0; i < positionIndices.size(); i += 3) {
-		for (int j = 0; j < 3; ++j) { // Process each vertex of the face
-
-			if (i + j >= positionIndices.size()) {
-				std::cerr << "Error: posIdx out of bounds. i + j = " << i + j << " (positionIndices size: " << positionIndices.size() << ")" << std::endl;
-				continue; // Skip this vertex if position index is out of bounds
-			}
-
-			int posIdx = positionIndices[i + j];
-			int texIdx = texCoordIndices.empty() ? -1 : texCoordIndices[i + j];
-			int normIdx = normalIndices.empty() ? -1 : normalIndices[i + j];
-
-			// Skip invalid indices (-1, or out-of-bounds indices)
-			if (posIdx < 0 || posIdx >= positions.size()) {
-				std::cerr << "Error: posIdx out of bounds. posIdx = " << posIdx << std::endl;
-				continue; // Skip this vertex
-			}
-
-			// Create a key based on the combination of position, texCoord, and normal
-			std::tuple<int, int, int> key = std::make_tuple(posIdx, texIdx, normIdx);
-
-			// Check if this combination of attributes is already in the map
-			if (uniqueVertices.find(key) == uniqueVertices.end()) {
-				Vertex vertex;
-
-				// Set the position
-				vertex.position = positions[posIdx]; // Safe now due to bounds check
-
-				// Set texture coordinates, or default if out of bounds
-				if (texIdx >= 0 && texIdx < texCoords.size()) {
-					vertex.texCoord = texCoords[texIdx];
-				}
-				else {
-					vertex.texCoord = vec2(0.0f, 0.0f); // Default texture coordinate
-				}
-
-				// Set normal, or default if out of bounds
-				if (normIdx >= 0 && normIdx < normals.size()) {
-					vertex.normal = normals[normIdx];
-					normalize(vertex.normal);
-				}
-				else {
-					vertex.normal = vec3(0.0f, 0.0f, 0.0f); // Default normal
-				}
-
-				// Insert the new vertex into the map and print the inserted values
-				uniqueVertices[key] = static_cast<int>(vertices.size());
-				vertices.push_back(vertex);
-			}
-
-			// Store the index of the unique vertex
-			vertexIndices.push_back(uniqueVertices[key]);
-		}
-	}
-
 	// Print final sizes of the vertices and indices
 	std::cout << "Final unique vertices size: " << vertices.size() << std::endl;
-	std::cout << "Final indices size: " << vertexIndices.size() << std::endl;
+	std::cout << "Final indices size: " << indices.size() << std::endl;
 
 	// Transfer the unique vertices and indices to the mesh
 	mesh->vertices = std::move(vertices);
-	mesh->indices = std::move(vertexIndices);
+	mesh->indices = std::move(indices);
 
 	mesh->setUpBuffers();
 	return mesh;
+}
+
+int MeshResource::fixIndex(int idx, int size)
+{
+	if (idx > 0)
+	{
+		return idx - 1;
+	}
+	if (idx < 0)
+	{
+		return size + idx;
+	}
+	return -1;
+}
+
+bool MeshResource::parseFaceToken(const std::string& token, ObjIndex& out)
+{
+	out = ObjIndex{};
+	size_t firstSlash = token.find('/');
+	if (firstSlash == std::string::npos)
+	{
+		// v
+		out.v = std::stoi(token);
+		return true;
+	}
+
+	size_t secondSlash = token.find('/', firstSlash + 1);
+
+	if (secondSlash == std::string::npos)
+	{
+		// v/vt
+		std::string vStr = token.substr(0, firstSlash);
+		std::string vtStr = token.substr(firstSlash + 1);
+
+		if (!vStr.empty())
+		{
+			out.v = std::stoi(vStr);
+		}
+		if (!vtStr.empty())
+		{
+			out.vt = std::stoi(vtStr);
+		}
+		return true;
+	}
+
+	// v//vn or v/vt/vn
+	std::string vStr = token.substr(0, firstSlash);
+	std::string vtStr = token.substr(firstSlash + 1, secondSlash - firstSlash - 1);
+	std::string vnStr = token.substr(secondSlash + 1);
+
+	if (!vStr.empty())
+	{
+		out.v = std::stoi(vStr);
+	}
+	if (!vtStr.empty())
+	{
+		out.vt = std::stoi(vtStr);
+	}
+	if (!vnStr.empty())
+	{
+		out.vn = std::stoi(vnStr);
+	}
+
+	return true;
 }

@@ -5,11 +5,11 @@
 Lighting::Lighting() :
 	pointLightPos(0.0f, 2.0f, 0.0f),
 	pointLightColor(1.0f, 1.0f, 1.0f),
-	pointLightIntensity(5.0f), 
+	pointLightIntensity(0.2f), 
 	
 	directionalLightDir(0.0f, -1.0f, 0.0f), 
 	directionalLightColor(1.0f, 1.0f, 1.0f), 
-	directionalLightIntensity(1.0f) {}
+	directionalLightIntensity(0.1f) {}
 
 Lighting::~Lighting() {}
 

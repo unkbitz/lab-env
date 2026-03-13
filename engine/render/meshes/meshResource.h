@@ -20,6 +20,13 @@ struct TupleHash {
 	}
 };
 
+struct ObjIndex
+{
+	int v = -1;
+	int vt = -1;
+	int vn = -1;
+};
+
 struct Vertex {
 	vec4 position;
 	vec3 normal;
@@ -53,6 +60,9 @@ public:
 
 	static std::shared_ptr<MeshResource>  createCube(float width, float height, float depth);
 	static std::shared_ptr<MeshResource> loadFromOBJ(const std::string& filename);
+
+	static int fixIndex(int idx, int size);
+	static bool parseFaceToken(const std::string& token, ObjIndex& out);
 
 private:
 	GLuint vbo;

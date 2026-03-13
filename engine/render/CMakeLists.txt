@@ -60,6 +60,8 @@ SOURCE_GROUP("meshes" FILES ${files_meshes})
 SET(files_graphics
 	graphics/graphics.cpp
 	graphics/graphics.h
+	graphics/gBuffer.h
+	graphics/gBuffer.cpp
 	)
 SOURCE_GROUP("graphics" FILES ${files_graphics})
 

@@ -32,11 +32,22 @@ public:
 	mat4 getRotation();
 	void setScale(vec3 const newScale);
 	vec3 getScale();
+	void drawGeometry(Camera& camera);
 	void draw(Camera& camera, Lighting& light);
-	void drawWithCount(Camera& camera, Lighting& light, int nodeIndex);
+	void drawDebugLights(Camera& camera);
+	void setBaseColor(const vec4& color);
+	void setUseDiffuseTexture(bool value);
 private:
 	std::shared_ptr<MeshResource> m_mesh;
 	std::shared_ptr<TextureResource> m_texture;
 	std::shared_ptr<ShaderResource> m_shader;
+	std::shared_ptr<Material> m_material;
 	std::vector<std::shared_ptr<GraphicsNode>> m_childNodes;
+
+	vec4 m_position = vec4(0, 0, 0, 1);
+	mat4 m_rotation;
+	vec3 m_scale = vec3(1, 1, 1);
+
+	vec4 baseColor = vec4(1, 1, 1, 1);
+	bool useDiffuseTexture = true;
 };

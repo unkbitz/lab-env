@@ -17,6 +17,9 @@ public:
 	void setNormalMapTexture(std::shared_ptr<TextureResource> normalMap);
 	void setOcclusionTexture(std::shared_ptr<TextureResource> occlusion);
 	void setShininess(float shininess);
+
+	std::shared_ptr<TextureResource> getDiffuseTexture() const { return diffuseTexture; }
+	std::shared_ptr<TextureResource> getSpecularTexture() const { return specularTexture; }
 private:
 	std::shared_ptr<ShaderResource> blinnPhongShader;
 	std::shared_ptr<TextureResource> diffuseTexture;
