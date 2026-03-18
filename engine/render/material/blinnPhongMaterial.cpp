@@ -14,70 +14,84 @@ BlinnPhongMaterial::BlinnPhongMaterial(std::shared_ptr<ShaderResource> shader, f
 
 BlinnPhongMaterial::~BlinnPhongMaterial() {}
 
-void BlinnPhongMaterial::Apply() const {
+void BlinnPhongMaterial::Apply() const
+{
 	blinnPhongShader->bind();
 	blinnPhongShader->setUniform1f("material.shininess", shininess);
 
-	if (diffuseTexture) {
+	if (diffuseTexture)
+	{
 		diffuseTexture->bind(0);
 		blinnPhongShader->setUniform1i("material.diffuse", 0);
 	}
 
-	if (specularTexture) {
+	if (specularTexture)
+	{
 		specularTexture->bind(1);
 		blinnPhongShader->setUniform1i("material.specular", 1);
 		blinnPhongShader->setUniform1i("material.hasSpecular", 1);
 	}
 	
-	if (metallicTexture) {
+	if (metallicTexture)
+	{
 		metallicTexture->bind(2);
 		blinnPhongShader->setUniform1i("material.metallic", 2);
 		blinnPhongShader->setUniform1i("material.hasMetallic", 1);
 	}
 
-	if (emissiveTexture) {
+	if (emissiveTexture)
+	{
 		emissiveTexture->bind(3);
 		blinnPhongShader->setUniform1i("material.emissive", 3);
 		blinnPhongShader->setUniform1i("material.hasEmissive", 1);
 	}
 
-	if (normalMapTexture) {
+	if (normalMapTexture)
+	{
 		normalMapTexture->bind(4);
 		blinnPhongShader->setUniform1i("material.normalMap", 4);
 		blinnPhongShader->setUniform1i("material.hasNormalMap", 1);
 	}
 
-	if (occlusionTexture) {
+	if (occlusionTexture)
+	{
 		occlusionTexture->bind(5);
 		blinnPhongShader->setUniform1i("material.occlusion", 5);
 		blinnPhongShader->setUniform1i("material.hasOcclusion", 1);
 	}
 } 
 
-void BlinnPhongMaterial::setDiffuseTexture(std::shared_ptr<TextureResource> diffuse) {
+void BlinnPhongMaterial::setDiffuseTexture(std::shared_ptr<TextureResource> diffuse)
+{
 	this->diffuseTexture = diffuse;
 }
 
-void BlinnPhongMaterial::setSpecularTexture(std::shared_ptr<TextureResource> specular) {
+void BlinnPhongMaterial::setSpecularTexture(std::shared_ptr<TextureResource> specular)
+{
 	this->specularTexture = specular;
 }
 
-void BlinnPhongMaterial::setMetallicTexture(std::shared_ptr<TextureResource> metallic) {
+void BlinnPhongMaterial::setMetallicTexture(std::shared_ptr<TextureResource> metallic)
+{
 	this->metallicTexture = metallic;
 }
 
-void BlinnPhongMaterial::setEmissiveTexture(std::shared_ptr<TextureResource> emissive) {
+void BlinnPhongMaterial::setEmissiveTexture(std::shared_ptr<TextureResource> emissive)
+{
 	this->emissiveTexture = emissive;
 }
 
-void BlinnPhongMaterial::setNormalMapTexture(std::shared_ptr<TextureResource> normalMap) {
+void BlinnPhongMaterial::setNormalMapTexture(std::shared_ptr<TextureResource> normalMap)
+{
 	this->normalMapTexture = normalMap;
 }
 
-void BlinnPhongMaterial::setOcclusionTexture(std::shared_ptr<TextureResource> occlusion) {
+void BlinnPhongMaterial::setOcclusionTexture(std::shared_ptr<TextureResource> occlusion)
+{
 	this->occlusionTexture = occlusion;
 }
 
-void BlinnPhongMaterial::setShininess(float shininess) {
+void BlinnPhongMaterial::setShininess(float shininess)
+{
 	this->shininess = shininess;
 }

@@ -22,6 +22,7 @@ public:
 	void setUnifrom4f(const std::string& name, float v0, float v1, float v2, float v3);
 	void setUniformMat4(const char* name, mat4 const& matrix, GLuint program);
 	void setUniform3f(const std::string& name, float v0, float v1, float v2);
+	void setUniform2f(const std::string& name, float v0, float v1);
 	void setUniform1f(const std::string& name, float v0);
 	void setUniform1i(const std::string& name, int v0);
 private:

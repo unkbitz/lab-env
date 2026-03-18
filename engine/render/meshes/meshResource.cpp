@@ -5,14 +5,17 @@
 #include <sstream>
 #include "meshResource.h"
 
-MeshResource::MeshResource() :vbo(0), ibo(0), vao(0), material(nullptr) {}
+MeshResource::MeshResource() :vbo(0), ibo(0), vao(0)/*, material(nullptr)*/ {}
 
-MeshResource::~MeshResource() {
+MeshResource::~MeshResource()
+{
 	cleanUp();
 }
 
-void MeshResource::setUpBuffers() {
-    if (vertices.empty() || indices.empty()) {
+void MeshResource::setUpBuffers()
+{
+    if (vertices.empty() || indices.empty())
+	{
         std::cerr << "Error: No vertex or index data available to set up buffers." << std::endl;
         return;
     }
@@ -39,7 +42,8 @@ void MeshResource::setUpBuffers() {
     std::cout << "Buffer set up" << std::endl;
 }
 
-void MeshResource::bindBuffers() const {
+void MeshResource::bindBuffers() const
+{
 	glEnableVertexAttribArray(0); // Position
 	glEnableVertexAttribArray(1); // Normal
 	glEnableVertexAttribArray(2); // Texture coordinates
@@ -57,83 +61,57 @@ void MeshResource::bindBuffers() const {
 	std::cout << "Buffer bound" << std::endl;
 }
 
-void MeshResource::drawMesh() {
-	//// Applying materials first
-	//if (material) {
-	//	material->Apply();
-	//}
+void MeshResource::drawMesh()
+{
 	glBindVertexArray(vao);
 	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);
 }
 
-void MeshResource::cleanUp() {
-	if (vbo != 0) {
+void MeshResource::cleanUp()
+{
+	if (vbo != 0)
+	{
 		glDeleteBuffers(1, &vbo);
 		vbo = 0;
 		std::cout << "vbo deleted" << endl;
 	}
-	if (ibo != 0) {
+	if (ibo != 0)
+	{
 		glDeleteBuffers(1, &ibo);
 		ibo = 0;
 		std::cout << "ibo deleted" << endl;
 	}
-	if (vao != 0) {
+	if (vao != 0)
+	{
 		glDeleteVertexArrays(1, &vao);
 		vao = 0;
 		std::cout << "vao deleted" << endl;
 	}
 }
 
-vec4 MeshResource::getPosition() {
-	return transform.getPosition();
-}
-
-mat4 MeshResource::getRotation() {
-	return transform.getRotation();
-}
-
-vec3 MeshResource::getScale() {
-	return transform.getScale();
-}
-
-mat4 MeshResource::getTransform() {
-	return transform.getTransformMatrix();
-}
-
-std::vector<Vertex> MeshResource::getVertices() {
+std::vector<Vertex> MeshResource::getVertices()
+{
 	return vertices;
 }
 
-std::vector<int> MeshResource::getIndices() {
+std::vector<int> MeshResource::getIndices()
+{
 	return indices;
 }
 
-void MeshResource::setMaterial(std::shared_ptr<Material> mat) {
-	this->material = mat;
-}
-
-void MeshResource::setPosition(vec4 const position) {
-	transform.setPosition(position);
-}
-
-void MeshResource::setRotation(mat4 const rotation) {
-	transform.setRotation(rotation);
-}
-
-void MeshResource::setScale(vec3 const scale) {
-	transform.setScale(scale);
-}
-
-void MeshResource::setVertices(std::vector<Vertex> const vertices) {
+void MeshResource::setVertices(std::vector<Vertex> const vertices)
+{
 	this->vertices = vertices;
 }
 
-void MeshResource::setIndices(std::vector<int> const indices) {
+void MeshResource::setIndices(std::vector<int> const indices)
+{
 	this->indices = indices;
 }
 
-std::shared_ptr<MeshResource> MeshResource::createCube(float width, float height, float depth) {
+std::shared_ptr<MeshResource> MeshResource::createCube(float width, float height, float depth)
+{
 	std::shared_ptr<MeshResource> mesh = std::make_shared<MeshResource>();
 
 	height = height / 2;
@@ -141,7 +119,8 @@ std::shared_ptr<MeshResource> MeshResource::createCube(float width, float height
 	depth = depth / 2;
 
 	// Define positions for the cube's vertices
-	vec4 cubePositions[] = {
+	vec4 cubePositions[] =
+	{
 		// Front face
 		vec4(-width, -height,  depth, 1.0f), // Bottom-left
 		vec4(width, -height,  depth, 1.0f), // Bottom-right
@@ -155,7 +134,8 @@ std::shared_ptr<MeshResource> MeshResource::createCube(float width, float height
 	};
 
 	// Define normals for the cube (pointing outwards)
-	vec3 cubeNormals[] = {
+	vec3 cubeNormals[] =
+	{
 		vec3(0.0f,  0.0f,  1.0f), // Front face
 		vec3(0.0f,  0.0f, -1.0f), // Back face
 		vec3(-1.0f,  0.0f,  0.0f), // Left face
@@ -165,7 +145,8 @@ std::shared_ptr<MeshResource> MeshResource::createCube(float width, float height
 	};
 
 	// Define texture coordinates
-	vec2 texCoords[] = {
+	vec2 texCoords[] =
+	{
 		vec2(1.0f, 1.0f), // Bottom-left
 		vec2(0.0f, 1.0f), // Bottom-right
 		vec2(0.0f, 0.0f), // Top-right
@@ -173,7 +154,8 @@ std::shared_ptr<MeshResource> MeshResource::createCube(float width, float height
 	};
 
 	// Create the vertices for the cube
-	mesh->vertices = {
+	mesh->vertices =
+	{
 		// Front face
 		{ cubePositions[0], cubeNormals[0], texCoords[0] },
 		{ cubePositions[1], cubeNormals[0], texCoords[1] },
@@ -207,7 +189,8 @@ std::shared_ptr<MeshResource> MeshResource::createCube(float width, float height
 	};
 
 	// Define the indices for drawing the cube with triangles
-	mesh->indices = {
+	mesh->indices =
+	{
 		// Front face
 		0, 1, 2, 2, 3, 0,
 		// Back face
@@ -380,6 +363,7 @@ std::shared_ptr<MeshResource> MeshResource::loadFromOBJ(const std::string& filen
 	}
 
 	// Print final sizes of the vertices and indices
+	std::cout << filename << std::endl;
 	std::cout << "Final unique vertices size: " << vertices.size() << std::endl;
 	std::cout << "Final indices size: " << indices.size() << std::endl;
 

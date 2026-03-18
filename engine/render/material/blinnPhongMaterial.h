@@ -5,7 +5,8 @@
 #include "render/textures/textureResource.h"
 #include <memory>
 
-class BlinnPhongMaterial : public Material {
+class BlinnPhongMaterial : public Material
+{
 public:
 	BlinnPhongMaterial(	std::shared_ptr<ShaderResource> shader, float shininess);
 	~BlinnPhongMaterial();

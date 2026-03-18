@@ -3,13 +3,13 @@
 #include "render/window.h"
 #include "render/shaders/shaderResource.h"
 
-namespace Example {
-	class ExampleApp : public Core::App {
+namespace MeshResourceSim {
+	class MeshResourceSimApp : public Core::App {
 	public:
 		/// constructor
-		ExampleApp();
+		MeshResourceSimApp();
 		/// destructor
-		~ExampleApp();
+		~MeshResourceSimApp();
 
 		bool Open();
 		void Close();
@@ -25,4 +25,4 @@ namespace Example {
 		ShaderResource shader;
 		Display::Window* window;
 	};
-} // namespace Example
+} // namespace 

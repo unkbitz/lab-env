@@ -10,7 +10,8 @@
 #include "render/lighting/lighting.h"
 #include "render/material/blinnPhongMaterial.h"
 
-class GraphicsNode {
+class GraphicsNode
+{
 public:
 	GraphicsNode();
 	~GraphicsNode();
@@ -32,9 +33,10 @@ public:
 	mat4 getRotation();
 	void setScale(vec3 const newScale);
 	vec3 getScale();
-	void drawGeometry(Camera& camera);
-	void draw(Camera& camera, Lighting& light);
-	void drawDebugLights(Camera& camera);
+	void drawGeometry(Camera& camera, float aspect);
+	void draw(Camera& camera, Lighting& light, float aspect);
+	void drawLightVolume(Camera& camera, float width, float height, float aspect);
+	void drawDebugLights(Camera& camera, float aspect);
 	void setBaseColor(const vec4& color);
 	void setUseDiffuseTexture(bool value);
 private:

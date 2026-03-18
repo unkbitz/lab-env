@@ -18,12 +18,15 @@ std::shared_ptr<GraphicsNode> GLTFLoader::loadGLTFRootNode(
 	// Create a root node for the entire model
 	auto rootNode = std::make_shared<GraphicsNode>();
 	// Iterate through top-level nodes in the document
-	for (size_t i = 0; i < document.scenes.at(0).nodes.size(); ++i) {
+	for (size_t i = 0; i < document.scenes.at(0).nodes.size(); ++i)
+	{
 		auto nextNode = loadGLTFNode(document, document.scenes.at(0).nodes[i], folderPath, shaderPath, shininess, imageFlip);
-		if (i == 0) {
+		if (i == 0)
+		{
 			rootNode = nextNode;
 		}
-		else {
+		else
+		{
 			rootNode->addChild(nextNode);
 		}
 	}
@@ -36,17 +39,20 @@ std::shared_ptr<GraphicsNode> GLTFLoader::loadGLTFNode(
 	string folderPath, 
 	string shaderPath, 
 	float shininess,
-	int imageFlip) {
+	int imageFlip)
+{
 
 	const auto& gltfNode = document.nodes.at(nodeIndex);
 	auto graphicsNode = std::make_shared<GraphicsNode>();
 	// If the node has a mesh, load it
-	if (gltfNode.mesh >= 0) {
+	if (gltfNode.mesh >= 0)
+	{
 		const auto& mesh = document.meshes.at(gltfNode.mesh);
 		auto meshResource = std::make_shared<MeshResource>();
 
 		// Iterate through the primitives of the mesh
-		for (const auto& primitive : mesh.primitives) {
+		for (const auto& primitive : mesh.primitives)
+		{
 			// Creating accessors for positions, normals, and texture coordinates
 			const auto& positionAccessor = document.accessors.at(primitive.attributes.at("POSITION"));
 			const auto& normalAccessor = document.accessors.at(primitive.attributes.at("NORMAL"));
@@ -54,7 +60,8 @@ std::shared_ptr<GraphicsNode> GLTFLoader::loadGLTFNode(
 			const auto tangentIt = primitive.attributes.find("TANGENT");
 
 			const float* tangents = nullptr;
-			if (tangentIt != primitive.attributes.end()) {
+			if (tangentIt != primitive.attributes.end())
+			{
 				const auto& tangentAccessor = document.accessors.at(tangentIt->second);
 				const auto& tangentBufferView = document.bufferViews.at(tangentAccessor.bufferView);
 				const auto& tangentBuffer = document.buffers.at(tangentBufferView.buffer);
@@ -80,15 +87,18 @@ std::shared_ptr<GraphicsNode> GLTFLoader::loadGLTFNode(
 
 			// Creating vertices
 			std::vector<Vertex> vertices;
-			for (size_t i = 0; i < positionAccessor.count; ++i) {
+			for (size_t i = 0; i < positionAccessor.count; ++i)
+			{
 				Vertex vertex;
 				vertex.position = vec4(positions[i * 3], positions[i * 3 + 1], positions[i * 3 + 2], 1.0f);
 				vertex.normal = vec3(normals[i * 3], normals[i * 3 + 1], normals[i * 3 + 2]);
 				vertex.texCoord = vec2(texCoords[i * 2], texCoords[i * 2 + 1]);
-				if (tangents) {
+				if (tangents)
+				{
 					vertex.tangent = vec4(tangents[i * 4], tangents[i * 4 + 1], tangents[i * 4 + 2], tangents[i * 4 + 3]);
 				}
-				else {
+				else
+				{
 					vertex.tangent = vec4(0.0f, 0.0f, 0.0f, 0.0f);
 				}
 				vertices.push_back(vertex);
@@ -98,7 +108,8 @@ std::shared_ptr<GraphicsNode> GLTFLoader::loadGLTFNode(
 			meshResource->setVertices(vertices);
 
 			// Handle indices
-			if (primitive.indices >= 0) {
+			if (primitive.indices >= 0)
+			{
 				const auto& indexAccessor = document.accessors.at(primitive.indices);
 				const auto& indexBufferView = document.bufferViews.at(indexAccessor.bufferView);
 				const auto& indexBuffer = document.buffers.at(indexBufferView.buffer);
@@ -115,34 +126,40 @@ std::shared_ptr<GraphicsNode> GLTFLoader::loadGLTFNode(
 
 			// Handle material loading
 			std::shared_ptr<BlinnPhongMaterial> material = std::make_shared<BlinnPhongMaterial>(shader, shininess);
-			if (primitive.material >= 0) {
+			if (primitive.material >= 0)
+			{
 				const auto& materialInfo = document.materials.at(primitive.material);
 
 				// Load diffuse texture
-				if (materialInfo.pbrMetallicRoughness.baseColorTexture.index >= 0) {
+				if (materialInfo.pbrMetallicRoughness.baseColorTexture.index >= 0)
+				{
 					auto diffuseTexture = loadTexture(document, materialInfo.pbrMetallicRoughness.baseColorTexture.index, folderPath, imageFlip);
 					material->setDiffuseTexture(diffuseTexture);
 				}
 
 				// Load specular texture if available
-				if (materialInfo.pbrMetallicRoughness.metallicRoughnessTexture.index >= 0) {
+				if (materialInfo.pbrMetallicRoughness.metallicRoughnessTexture.index >= 0)
+				{
 					auto specularTexture = loadTexture(document, materialInfo.pbrMetallicRoughness.metallicRoughnessTexture.index, folderPath, imageFlip);
 					material->setSpecularTexture(specularTexture);
 				}
 
 				// Load emissive texture if available
-				if (materialInfo.emissiveTexture.index >= 0) {
+				if (materialInfo.emissiveTexture.index >= 0)
+				{
 					auto emissiveTexture = loadTexture(document, materialInfo.emissiveTexture.index, folderPath, imageFlip);
 					material->setEmissiveTexture(emissiveTexture);
 				}
 				
-				if (materialInfo.occlusionTexture.index >= 0) {
+				if (materialInfo.occlusionTexture.index >= 0)
+				{
 					auto occlusionTexture = loadTexture(document, materialInfo.occlusionTexture.index, folderPath, imageFlip);
 					material->setOcclusionTexture(occlusionTexture);
 				}
 				
 				// Load normalMap texture if available
-				if (!materialInfo.normalTexture.empty() && materialInfo.normalTexture.index >= 0) {
+				if (!materialInfo.normalTexture.empty() && materialInfo.normalTexture.index >= 0)
+				{
 					auto normalTexture = loadTexture(document, materialInfo.normalTexture.index, folderPath, imageFlip);
 					material->setNormalMapTexture(normalTexture);
 				}
@@ -161,9 +178,11 @@ std::shared_ptr<TextureResource> GLTFLoader::loadTexture(
 	const fx::gltf::Document& document, 
 	int textureIndex, 
 	string folderPath,
-	int imageFlip) {
+	int imageFlip)
+{
 
-	if (textureIndex < 0 || textureIndex >= document.textures.size()) {
+	if (textureIndex < 0 || textureIndex >= document.textures.size())
+	{
 		return nullptr; // Invalid texture index
 	}
 	const auto& texture = document.textures[textureIndex];
@@ -172,7 +191,8 @@ std::shared_ptr<TextureResource> GLTFLoader::loadTexture(
 	std::shared_ptr<TextureResource> textureResource = std::make_shared<TextureResource>();
 	textureResource->loadTextureURI(folderPath + image.uri, imageFlip);
 	// Load texture data (URI handling and stb_image loading)
-	if (!textureResource) {
+	if (!textureResource)
+	{
 		std::cout << "failed to load texture" << std::endl;
 		return nullptr;
 	}

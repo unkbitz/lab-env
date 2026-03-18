@@ -3,7 +3,8 @@
 #include <unordered_map>
 #include "math/mat4.h"
 
-class MeshTransform {
+class MeshTransform
+{
 public:
 	MeshTransform();
 	~MeshTransform();

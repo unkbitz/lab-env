@@ -5,7 +5,7 @@
 int
 main(int argc, const char** argv)
 {
-	Example::ExampleApp app;
+	MeshResourceSim::MeshResourceSimApp app;
 	if (app.Open())
 	{
 		app.Run();

@@ -2,7 +2,8 @@
 #include "render/textures/textureResource.h"
 #include "render/graphics/graphics.h"
 
-class GLTFLoader {
+class GLTFLoader
+{
 public:
 	GLTFLoader();
 	~GLTFLoader();

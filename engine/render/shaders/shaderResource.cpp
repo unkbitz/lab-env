@@ -100,7 +100,6 @@ void ShaderResource::setUniform4fv(const char* name, vec4 const& vector, GLuint 
 
 void ShaderResource::setUnifrom4f(const std::string& name, float v0, float v1, float v2, float v3) {
 	glUniform4f(getUniformLocation(name), v0, v1, v2, v3);
-	
 }
 
 void ShaderResource::setUniformMat4(const char* name, mat4 const& matrix, GLuint program) {
@@ -111,6 +110,9 @@ void ShaderResource::setUniform3f(const std::string& name, float v0, float v1, f
 	glUniform3f(getUniformLocation(name), v0, v1, v2);
 }
 
+void ShaderResource::setUniform2f(const std::string& name, float v0, float v1) {
+	glUniform2f(getUniformLocation(name), v0, v1);
+}
 void ShaderResource::setUniform1f(const std::string& name, float v0) {
 	glUniform1f(getUniformLocation(name), v0);
 }

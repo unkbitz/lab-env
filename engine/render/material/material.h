@@ -1,7 +1,8 @@
 #pragma once
 #include "config.h"
 
-class Material {
+class Material
+{
 public:
 	virtual ~Material() {}
 
