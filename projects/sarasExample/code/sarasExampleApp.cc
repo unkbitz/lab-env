@@ -136,7 +136,7 @@ bool ExampleApp::LoadOBJMeshes()
 		std::cout << "Bunny loaded from OBJ" << std::endl;
 	}
 
-	truckMesh = MeshResource::loadFromOBJ("assets/kenney_car-kit/Models/OBJ format/truck-flat.obj");
+	truckMesh = MeshResource::loadFromOBJ("assets/kenney_car-kit/Models/OBJ format/truck.obj");
 	if (!truckMesh)
 	{
 		std::cerr << "Failed to load truck from OBJ" << std::endl;
@@ -166,7 +166,7 @@ bool ExampleApp::LoadOBJMeshes()
 	}
 	else
 	{
-		std::cout << "ambulanceMesh loaded from OBJ" << std::endl;
+		std::cout << "deliveryMesh loaded from OBJ" << std::endl;
 	}
 
 	fireTruckMesh = MeshResource::loadFromOBJ("assets/kenney_car-kit/Models/OBJ format/firetruck.obj");
@@ -177,7 +177,7 @@ bool ExampleApp::LoadOBJMeshes()
 	}
 	else
 	{
-		std::cout << "ambulanceMesh loaded from OBJ" << std::endl;
+		std::cout << "fireTruckMesh loaded from OBJ" << std::endl;
 	}
 
 	raceMesh = MeshResource::loadFromOBJ("assets/kenney_car-kit/Models/OBJ format/race.obj");
@@ -188,7 +188,7 @@ bool ExampleApp::LoadOBJMeshes()
 	}
 	else
 	{
-		std::cout << "ambulanceMesh loaded from OBJ" << std::endl;
+		std::cout << "raceMesh loaded from OBJ" << std::endl;
 	}
 
 	taxiMesh = MeshResource::loadFromOBJ("assets/kenney_car-kit/Models/OBJ format/taxi.obj");
@@ -199,7 +199,7 @@ bool ExampleApp::LoadOBJMeshes()
 	}
 	else
 	{
-		std::cout << "ambulanceMesh loaded from OBJ" << std::endl;
+		std::cout << "taxiMesh loaded from OBJ" << std::endl;
 	}
 
 	cubeMesh = MeshResource::createCube(0.5f, 0.5f, 0.5f);
@@ -839,17 +839,14 @@ void ExampleApp::Run()
 		);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-
 		SpawnDirectionalLight();
 
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_CULL_FACE);
 		glDepthFunc(GL_GEQUAL);
 		glDepthMask(GL_FALSE);
-
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_ONE, GL_ONE);
-
 		glCullFace(GL_FRONT);
 
 		for (int i = 0; i < pointLights.size(); i++)
@@ -859,7 +856,6 @@ void ExampleApp::Run()
 			{
 				continue;
 			}
-
 			SpawnPointLight(i);
 		}
 
